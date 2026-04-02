@@ -817,19 +817,34 @@
     margin: 0 auto;
 }
 
-.caja-cristal {
-    display: flex;
-    flex-wrap: nowrap;
-    align-items: center;
-    background: rgba(0, 0, 0, 0.4); /* Cristal oscuro */
-    border: 1px solid rgba(255, 255, 255, 0.15);
-    border-radius: 50px; /* Forma de píldora horizontal */
-    padding: 8px;
-    gap: 8px;
-    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5);
-    backdrop-filter: blur(10px);
-    width: 100%;
-}
+/* =========================================
+   AJUSTES DE ESPACIO (RESPIRACIÓN Y UX)
+   ========================================= */
+    .caja-cristal {
+        /* Permite que los elementos pasen a una segunda línea en lugar de aplastarse */
+        flex-wrap: wrap !important; 
+        border-radius: 25px !important; /* Suavizamos los bordes para que luzca bien en 2 líneas */
+        padding: 15px !important;
+        justify-content: center; 
+    }
+    
+    /* Le damos prioridad y mucho más ancho al Email */
+    #reg-email {
+        flex: 2 !important; 
+        min-width: 260px !important;
+    }
+    
+    /* Le damos prioridad y muchísimo más ancho al Buscador de Lugar */
+    .lugar-list-container {
+        flex: 3 !important; 
+        min-width: 320px !important;
+    }
+    
+    /* Que los campos de fecha y hora no se estiren demasiado */
+    #reg-fecha, #reg-hora {
+        flex: 0.8 !important;
+        min-width: 130px !important;
+    }
 
 .input-lujo {
     background: transparent;
