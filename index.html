@@ -991,6 +991,80 @@
             }, 2000);
         }
     </script>
+    <script>
+    // 1. Cargar el combo de países al abrir la página
+    document.addEventListener("DOMContentLoaded", () => {
+        const comboPais = document.getElementById('reg-pais');
+        // Usamos la API pública y rápida de países
+        fetch('https://restcountries.com/v3.1/all?fields=name')
+            .then(res => res.json())
+            .then(data => {
+                // Ordenar alfabéticamente
+                const paises = data.map(p => p.name.common).sort();
+                paises.forEach(pais => {
+                    let option = document.createElement('option');
+                    option.value = pais;
+                    option.textContent = pais;
+                    // Para que se vea bien en el fondo oscuro
+                    option.style.color = "#000"; 
+                    comboPais.appendChild(option);
+                });
+            });
+    });
+
+    // 2. Lógica de Validación y Envío
+    async function registrarUsuario(event) {
+        event.preventDefault(); // Evita que la página recargue
+        
+        const btn = document.getElementById('btn-registro');
+        const mensaje = document.getElementById('mensaje-sistema');
+        
+        // Efecto visual de carga
+        btn.disabled = true;
+        btn.textContent = "Calculando coordenadas...";
+        mensaje.textContent = "";
+
+        // Recopilar datos
+        const datos = {
+            nombre: document.getElementById('reg-nombre').value,
+            email: document.getElementById('reg-email').value,
+            fecha: document.getElementById('reg-fecha').value,
+            hora: document.getElementById('reg-hora').value,
+            pais: document.getElementById('reg-pais').value,
+            ciudad: document.getElementById('reg-ciudad').value
+        };
+
+        try {
+            // Enviar datos al backend de Vercel
+            // NOTA: Si pruebas en local, usa la URL de tu Vercel ej: 'https://tu-proyecto.vercel.app/registro'
+            const response = await fetch('/registro', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(datos)
+            });
+
+            const resultado = await response.json();
+
+            if (resultado.status === "existe") {
+                // Correo repetido
+                mensaje.innerHTML = `<span style="color: #ffaaee;">${resultado.message}</span>`;
+                btn.textContent = "Mi Refugio (Gratis)";
+                btn.disabled = false;
+            } else if (resultado.status === "exito") {
+                // Todo perfecto, redirigimos al área free
+                window.location.href = "boveda.html";
+            } else {
+                mensaje.textContent = "Ocurrió un error: " + resultado.message;
+                btn.textContent = "Intentar de nuevo";
+                btn.disabled = false;
+            }
+        } catch (error) {
+            mensaje.textContent = "Error de conexión estelar. Revisa tu internet.";
+            btn.textContent = "Mi Refugio (Gratis)";
+            btn.disabled = false;
+        }
+    }
+</script>
 </body>
 
 </html>
