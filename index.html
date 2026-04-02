@@ -872,7 +872,30 @@
     border: 1px solid transparent;
     color: var(--text-cream);
     padding: 12px 15px;
-    font-size: 0.9rem;
+    font-size: 0.9rem/* =========================================
+   DISEÑO EN 3 FILAS (Elegante y con espacio)
+   ========================================= */
+    .caja-cristal {
+        flex-wrap: wrap !important; 
+        border-radius: 25px !important;
+        padding: 22px !important;
+        gap: 15px !important; /* Espacio uniforme entre todas las cajas */
+    }
+    
+    /* FILA 1: Nombre y Correo */
+    #reg-nombre { flex: 1 1 35% !important; min-width: 200px !important; }
+    #reg-email { flex: 2 1 55% !important; min-width: 250px !important; }
+    
+    /* FILA 2: Fecha, Hora y Buscador */
+    #reg-fecha, #reg-hora { flex: 1 1 20% !important; min-width: 120px !important; }
+    .lugar-list-container { flex: 3 1 45% !important; min-width: 220px !important; }
+    
+    /* FILA 3: Botón centrado abajo */
+    #btn-registro {
+        flex: 1 1 100% !important; /* Esto lo obliga a saltar a su propia línea */
+        max-width: 280px !important; /* Evita que el botón se estire de lado a lado */
+        margin: 15px auto 5px auto !important; /* Lo empuja hacia abajo y lo centra perfectamente */
+    }
     font-family: 'Inter', sans-serif;
     outline: none;
     border-radius: 30px;
