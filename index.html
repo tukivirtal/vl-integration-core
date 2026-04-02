@@ -820,12 +820,33 @@
 /* =========================================
    AJUSTES DE ESPACIO (RESPIRACIÓN Y UX)
    ========================================= */
+   /* =========================================
+   AJUSTES DE ESPACIO Y CENTRADO DE ALTA COSTURA
+   ========================================= */
     .caja-cristal {
-        /* Permite que los elementos pasen a una segunda línea en lugar de aplastarse */
         flex-wrap: wrap !important; 
-        border-radius: 25px !important; /* Suavizamos los bordes para que luzca bien en 2 líneas */
+        border-radius: 25px !important;
         padding: 15px !important;
-        justify-content: center; 
+        justify-content: center !important; /* Centra todo lo que caiga a la segunda línea */
+        gap: 12px !important; /* Separación uniforme entre elementos */
+    }
+    
+    /* 1. Primera línea: Proporciones para las 4 cajas */
+    #reg-nombre { flex: 1 1 160px !important; }
+    #reg-email { flex: 2 1 240px !important; }
+    #reg-fecha, #reg-hora { flex: 1 1 110px !important; }
+    
+    /* 2. Segunda línea: Buscador corto y centrado */
+    .lugar-list-container {
+        /* flex: 0 (no te estires), 1 (encógete si falta espacio), 350px (ancho ideal) */
+        flex: 0 1 350px !important; 
+        min-width: 250px !important;
+    }
+    
+    /* 3. Asegurar que el botón acompañe armónicamente */
+    #btn-registro {
+        flex: 0 1 auto !important;
+        margin-top: 0 !important; /* Le quitamos el margen que tenía antes para que alinee con el buscador */
     }
     
     /* Le damos prioridad y mucho más ancho al Email */
