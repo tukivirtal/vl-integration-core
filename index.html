@@ -976,30 +976,30 @@
                 medio del agotamiento diario. Tu momento de pausa racional y reconfortante.</p>
 
             <!-- Formulario Hero -->
-       <form id="registroRefugio" class="formulario-refugio" onsubmit="registrarUsuario(event)">
-    <div class="caja-cristal">
-        
-        <input type="text" id="reg-nombre" class="input-lujo" placeholder="Tu nombre" required oninput="this.value = this.value.toUpperCase()">
-        
-        <input type="email" id="reg-email" class="input-lujo" placeholder="Tu correo electrónico" required>
-        
-        <input type="date" id="reg-fecha" class="input-lujo" required>
-        <input type="time" id="reg-hora" class="input-lujo" required>
-        
-        <div class="lugar-list-container">
-        <input type="text" id="reg-lugar" class="input-lujo" placeholder="Ciudad, país..." required autocomplete="off" style="width: 100%;"> <div id="lugar-list" class="hidden"></div>
+    <form id="registroRefugio" class="formulario-refugio" onsubmit="registrarUsuario(event)">
+        <div class="caja-cristal">
+            
+            <input type="text" id="reg-nombre" class="input-lujo" placeholder="Tu nombre" required oninput="this.value = this.value.toUpperCase()">
+            
+            <input type="email" id="reg-email" class="input-lujo" placeholder="Tu correo electrónico" required>
+            
+            <input type="date" id="reg-fecha" class="input-lujo" required>
+            <input type="time" id="reg-hora" class="input-lujo" required>
+            
+            <div class="lugar-list-container">
+                <input type="text" id="reg-lugar" class="input-lujo" placeholder="Ciudad, país..." required autocomplete="off">
+                <div id="lugar-list" class="hidden"></div>
+            </div>
+    
+            <button type="submit" id="btn-registro" class="btn-magia">Mi Refugio (Gratis)</button>
+            
         </div>
+    
+        <input type="hidden" id="lat">
+        <input type="hidden" id="lon">
+    </form>
 
-        <button type="submit" id="btn-registro" class="btn-magia">Mi Refugio (Gratis)</button>
-        
-    </div>
-
-    <input type="hidden" id="lat">
-    <input type="hidden" id="lon">
-</form>
-
-<div id="mensaje-sistema" style="text-align: center; margin-top: 15px; font-family: 'Playfair Display', serif; font-style: italic; color: #D1C5D8; font-size: 1.1rem; text-shadow: 0 0 5px rgba(0,0,0,0.8);"></div>        
-                </div>
+<div id="mensaje-sistema" style="text-align: center; margin-top: 15px; font-family: 'Playfair Display', serif; font-style: italic; color: #D1C5D8; font-size: 1.1rem; text-shadow: 0 0 5px rgba(0,0,0,0.8);"></div>
             </section>
         
             <!-- Filosofía -->
