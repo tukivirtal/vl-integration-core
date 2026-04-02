@@ -5,11 +5,14 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Refugio | El mapa de tu vida para darte paz</title>
-    <meta name="description" content="Decodificamos tu mapa de vida a través de cálculos astronómicos exactos para darte paz y claridad mental.">
+    <meta name="description"
+        content="Decodificamos tu mapa de vida a través de cálculos astronómicos exactos para darte paz y claridad mental.">
 
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Great+Vibes&family=Inter:wght@300;400;500;600&family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400;1,600&display=swap" rel="stylesheet">
+    <link
+        href="https://fonts.googleapis.com/css2?family=Great+Vibes&family=Inter:wght@300;400;500;600&family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400;1,600&display=swap"
+        rel="stylesheet">
 
     <style>
         :root {
@@ -17,6 +20,7 @@
             --orchid-glow: #8B1C62;
             --jewel-fuchsia: #D4208C;
             --jewel-purple: #5E1494;
+
             --text-cream: #FDFBF7;
             --text-pearl: rgba(255, 255, 255, 0.88);
             --text-muted: #D1C5D8;
@@ -54,7 +58,7 @@
 
         h1, h2 { text-shadow: 0 0 20px rgba(255, 255, 255, 0.3); }
         a { text-decoration: none; color: inherit; }
-        
+
         .container {
             max-width: 1200px;
             margin: 0 auto;
@@ -71,6 +75,8 @@
             border-top: 1px solid rgba(255, 255, 255, 0.25);
             border-radius: 20px;
             box-shadow: inset 0 0 30px rgba(0, 0, 0, 0.6), 0 20px 40px rgba(0, 0, 0, 0.8);
+            position: relative;
+            overflow: hidden;
             transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
         }
 
@@ -90,7 +96,7 @@
             border: 1px solid rgba(255, 255, 255, 0.2);
             font-size: 1.05rem;
             font-family: 'Inter', sans-serif;
-            transition: all 0.4s;
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
         }
 
         .btn-primary {
@@ -115,23 +121,107 @@
             font-weight: 600;
         }
 
-        /* HEADER */
-        header { padding: 30px 0; position: absolute; top: 0; left: 0; right: 0; z-index: 100; }
+        header {
+            padding: 30px 0;
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 100;
+            background: transparent;
+        }
+
         .header-content { display: flex; justify-content: space-between; align-items: center; }
-        .logo-container { display: flex; flex-direction: column; align-items: center; gap: 5px; transition: transform 0.4s ease; }
+        .logo-container { display: flex; flex-direction: column; align-items: center; gap: 5px; text-decoration: none; transition: transform 0.4s ease; }
         .logo-container:hover { transform: translateY(-2px); }
-        .logo-text { font-family: 'Great Vibes', cursive; font-size: 2.2rem; color: var(--text-cream); text-shadow: 0px 4px 6px rgba(0, 0, 0, 0.8), 0px 0px 15px rgba(255, 255, 255, 0.2); line-height: 1; }
+        .logo-text { font-family: 'Great Vibes', cursive; font-size: 2.2rem; color: var(--text-cream); letter-spacing: normal; text-transform: none; font-weight: 400; text-shadow: 0px 4px 6px rgba(0, 0, 0, 0.8), 0px 0px 15px rgba(255, 255, 255, 0.2); line-height: 1; }
+        
         .nav-links { display: flex; gap: 40px; }
         .nav-links a { font-family: 'Inter', sans-serif; font-size: 13px; font-weight: 300; text-transform: uppercase; letter-spacing: 1.8px; color: rgba(255, 255, 255, 0.6); padding-bottom: 4px; border-bottom: 1px solid transparent; transition: all 0.4s ease; }
         .nav-links a:hover { color: var(--text-cream); text-shadow: 0 0 10px rgba(253, 251, 247, 0.5); border-bottom: 1px solid rgba(253, 251, 247, 0.4); }
-        .header-cta { background: rgba(255, 255, 255, 0.1); backdrop-filter: blur(10px); border: 1px solid rgba(255, 255, 255, 0.3); color: var(--text-cream); padding: 10px 24px; border-radius: 30px; font-size: 13px; text-transform: uppercase; letter-spacing: 1px; transition: all 0.4s ease; }
-        .header-cta:hover { background: rgba(255, 255, 255, 0.2); border-color: rgba(255, 255, 255, 0.6); color: #FFF; }
+        
+        .header-cta { background: rgba(255, 255, 255, 0.1); backdrop-filter: blur(10px); border: 1px solid rgba(255, 255, 255, 0.3); color: var(--text-cream); padding: 10px 24px; border-radius: 30px; font-size: 13px; text-transform: uppercase; letter-spacing: 1px; font-weight: 400; transition: all 0.4s ease; box-shadow: 0 0 10px rgba(255, 255, 255, 0.05); }
+        .header-cta:hover { background: rgba(255, 255, 255, 0.2); border-color: rgba(255, 255, 255, 0.6); box-shadow: 0 0 15px rgba(255, 255, 255, 0.3), inset 0 0 15px rgba(255, 255, 255, 0.2); color: #FFF; }
 
-        /* HERO */
         .hero { position: relative; padding: 180px 0 120px; text-align: center; }
         .hero h1 { font-size: 4.8rem; max-width: 1100px; margin: 0 auto 30px; line-height: 1.1; letter-spacing: 1.5px; }
         .hero h1 em { font-style: italic; font-weight: 400; color: var(--text-cream); }
-        .hero p { font-size: 1.25rem; max-width: 700px; margin: 0 auto 60px; color: var(--text-muted); font-weight: 300; text-shadow: 0 2px 8px rgba(0, 0, 0, 0.8); }
+        .hero p { font-size: 1.25rem; max-width: 700px; margin: 0 auto 60px; color: var(--text-muted); font-weight: 300; letter-spacing: 0.5px; text-shadow: 0 2px 8px rgba(0, 0, 0, 0.8); }
+
+        .philosophy { padding: 100px 0; }
+        .philosophy-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 70px; align-items: center; }
+        .philosophy-text h2 { font-size: 3.2rem; margin-bottom: 24px; line-height: 1.2; letter-spacing: 0.5px; }
+        .philosophy-text p { font-size: 1.15rem; margin-bottom: 24px; color: var(--text-muted); font-weight: 300; }
+        .philosophy-card { padding: 60px 40px; text-align: center; }
+        .philosophy-card blockquote { font-size: 1.8rem; color: var(--text-pearl); font-style: italic; line-height: 1.5; letter-spacing: 0.5px; text-shadow: 0 0 10px rgba(255, 255, 255, 0.2); }
+
+        .how-it-works { padding: 100px 0; text-align: center; }
+        .how-it-works h2 { font-size: 3.2rem; margin-bottom: 70px; letter-spacing: 0.5px; }
+        .steps-container { display: flex; gap: 35px; justify-content: center; flex-wrap: wrap; }
+        .step-card { flex: 1; min-width: 300px; padding: 60px 40px; text-align: left; }
+        .step-icon { font-size: 2.2rem; margin-bottom: 28px; background: linear-gradient(135deg, var(--jewel-fuchsia) 0%, var(--dark-purple) 100%); border: 1px solid rgba(255, 255, 255, 0.2); width: 80px; height: 80px; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: var(--text-cream); box-shadow: 0 0 20px rgba(139, 28, 98, 0.4), inset 0 0 15px rgba(0, 0, 0, 0.8); transition: transform 0.4s ease, box-shadow 0.4s ease; }
+        .step-card:hover .step-icon { transform: scale(1.1); box-shadow: 0 0 25px rgba(212, 32, 140, 0.6), inset 0 0 10px rgba(255, 255, 255, 0.2); }
+        .step-card h3 { font-size: 1.6rem; margin-bottom: 16px; letter-spacing: 0.5px; }
+        .step-card p { font-size: 1.05rem; font-weight: 300; }
+
+        .discover { padding: 100px 0 80px; position: relative; }
+        .discover-header { text-align: center; margin-bottom: 70px; }
+        .discover-header h2 { font-size: 3.2rem; letter-spacing: 0.5px; }
+        .features-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 40px; margin-bottom: 60px; }
+        .feature-card { padding: 50px 40px; text-align: center; }
+        .feature-icon-text { font-size: 3rem; margin-bottom: 24px; display: inline-block; transition: transform 0.4s; filter: drop-shadow(0 0 10px rgba(255, 255, 255, 0.2)); }
+        .feature-card:hover .feature-icon-text { transform: translateY(-8px) scale(1.1); filter: drop-shadow(0 0 15px rgba(212, 32, 140, 0.5)); }
+        .feature-card h3 { font-size: 1.6rem; margin-bottom: 16px; letter-spacing: 0.5px; }
+        .feature-card p { font-weight: 300; font-size: 1.05rem; }
+
+        .testimonials { padding: 80px 0; text-align: center; }
+        .testimonials h2 { font-size: 3.2rem; margin-bottom: 70px; letter-spacing: 0.5px; }
+        .testimonials-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 40px; text-align: left; }
+        .testimonial-card { padding: 50px 40px; }
+        .testimonial-text { font-style: italic; font-size: 1.15rem; margin-bottom: 35px; color: var(--text-pearl); }
+        .testimonial-author { display: flex; align-items: center; gap: 18px; }
+        .author-avatar { width: 60px; height: 60px; border-radius: 50%; background: linear-gradient(135deg, var(--jewel-fuchsia), var(--dark-purple)); border: 1px solid rgba(255, 255, 255, 0.3); display: flex; align-items: center; justify-content: center; color: var(--text-cream); font-family: 'Playfair Display', serif; font-weight: 700; font-size: 1.6rem; box-shadow: inset 0 0 10px rgba(0, 0, 0, 0.8), 0 0 15px rgba(139, 28, 98, 0.5); }
+        .author-info h4 { font-size: 1.1rem; margin-bottom: 4px; letter-spacing: 0.5px; }
+        .author-info p { font-size: 0.95rem; font-weight: 300; }
+
+        .cierre-emocional { padding: 120px 0 160px; text-align: center; }
+        .cierre-emocional h2 { font-size: 3.8rem; margin-bottom: 24px; letter-spacing: 1px; }
+        .cierre-emocional p { font-size: 1.25rem; max-width: 650px; margin: 0 auto 50px; color: var(--text-muted); font-weight: 300; }
+
+        footer { background: rgba(10, 0, 15, 0.8); border-top: 1px solid rgba(255, 255, 255, 0.1); position: relative; padding: 100px 0 50px; text-align: center; box-shadow: 0 -20px 50px rgba(0, 0, 0, 0.5); }
+        .footer-logo { font-family: 'Playfair Display', serif; font-size: 2.8rem; margin-bottom: 20px; display: inline-block; color: var(--text-pearl); text-shadow: 0 0 20px rgba(255, 255, 255, 0.2); letter-spacing: 1px; }
+        .footer-msg { color: var(--text-muted); font-style: italic; font-weight: 300; font-size: 1.25rem; margin-bottom: 40px; }
+        .footer-links { display: flex; justify-content: center; gap: 40px; margin-bottom: 40px; flex-wrap: wrap; }
+        .footer-links a, .contact-email { font-family: 'Inter', sans-serif; font-size: 13px; text-transform: uppercase; letter-spacing: 1.5px; color: rgba(255, 255, 255, 0.6); transition: all 0.3s; font-weight: 300; }
+        .contact-email { display: block; margin-bottom: 40px; color: var(--jewel-fuchsia); text-shadow: 0 0 10px rgba(212, 32, 140, 0.4); font-weight: 400; }
+        .footer-links a:hover, .contact-email:hover { color: var(--text-cream); text-shadow: 0 0 10px rgba(255, 255, 255, 0.5); }
+        .copyright { font-family: 'Inter', sans-serif; font-size: 0.9rem; font-weight: 300; color: rgba(209, 197, 216, 0.4); letter-spacing: 0.5px; }
+        
+        .scientific-note { display: block; margin-top: 12px; color: rgba(253, 251, 247, 0.7); font-style: italic; font-size: 0.85rem; line-height: 1.5; }
+        .footer-scientific-note { max-width: 750px; margin: 0 auto 30px; font-size: 0.85rem; color: rgba(255, 255, 255, 0.4); font-weight: 300; line-height: 1.6; }
+
+        @media (max-width: 1024px) {
+            .hero h1 { font-size: 4rem; }
+            .cierre-emocional h2 { font-size: 3rem; }
+        }
+
+        @media (max-width: 900px) {
+            .philosophy-grid { grid-template-columns: 1fr; gap: 50px; }
+            .btn-dominante { padding: 20px 40px; font-size: 1.1rem; }
+        }
+
+        @media (max-width: 768px) {
+            .nav-links { display: none; }
+            header { background: rgba(10, 0, 15, 0.8); backdrop-filter: blur(10px); padding: 16px 0; border-bottom: 1px solid rgba(255, 255, 255, 0.05); }
+            .logo-text { font-size: 1.8rem; }
+            .logo-container svg { width: 35px; height: 35px; }
+            .hero { padding: 140px 0 80px; }
+            .hero h1 { font-size: 2.8rem; }
+            .hero p { font-size: 1.15rem; }
+            .step-card, .feature-card, .testimonial-card { min-width: 100%; }
+            .cierre-emocional { padding: 80px 0 100px; }
+            .cierre-emocional h2 { font-size: 2.5rem; }
+        }
 
         /* =========================================
            FORMULARIO DE CRISTAL (3 FILAS LIMPIO)
@@ -160,7 +250,7 @@
             background: rgba(255, 255, 255, 0.08) !important; border: 1px solid rgba(255, 255, 255, 0.4) !important; 
             color: #FDFBF7 !important; padding: 12px 15px; font-size: 0.9rem !important;
             font-family: 'Inter', sans-serif; outline: none; border-radius: 30px !important;
-            transition: all 0.3s ease; box-sizing: border-box;
+            transition: all 0.3s ease; box-sizing: border-box; width: 100%;
         }
         
         .input-lujo:-webkit-autofill, .input-lujo:-webkit-autofill:hover, .input-lujo:-webkit-autofill:focus, .input-lujo:-webkit-autofill:active{
@@ -181,23 +271,329 @@
         /* BUSCADOR KOMOOT */
         #lugar-list {
             position: absolute; top: 100%; left: 0; width: 100%; background: rgba(20, 0, 26, 0.95);
-            border: 1px solid rgba(255, 255, 255, 0.2); border-radius: 8px; z-index: 100; max-height: 200px; overflow-y: auto; margin-top: 5px;
+            border: 1px solid rgba(255, 255, 255, 0.2); border-radius: 8px; z-index: 100; max-height: 200px; overflow-y: auto; margin-top: 5px; text-align: left;
         }
         .hidden { display: none !important; }
         .autocomplete-item { padding: 10px; cursor: pointer; font-size: 0.85rem; color: #FDFBF7; border-bottom: 1px solid rgba(255, 255, 255, 0.05); }
         .autocomplete-item:hover { background: rgba(255, 255, 255, 0.1); }
 
-        /* SECCIONES: Filosofía y Como Funciona */
-        .philosophy { padding: 100px 0; }
-        .philosophy-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 70px; align-items: center; }
-        .philosophy-text h2 { font-size: 3.2rem; margin-bottom: 24px; line-height: 1.2; letter-spacing: 0.5px; }
-        .philosophy-text p { font-size: 1.15rem; margin-bottom: 24px; color: var(--text-muted); font-weight: 300; }
-        .philosophy-card { padding: 60px 40px; text-align: center; }
-        .philosophy-card blockquote { font-size: 1.8rem; color: var(--text-pearl); font-style: italic; line-height: 1.5; letter-spacing: 0.5px; text-shadow: 0 0 10px rgba(255, 255, 255, 0.2); }
+        @media (max-width: 768px) {
+            .caja-cristal { flex-direction: column !important; padding: 15px !important; }
+            #reg-nombre, #reg-email, #reg-fecha, #reg-hora, .lugar-list-container, #btn-registro { min-width: 100% !important; margin: 0 !important; }
+        }
+    </style>
+</head>
 
-        .how-it-works { padding: 100px 0; text-align: center; }
-        .how-it-works h2 { font-size: 3.2rem; margin-bottom: 70px; letter-spacing: 0.5px; }
-        .steps-container { display: flex; gap: 35px; justify-content: center; flex-wrap: wrap; }
-        .step-card { flex: 1; min-width: 300px; padding: 60px 40px; text-align: left; }
-        .step-icon { font-size: 2.2rem; margin-bottom: 28px; background: linear-gradient(135deg, var(--jewel-fuchsia) 0%, var(--dark-purple) 100%); border: 1px solid rgba(255, 255, 255, 0.2); width: 80px; height: 80px; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: var(--text-cream); box-shadow: 0 0 20px rgba(139, 28, 98, 0.4), inset 0 0 15px rgba(0, 0, 0, 0.8); transition: transform 0.4s ease; }
-        .step-card:hover .step-icon { transform: scale(1.1); box-
+<body>
+
+    <header>
+        <div class="container header-content">
+            <a href="#" class="logo-container">
+                <svg width="45" height="45" viewBox="0 0 60 60" fill="none" xmlns="http://www.w3.org/2000/svg"
+                    style="filter: drop-shadow(0px 4px 6px rgba(0,0,0,0.8)) drop-shadow(0px 0px 12px rgba(255, 255, 255, 0.3));">
+                    <path d="M 28 10 A 18 18 0 0 0 28 50 A 22 22 0 0 1 28 10 Z" stroke="#FDFBF7" stroke-width="1.5"
+                        stroke-linecap="round" stroke-linejoin="round" />
+                    <polygon points="42,16 44,22 50,24 44,26 42,32 40,26 34,24 40,22" stroke="#FDFBF7"
+                        stroke-width="1.5" stroke-linejoin="round" />
+                    <circle cx="48" cy="14" r="1.5" fill="#FDFBF7" opacity="0.8" />
+                    <circle cx="50" cy="34" r="1" fill="#FDFBF7" opacity="0.6" />
+                    <circle cx="34" cy="14" r="1" fill="#FDFBF7" opacity="0.5" />
+                </svg>
+                <span class="logo-text">Refugio</span>
+            </a>
+            <nav class="nav-links">
+                <a href="#filosofia">Nuestra Filosofía</a>
+                <a href="#como-funciona">Cómo Funciona</a>
+                <a href="#testimonios">Testimonios</a>
+            </nav>
+            <a href="#accender" class="header-cta">Mi Cuenta</a>
+        </div>
+    </header>
+
+    <section class="hero" id="registro">
+        <div class="container">
+            <h1>El mapa de tu vida, <em>decodificado por las estrellas</em> para darte bienestar</h1>
+            <p>Usamos matemáticas exactas y cálculos astronómicos para ofrecerte claridad, descanso y orientación en
+                medio del agotamiento diario. Tu momento de pausa racional y reconfortante.</p>
+
+            <form id="registroRefugio" class="formulario-refugio" onsubmit="registrarUsuario(event)">
+                <div class="caja-cristal">
+                    
+                    <input type="text" id="reg-nombre" class="input-lujo" placeholder="Tu nombre" required oninput="this.value = this.value.toUpperCase()">
+                    <input type="email" id="reg-email" class="input-lujo" placeholder="Tu correo electrónico" required>
+                    
+                    <input type="date" id="reg-fecha" class="input-lujo" required>
+                    <input type="time" id="reg-hora" class="input-lujo" required>
+                    
+                    <div class="lugar-list-container">
+                        <input type="text" id="reg-lugar" class="input-lujo" placeholder="Ciudad, país..." required autocomplete="off">
+                        <div id="lugar-list" class="hidden"></div>
+                    </div>
+            
+                    <button type="submit" id="btn-registro" class="btn-magia">Mi Refugio (Gratis)</button>
+                </div>
+            
+                <input type="hidden" id="lat">
+                <input type="hidden" id="lon">
+            </form>
+
+            <div id="mensaje-sistema" style="text-align: center; margin-top: 15px; font-family: 'Playfair Display', serif; font-style: italic; color: #D1C5D8; font-size: 1.1rem; text-shadow: 0 0 5px rgba(0,0,0,0.8);"></div>
+
+        </div>
+    </section>
+
+    <section id="filosofia" class="philosophy container">
+        <div class="philosophy-grid">
+            <div class="philosophy-text">
+                <h2>El alivio de<br>entenderse a una misma</h2>
+                <p>Sabemos que el día a día te exige ser la solución para todos y sostener el peso de la rutina. La
+                    carga mental de la mujer moderna es real, silenciosa y agotadora.</p>
+                <p>En Refugio no practicamos la adivinación. Tomamos el dato duro —el cálculo matemático de las
+                    posiciones celestes exactas en tu nacimiento— y lo transformamos en una narrativa profunda.</p>
+                <p>Nuestra misión es devolverte el rumbo mediante una introspección racional y estructurada. Creamos
+                    este rincón seguro para que sueltes el control y te permitas ser guiada por tu propio diseño.</p>
+            </div>
+            <div class="philosophy-card glass">
+                <blockquote class="serif">
+                    "Transformamos la inmensidad del cielo en un mapa íntimo y exacto, para que puedas frenar, respirar
+                    profundo y reconciliarte con tu propia naturaleza."
+                </blockquote>
+            </div>
+        </div>
+    </section>
+
+    <section id="como-funciona" class="how-it-works container">
+        <h2>Un proceso lógico hacia tu bienestar</h2>
+        <div class="steps-container">
+            <div class="step-card glass">
+                <div class="step-icon">📍</div>
+                <h3>1. Ingresas tus datos</h3>
+                <p>Tu nombre, correo, fecha, hora y ciudad exacta conforman la variable de entrada para nuestras
+                    coordenadas matemáticas.</p>
+            </div>
+            <div class="step-card glass">
+                <div class="step-icon">⚙️</div>
+                <h3>2. Cálculo Astronómico</h3>
+                <p>Realizamos un cálculo posicional preciso de la bóveda celeste de ese instante, mapeando tu plano con
+                    rigor y de forma impecable.</p>
+                <p class="scientific-note">Basado en los algoritmos de efemérides del Jet Propulsion Laboratory (JPL) de
+                    la NASA para una precisión celeste exacta.</p>
+            </div>
+            <div class="step-card glass">
+                <div class="step-icon">📖</div>
+                <h3>3. Claridad Inmediata</h3>
+                <p>Recibes en tu correo acceso a tu carta introductoria gratis y la opción de adquirir la Carta
+                    Descriptiva Profunda en formato premium.</p>
+            </div>
+        </div>
+    </section>
+
+    <section class="discover container">
+        <div class="discover-header">
+            <h2>Lo que tu mapa tiene para contarte</h2>
+        </div>
+        <div class="features-grid">
+            <div class="feature-card glass">
+                <span class="feature-icon-text">🌿</span>
+                <h3>Tus áreas de descanso</h3>
+                <p>Identificamos lógicamente dónde tu energía fluye de forma orgánica para dejar de forzar situaciones
+                    que te restan salud emocional.</p>
+            </div>
+            <div class="feature-card glass">
+                <span class="feature-icon-text">✨</span>
+                <h3>Tus fortalezas ocultas</h3>
+                <p>Reconocerás talentos que has normalizado con el tiempo, devolviéndote la legitimidad y firmeza en tu
+                    toma de decisiones.</p>
+            </div>
+            <div class="feature-card glass">
+                <span class="feature-icon-text">🧭</span>
+                <h3>Tus puntos de expansión</h3>
+                <p>Comprenderás qué direcciones vitales, entornos y retos específicos te traerán verdadera satisfacción
+                    y tranquilidad.</p>
+            </div>
+        </div>
+    </section>
+
+    <section id="testimonios" class="testimonials container">
+        <h2>Voces de quienes ya habitan su propio eje</h2>
+        <div class="testimonials-grid">
+            <div class="testimonial-card glass">
+                <p class="testimonial-text">"Entre mi carrera directiva y el hogar, sentía que había perdido mi centro.
+                    El enfoque de Refugio fue como si pusieran mi caos interno en palabras racionales. Me devolvió la
+                    paz."</p>
+                <div class="testimonial-author">
+                    <div class="author-avatar">LM</div>
+                    <div class="author-info">
+                        <h4>Laura M.</h4>
+                        <p>40 años • Arquitecta</p>
+                    </div>
+                </div>
+            </div>
+            <div class="testimonial-card glass">
+                <p class="testimonial-text">"Me entregó un mapa lógico que me permitió al fin entender por qué me siento
+                    tan drenada en ciertos vínculos. Me enseñó a frenar sin culpa. Es un servicio decididamente
+                    premium."</p>
+                <div class="testimonial-author">
+                    <div class="author-avatar">ES</div>
+                    <div class="author-info">
+                        <h4>Elena S.</h4>
+                        <p>45 años • Consultora Financiera</p>
+                    </div>
+                </div>
+            </div>
+            <div class="testimonial-card glass">
+                <p class="testimonial-text">"Llevaba meses exhausta necesitando un descanso mental. Leer mi carta acá
+                    fue el primer abrazo genuino al intelecto en mucho tiempo. Precisión matemática que verdaderamente
+                    consuela."</p>
+                <div class="testimonial-author">
+                    <div class="author-avatar">CT</div>
+                    <div class="author-info">
+                        <h4>Carmen T.</h4>
+                        <p>52 años • Emprendedora</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="cierre-emocional container">
+        <h2>Estás a un paso de retornar a tu propia esencia</h2>
+        <p>Deja de luchar contra tu propia gravedad. Conoce las coordenadas exactas de tu diseño vital y permítete
+            avanzar sin fricción, respetando por fin tu propia naturaleza.</p>
+        <a href="#registro" class="btn btn-primary btn-dominante" onclick="focusForm()">DESCUBRE TU HISTORIA</a>
+    </section>
+
+    <footer>
+        <div class="container footer-content">
+            <div class="footer-logo">Refugio</div>
+            <p class="serif footer-msg">Dato exacto, cuidado profundo. Para que vuelvas a tu centro.</p>
+
+            <a href="mailto:contact@emotionalvaults.com" class="contact-email">contact@emotionalvaults.com</a>
+
+            <div class="footer-links">
+                <a href="#">Aviso Legal</a>
+                <a href="#">Política de Privacidad</a>
+                <a href="#">Términos y Condiciones</a>
+            </div>
+            <p class="footer-scientific-note">Rigor y Transparencia: Todos los mapas y coordenadas celestes generados en
+                este refugio utilizan bases de datos astronómicas oficiales (NASA/JPL) para garantizar que tu lectura
+                esté anclada en la matemática exacta del universo, libre de adivinación.</p>
+            <p class="copyright">&copy; 2026 Refugio. Todos los derechos reservados.</p>
+        </div>
+    </footer>
+
+    <script>
+        // Navegación fluida
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                const targetId = this.getAttribute('href');
+                if (targetId === '#' || !targetId) return;
+
+                const targetElement = document.querySelector(targetId);
+                if (targetElement) {
+                    e.preventDefault();
+                    targetElement.scrollIntoView({
+                        behavior: 'smooth',
+                        block: 'start'
+                    });
+                }
+            });
+        });
+
+        // Enfoque del formulario desde el botón final
+        function focusForm() {
+            setTimeout(() => {
+                const nameInput = document.getElementById('reg-nombre');
+                if (nameInput) nameInput.focus();
+            }, 500);
+        }
+
+        // 1. Lógica de Envío a la Base de Datos (Vercel)
+        async function registrarUsuario(event) {
+            event.preventDefault(); 
+            
+            const btn = document.getElementById('btn-registro');
+            const mensaje = document.getElementById('mensaje-sistema');
+            
+            btn.disabled = true;
+            btn.textContent = "Calculando coordenadas...";
+            mensaje.textContent = "";
+
+            const datos = {
+                nombre: document.getElementById('reg-nombre').value,
+                email: document.getElementById('reg-email').value,
+                fecha: document.getElementById('reg-fecha').value,
+                hora: document.getElementById('reg-hora').value,
+                ciudad: document.getElementById('reg-lugar').value,
+                pais: "", 
+                lat: document.getElementById('lat').value,
+                lon: document.getElementById('lon').value
+            };
+
+            try {
+                const response = await fetch('/registro', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(datos)
+                });
+
+                const resultado = await response.json();
+
+                if (resultado.status === "existe") {
+                    mensaje.innerHTML = `<span style="color: #ffaaee;">${resultado.message}</span>`;
+                    btn.textContent = "Mi Refugio (Gratis)";
+                    btn.disabled = false;
+                } else if (resultado.status === "exito") {
+                    window.location.href = "boveda.html";
+                } else {
+                    mensaje.textContent = "Ocurrió un error: " + resultado.message;
+                    btn.textContent = "Intentar de nuevo";
+                    btn.disabled = false;
+                }
+            } catch (error) {
+                mensaje.textContent = "Error de conexión estelar. Revisa tu internet.";
+                btn.textContent = "Mi Refugio (Gratis)";
+                btn.disabled = false;
+            }
+        }
+
+        // 2. Buscador Komoot Inteligente
+        const lugarInput = document.getElementById('reg-lugar');
+        const lugarList = document.getElementById('lugar-list');
+
+        lugarInput.addEventListener('input', async (e) => {
+            const val = e.target.value;
+            if (val.length < 3) { lugarList.classList.add('hidden'); return; }
+            try {
+                const res = await fetch(`https://photon.komoot.io/api/?q=${encodeURIComponent(val)}&limit=5`);
+                const data = await res.json();
+                lugarList.innerHTML = '';
+                lugarList.classList.remove('hidden');
+                
+                data.features.forEach(feat => {
+                    const prop = feat.properties;
+                    const label = [prop.name, prop.state, prop.country].filter(Boolean).join(", ");
+                    const item = document.createElement('div');
+                    item.className = 'autocomplete-item';
+                    
+                    item.innerText = label.toUpperCase(); 
+                    
+                    item.onclick = () => {
+                        lugarInput.value = label.toUpperCase(); 
+                        document.getElementById('lat').value = feat.geometry.coordinates[1];
+                        document.getElementById('lon').value = feat.geometry.coordinates[0];
+                        lugarList.classList.add('hidden');
+                    };
+                    lugarList.appendChild(item);
+                });
+            } catch (err) { console.error(err); }
+        });
+
+        // Cerrar lista al hacer clic fuera
+        document.addEventListener('click', (e) => { 
+            if (e.target !== lugarInput) lugarList.classList.add('hidden'); 
+        });
+    </script>
+</body>
+
+</html>
