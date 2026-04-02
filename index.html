@@ -808,34 +808,31 @@
                 medio del agotamiento diario. Tu momento de pausa racional y reconfortante.</p>
 
             <!-- Formulario Hero -->
-            <form class="hero-form glass" onsubmit="handleFormSubmit(event)">
-                <div class="input-group large">
-                    <input type="text" placeholder="Tu nombre" required aria-label="Nombre" id="name">
+         <form id="registroRefugio" class="formulario-glass" onsubmit="registrarUsuario(event)">
+            <input type="text" id="reg-nombre" placeholder="Tu nombre" required oninput="this.value = this.value.toUpperCase()">
+            
+            <input type="email" id="reg-email" placeholder="Tu correo electrónico" required>
+            
+            <input type="date" id="reg-fecha" required>
+            <input type="time" id="reg-hora" required>
+            
+            <div class="lugar-list-container" style="width: 100%; margin-bottom: 15px;">
+                <input type="text" id="reg-lugar" placeholder="Ciudad, país de origen..." required autocomplete="off" oninput="this.value = this.value.toUpperCase()">
+                <div id="lugar-list" class="hidden"></div>
+            </div>
+        
+            <input type="hidden" id="lat">
+            <input type="hidden" id="lon">
+            
+            <button type="submit" id="btn-registro" style="margin-top: 10px;">Mi Refugio (Gratis)</button>    
+         </form>
+        
+        <div id="mensaje-sistema" style="text-align: center; margin-top: 15px; font-style: italic; color: #FDFBF7; font-size: 0.9rem;"></div>
                 </div>
-                <div class="input-group large">
-                    <input type="email" placeholder="Correo electrónico" required aria-label="Correo electrónico"
-                        id="email">
-                </div>
-                <div class="input-group">
-                    <input type="date" required aria-label="Fecha nacimiento" id="dob">
-                </div>
-                <div class="input-group">
-                    <input type="time" required aria-label="Hora exacta" id="tob">
-                </div>
-               <div class="lugar-list-container">
-                    <input type="text" id="reg-ciudad" placeholder="Escribe tu ciudad de nacim..." required autocomplete="off">
-                    <div id="lugar-list" class="hidden"></div>
-                </div>
-                
-                <input type="hidden" id="lat">
-                <input type="hidden" id="lon">
-                <button type="submit" class="btn btn-primary">Mi Refugio (Gratis)</button>
-            </form>
-        </div>
-    </section>
-
-    <!-- Filosofía -->
-    <section id="filosofia" class="philosophy container">
+            </section>
+        
+            <!-- Filosofía -->
+            <section id="filosofia" class="philosophy container">
         <div class="philosophy-grid">
             <div class="philosophy-text">
                 <h2>El alivio de<br>entenderse a una misma</h2>
@@ -1059,17 +1056,17 @@
 
         // Recopilar datos
        // Recopilar datos incluyendo las coordenadas ocultas
+        // Recopilar datos (Ahora enviamos el lugar completo en un solo campo)
         const datos = {
             nombre: document.getElementById('reg-nombre').value,
             email: document.getElementById('reg-email').value,
             fecha: document.getElementById('reg-fecha').value,
             hora: document.getElementById('reg-hora').value,
-            pais: document.getElementById('reg-pais').value,
-            ciudad: document.getElementById('reg-ciudad').value,
-            lat: document.getElementById('lat').value,  // Capturado del buscador
-            lon: document.getElementById('lon').value   // Capturado del buscador
+            ciudad: document.getElementById('reg-lugar').value, // Enviaremos "CARMELO, COLONIA, URUGUAY" a la columna ciudad
+            pais: "", // Lo dejamos vacío porque el país ya va dentro de la línea anterior
+            lat: document.getElementById('lat').value,
+            lon: document.getElementById('lon').value
         };
-
         try {
             // Enviar datos al backend de Vercel
             // NOTA: Si pruebas en local, usa la URL de tu Vercel ej: 'https://tu-proyecto.vercel.app/registro'
