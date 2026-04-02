@@ -25,6 +25,35 @@
             --text-pearl: rgba(255, 255, 255, 0.88);
             --text-muted: #D1C5D8;
         }
+            /* Estilos reciclados para el buscador de ciudades */
+    .lugar-list-container {
+        position: relative;
+        width: 100%;
+    }
+    #lugar-list {
+        position: absolute;
+        top: 100%;
+        left: 0;
+        width: 100%;
+        background: rgba(20, 0, 26, 0.95); /* Fondo oscuro premium */
+        border: 1px solid rgba(255, 255, 255, 0.2);
+        border-radius: 8px;
+        z-index: 100;
+        max-height: 200px;
+        overflow-y: auto;
+        margin-top: 5px;
+    }
+    .hidden { display: none !important; }
+    .autocomplete-item {
+        padding: 10px;
+        cursor: pointer;
+        font-size: 0.85rem;
+        color: #FDFBF7;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+    }
+    .autocomplete-item:hover {
+        background: rgba(255, 255, 255, 0.1);
+    }
 
         * {
             box-sizing: border-box;
