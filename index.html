@@ -1058,13 +1058,16 @@
         mensaje.textContent = "";
 
         // Recopilar datos
+       // Recopilar datos incluyendo las coordenadas ocultas
         const datos = {
             nombre: document.getElementById('reg-nombre').value,
             email: document.getElementById('reg-email').value,
             fecha: document.getElementById('reg-fecha').value,
             hora: document.getElementById('reg-hora').value,
             pais: document.getElementById('reg-pais').value,
-            ciudad: document.getElementById('reg-ciudad').value
+            ciudad: document.getElementById('reg-ciudad').value,
+            lat: document.getElementById('lat').value,  // Capturado del buscador
+            lon: document.getElementById('lon').value   // Capturado del buscador
         };
 
         try {
