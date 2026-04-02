@@ -822,10 +822,13 @@
                 <div class="input-group">
                     <input type="time" required aria-label="Hora exacta" id="tob">
                 </div>
-                <div class="input-group large">
-                    <input type="text" placeholder="Ciudad de nacimiento" required aria-label="Ciudad de nacimiento"
-                        id="city">
+               <div class="lugar-list-container">
+                    <input type="text" id="reg-ciudad" placeholder="Escribe tu ciudad de nacim..." required autocomplete="off">
+                    <div id="lugar-list" class="hidden"></div>
                 </div>
+                
+                <input type="hidden" id="lat">
+                <input type="hidden" id="lon">
                 <button type="submit" class="btn btn-primary">Mi Refugio (Gratis)</button>
             </form>
         </div>
@@ -1020,6 +1023,7 @@
             }, 2000);
         }
     </script>
+    
     <script>
     // 1. Cargar el combo de países al abrir la página
     document.addEventListener("DOMContentLoaded", () => {
@@ -1093,6 +1097,50 @@
             btn.disabled = false;
         }
     }
+        // Motor de Búsqueda de Coordenadas (Reciclado)
+const lugarInput = document.getElementById('reg-ciudad');
+const lugarList = document.getElementById('lugar-list');
+
+lugarInput.addEventListener('input', async (e) => {
+    const val = e.target.value;
+    if (val.length < 3) { lugarList.classList.add('hidden'); return; }
+    try {
+        const res = await fetch(`https://photon.komoot.io/api/?q=${encodeURIComponent(val)}&limit=5`);
+        const data = await res.json();
+        lugarList.innerHTML = '';
+        lugarList.classList.remove('hidden');
+        
+        data.features.forEach(feat => {
+            const prop = feat.properties;
+            const label = [prop.name, prop.state, prop.country].filter(Boolean).join(", ");
+            const item = document.createElement('div');
+            item.className = 'autocomplete-item';
+            item.innerText = label; // Quitamos el toUpperCase() para que se vea más delicado
+            
+            item.onclick = () => {
+                lugarInput.value = label;
+                document.getElementById('lat').value = feat.geometry.coordinates[1];
+                document.getElementById('lon').value = feat.geometry.coordinates[0];
+                
+                // Si el usuario no seleccionó país en el combo, podemos autollenarlo
+                if(prop.country) {
+                    const comboPais = document.getElementById('reg-pais');
+                    // Intenta seleccionar el país si existe en la lista
+                    const op = Array.from(comboPais.options).find(o => o.value === prop.country);
+                    if(op) comboPais.value = prop.country;
+                }
+                
+                lugarList.classList.add('hidden');
+            };
+            lugarList.appendChild(item);
+        });
+    } catch (err) { console.error(err); }
+});
+
+// Cerrar lista al hacer clic fuera
+document.addEventListener('click', (e) => { 
+    if (e.target !== lugarInput) lugarList.classList.add('hidden'); 
+});
 </script>
 </body>
 
