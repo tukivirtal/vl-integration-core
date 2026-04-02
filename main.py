@@ -1,12 +1,26 @@
-from flask import Flask, request
-import requests
+import os
+from flask import Flask, request, jsonify
+from supabase import create_client, Client
 
 app = Flask(__name__)
 
-# TU WEBHOOK DE MAKE
-MAKE_WEBHOOK = "https://hook.us2.make.com/o74gpcv5xlre3cvwnh5yr0kg6w15vrxv"
+# ==========================================
+# CONEXIÓN A SUPABASE (El Motor)
+# ==========================================
+# Vercel inyectará estas variables automáticamente porque ya las configuraste
+url: str = os.environ.get("SUPABASE_URL")
+key: str = os.environ.get("SUPABASE_KEY")
 
+# Inicializamos el cliente de Supabase
+if url and key:
+    supabase: Client = create_client(url, key)
+else:
+    supabase = None
+    print("ADVERTENCIA: Faltan llaves de Supabase en Vercel.", flush=True)
 
+# ==========================================
+# RUTA DE REGISTRO
+# ==========================================
 @app.route('/registro', methods=['POST'])
 def registro():
     if not supabase:
@@ -28,14 +42,15 @@ def registro():
                 "message": "Este correo ya tiene un refugio creado. Por favor, accede a tu cuenta en el menú superior."
             }), 200
 
-        # 2. Formatear lugar (Ej: "Carmelo, Uruguay")
-        lugar_original = f"{data.get('ciudad', '')}, {data.get('pais', '')}".strip(", ")
+        # 2. Formatear lugar 
+        # Como Komoot ya nos manda "CARMELO, COLONIA, URUGUAY" en el campo ciudad, usamos eso directo
+        lugar_original = data.get('ciudad', '').strip()
 
         # 3. Empaquetar en formato JSON para datos_natales
         datos_natales_json = {
             "fecha": data.get('fecha'),
             "hora_nacimiento": data.get('hora'),
-            "lugar_original": lugar_original.upper() # Lo pasamos a mayúsculas como en tu ejemplo
+            "lugar_original": lugar_original.upper() 
         }
 
         # 4. Empaquetar en formato JSON para mapatotal (Coordenadas)
