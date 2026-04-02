@@ -951,8 +951,7 @@
         <input type="time" id="reg-hora" class="input-lujo" required>
         
         <div class="lugar-list-container">
-            <input type="text" id="reg-lugar" class="input-lujo" placeholder="Ciudad, país..." required autocomplete="off" oninput="this.value = this.value.toUpperCase()" style="width: 100%;">
-            <div id="lugar-list" class="hidden"></div>
+        <input type="text" id="reg-lugar" class="input-lujo" placeholder="Ciudad, país..." required autocomplete="off" style="width: 100%;"> <div id="lugar-list" class="hidden"></div>
         </div>
 
         <button type="submit" id="btn-registro" class="btn-magia">Mi Refugio (Gratis)</button>
@@ -1234,7 +1233,8 @@
         }
     }
         // Motor de Búsqueda de Coordenadas (Reciclado)
-const lugarInput = document.getElementById('reg-ciudad');
+// Motor de Búsqueda de Coordenadas (Corregido y sincronizado)
+const lugarInput = document.getElementById('reg-lugar');
 const lugarList = document.getElementById('lugar-list');
 
 lugarInput.addEventListener('input', async (e) => {
@@ -1251,21 +1251,15 @@ lugarInput.addEventListener('input', async (e) => {
             const label = [prop.name, prop.state, prop.country].filter(Boolean).join(", ");
             const item = document.createElement('div');
             item.className = 'autocomplete-item';
-            item.innerText = label; // Quitamos el toUpperCase() para que se vea más delicado
+            
+            // Lo mostramos en mayúsculas como en tu proyecto anterior
+            item.innerText = label.toUpperCase(); 
             
             item.onclick = () => {
-                lugarInput.value = label;
+                // Lo guardamos en mayúsculas al seleccionar
+                lugarInput.value = label.toUpperCase(); 
                 document.getElementById('lat').value = feat.geometry.coordinates[1];
                 document.getElementById('lon').value = feat.geometry.coordinates[0];
-                
-                // Si el usuario no seleccionó país en el combo, podemos autollenarlo
-                if(prop.country) {
-                    const comboPais = document.getElementById('reg-pais');
-                    // Intenta seleccionar el país si existe en la lista
-                    const op = Array.from(comboPais.options).find(o => o.value === prop.country);
-                    if(op) comboPais.value = prop.country;
-                }
-                
                 lugarList.classList.add('hidden');
             };
             lugarList.appendChild(item);
