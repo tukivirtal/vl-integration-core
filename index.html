@@ -767,6 +767,100 @@
                 font-size: 2.5rem;
             }
         }
+
+        /* =========================================
+   EL GLAMOUR: Formulario de Cristal Premium
+   ========================================= */
+.formulario-refugio {
+    display: flex;
+    justify-content: center;
+    width: 100%;
+    max-width: 980px; /* Da aire para que no se corten los textos */
+    margin: 0 auto;
+}
+
+.caja-cristal {
+    display: flex;
+    flex-wrap: nowrap;
+    align-items: center;
+    background: rgba(0, 0, 0, 0.4); /* Cristal oscuro */
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    border-radius: 50px; /* Forma de píldora horizontal */
+    padding: 8px;
+    gap: 8px;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5);
+    backdrop-filter: blur(10px);
+    width: 100%;
+}
+
+.input-lujo {
+    background: transparent;
+    border: 1px solid transparent;
+    color: var(--text-cream);
+    padding: 12px 15px;
+    font-size: 0.9rem;
+    font-family: 'Inter', sans-serif;
+    outline: none;
+    border-radius: 30px;
+    transition: all 0.3s ease;
+    flex: 1; /* Distribuye el espacio equitativamente */
+    min-width: 120px;
+}
+
+.input-lujo::placeholder {
+    color: rgba(253, 251, 247, 0.5);
+}
+
+.input-lujo:focus {
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(212, 32, 140, 0.4); /* Brillo sutil al hacer clic */
+}
+
+/* Forzar que los íconos de fecha/hora se vean blancos */
+.input-lujo::-webkit-calendar-picker-indicator {
+    filter: invert(1);
+    cursor: pointer;
+    opacity: 0.7;
+}
+
+.lugar-list-container {
+    position: relative;
+    flex: 1.5; /* El buscador de ciudades necesita más espacio */
+    min-width: 180px;
+}
+
+.btn-magia {
+    background: linear-gradient(135deg, var(--jewel-fuchsia) 0%, var(--jewel-purple) 100%);
+    color: white;
+    border: none;
+    padding: 12px 25px;
+    border-radius: 40px;
+    font-weight: 600;
+    font-family: 'Inter', sans-serif;
+    cursor: pointer;
+    box-shadow: 0 0 15px rgba(212, 32, 140, 0.3);
+    transition: transform 0.2s, box-shadow 0.2s;
+    white-space: nowrap;
+}
+
+.btn-magia:hover {
+    transform: scale(1.02);
+    box-shadow: 0 0 25px rgba(212, 32, 140, 0.6);
+}
+
+/* Responsivo: En teléfonos volvemos a apilar con elegancia */
+@media (max-width: 768px) {
+    .caja-cristal {
+        flex-direction: column;
+        border-radius: 20px;
+        padding: 15px;
+        background: rgba(0, 0, 0, 0.6);
+    }
+    .input-lujo, .btn-magia, .lugar-list-container {
+        width: 100%;
+    }
+    .input-lujo { border-bottom: 1px solid rgba(255,255,255,0.1); border-radius: 5px; }
+}
     </style>
 </head>
 
@@ -808,26 +902,30 @@
                 medio del agotamiento diario. Tu momento de pausa racional y reconfortante.</p>
 
             <!-- Formulario Hero -->
-         <form id="registroRefugio" class="formulario-glass" onsubmit="registrarUsuario(event)">
-            <input type="text" id="reg-nombre" placeholder="Tu nombre" required oninput="this.value = this.value.toUpperCase()">
-            
-            <input type="email" id="reg-email" placeholder="Tu correo electrónico" required>
-            
-            <input type="date" id="reg-fecha" required>
-            <input type="time" id="reg-hora" required>
-            
-            <div class="lugar-list-container" style="width: 100%; margin-bottom: 15px;">
-                <input type="text" id="reg-lugar" placeholder="Ciudad, país de origen..." required autocomplete="off" oninput="this.value = this.value.toUpperCase()">
-                <div id="lugar-list" class="hidden"></div>
-            </div>
+       <form id="registroRefugio" class="formulario-refugio" onsubmit="registrarUsuario(event)">
+    <div class="caja-cristal">
         
-            <input type="hidden" id="lat">
-            <input type="hidden" id="lon">
-            
-            <button type="submit" id="btn-registro" style="margin-top: 10px;">Mi Refugio (Gratis)</button>    
-         </form>
+        <input type="text" id="reg-nombre" class="input-lujo" placeholder="Tu nombre" required oninput="this.value = this.value.toUpperCase()">
         
-        <div id="mensaje-sistema" style="text-align: center; margin-top: 15px; font-style: italic; color: #FDFBF7; font-size: 0.9rem;"></div>
+        <input type="email" id="reg-email" class="input-lujo" placeholder="Tu correo electrónico" required>
+        
+        <input type="date" id="reg-fecha" class="input-lujo" required>
+        <input type="time" id="reg-hora" class="input-lujo" required>
+        
+        <div class="lugar-list-container">
+            <input type="text" id="reg-lugar" class="input-lujo" placeholder="Ciudad, país..." required autocomplete="off" oninput="this.value = this.value.toUpperCase()" style="width: 100%;">
+            <div id="lugar-list" class="hidden"></div>
+        </div>
+
+        <button type="submit" id="btn-registro" class="btn-magia">Mi Refugio (Gratis)</button>
+        
+    </div>
+
+    <input type="hidden" id="lat">
+    <input type="hidden" id="lon">
+</form>
+
+<div id="mensaje-sistema" style="text-align: center; margin-top: 15px; font-family: 'Playfair Display', serif; font-style: italic; color: #D1C5D8; font-size: 1.1rem; text-shadow: 0 0 5px rgba(0,0,0,0.8);"></div>        
                 </div>
             </section>
         
