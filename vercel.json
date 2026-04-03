@@ -5,18 +5,10 @@
       "use": "@vercel/python"
     }
   ],
-  "routes": [
+  "rewrites": [
     {
-      "src": "/registro",
-      "dest": "main.py"
-    },
-    {
-      "src": "/login",
-      "dest": "main.py"
-    },
-    {
-      "src": "/obtener_datos",
-      "dest": "main.py"
+      "source": "/(.*)",
+      "destination": "/main.py"
     }
   ]
 }
