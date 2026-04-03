@@ -1,25 +1,16 @@
 import os
-from werkzeug.security import generate_password_hash
+from werkzeug.security import generate_password_hash, check_password_hash
 from flask import Flask, request, jsonify
 from supabase import create_client, Client
 
-# ¡Esta es la línea que Vercel no encontraba!
 app = Flask(__name__)
 
-# Función para obtener el cliente de Supabase bajo demanda
 def get_supabase_client():
     url = os.environ.get("SUPABASE_URL")
     key = os.environ.get("SUPABASE_KEY")
-    
-    if not url or not key:
-        print("CRÍTICO: SUPABASE_URL o SUPABASE_KEY no encontradas en Vercel.", flush=True)
-        return None
-    
-    try:
-        return create_client(url, key)
-    except Exception as e:
-        print(f"Error al inicializar cliente Supabase: {str(e)}", flush=True)
-        return None
+    if not url or not key: return None
+    try: return create_client(url, key)
+    except: return None
 
 # ==========================================
 # 1. RUTA DE REGISTRO
@@ -27,105 +18,64 @@ def get_supabase_client():
 @app.route('/registro', methods=['POST'])
 def registro():
     supabase = get_supabase_client()
-    
-    if not supabase:
-        return jsonify({"status": "error", "message": "Error interno: Base de datos no configurada."}), 500
-
+    if not supabase: return jsonify({"status": "error", "message": "Error de base de datos."}), 500
     data = request.json
-    email = data.get('email')
-    password = data.get('password')
-
-    if not email or not password:
-        return jsonify({"status": "error", "message": "Correo y contraseña son obligatorios."}), 400
-
+    email, password = data.get('email'), data.get('password')
+    
     try:
-        # Verificar si el correo ya existe
         respuesta_busqueda = supabase.table('usuarios_refugio').select('email').eq('email', email).execute()
-
         if len(respuesta_busqueda.data) > 0:
-            return jsonify({
-                "status": "existe",
-                "message": "Este correo ya tiene un refugio creado. Por favor, accede a tu cuenta en el menú superior."
-            }), 200
-
-        # Encriptar la contraseña (¡Magia de Seguridad!)
-        if len(password) < 6:
-            return jsonify({"status": "error", "message": "La contraseña debe tener al menos 6 caracteres."}), 400
+            return jsonify({"status": "existe", "message": "Este correo ya tiene un refugio."}), 200
         
-        contrasena_encriptada = generate_password_hash(password)
-
-        # El lugar completo en mayúsculas
-        lugar_completo = data.get('ciudad', '').strip().upper()
-
-        # Empaquetar las coordenadas JSONB
-        datos_natales_json = {
-            "geo": {
-                "lat": float(data.get('lat')) if data.get('lat') else None,
-                "lon": float(data.get('lon')) if data.get('lon') else None
-            },
-            "auth": "PENDING_CALCULATION"
-        }
-
-        # Estructura FINAL insertando la contraseña encriptada
+        pass_hash = generate_password_hash(password)
         nuevo_usuario = {
-            "nombre": data.get('nombre'),
-            "email": email,
-            "contrasena": contrasena_encriptada, 
-            "fecha_nacimiento": data.get('fecha'),
-            "hora_nacimiento": data.get('hora'),
-            "ciudad": lugar_completo,
-            "pais": data.get('pais', ''),
-            "nivel_suscripcion": "free",
-            "datos_natales": datos_natales_json 
+            "nombre": data.get('nombre'), "email": email, "contrasena": pass_hash,
+            "fecha_nacimiento": data.get('fecha'), "hora_nacimiento": data.get('hora'),
+            "ciudad": data.get('ciudad', '').upper(), "nivel_suscripcion": "free",
+            "datos_natales": {"geo": {"lat": float(data.get('lat', 0)), "lon": float(data.get('lon', 0))}, "auth": "PENDING"}
         }
-
-        # Insertar en Supabase
         supabase.table('usuarios_refugio').insert(nuevo_usuario).execute()
-
-        return jsonify({
-            "status": "exito",
-            "message": "¡Tu refugio ha sido generado con éxito!"
-        }), 201
-
+        return jsonify({"status": "exito"}), 201
     except Exception as e:
-        print(f"Error en registro con BD: {str(e)}", flush=True) 
-        return jsonify({"status": "error", "message": "Fallo en el núcleo de registro."}), 500
-
+        return jsonify({"status": "error", "message": str(e)}), 500
 
 # ==========================================
-# 2. RUTA PARA OBTENER DATOS DEL REFUGIO
+# 2. NUEVA RUTA DE LOGIN (ACCESO)
+# ==========================================
+@app.route('/login', methods=['POST'])
+def login():
+    supabase = get_supabase_client()
+    data = request.json
+    email, password = data.get('email'), data.get('password')
+
+    try:
+        res = supabase.table('usuarios_refugio').select('*').eq('email', email).execute()
+        if len(res.data) == 0:
+            return jsonify({"status": "error", "message": "Usuario no encontrado."}), 404
+        
+        usuario = res.data[0]
+        # Verificamos si la contraseña coincide con el hash guardado
+        if check_password_hash(usuario.get('contrasena'), password):
+            return jsonify({
+                "status": "exito",
+                "datos": {"nombre": usuario.get('nombre'), "email": usuario.get('email')}
+            }), 200
+        else:
+            return jsonify({"status": "error", "message": "Contraseña incorrecta."}), 401
+    except Exception as e:
+        return jsonify({"status": "error", "message": str(e)}), 500
+
+# ==========================================
+# 3. RUTA PARA OBTENER DATOS
 # ==========================================
 @app.route('/obtener_datos', methods=['POST'])
 def obtener_datos():
     supabase = get_supabase_client()
-    if not supabase:
-        return jsonify({"status": "error", "message": "Base de datos desconectada."}), 500
-
-    data = request.json
-    email = data.get('email')
-
-    if not email:
-        return jsonify({"status": "error", "message": "Email no proporcionado."}), 400
-
+    email = request.json.get('email')
     try:
-        # Buscar al usuario por su email
-        respuesta = supabase.table('usuarios_refugio').select('*').eq('email', email).execute()
-
-        if len(respuesta.data) > 0:
-            usuario = respuesta.data[0]
-            
-            # Devolvemos los datos guardados para inyectarlos en la web
-            return jsonify({
-                "status": "exito",
-                "datos": {
-                    "nombre": usuario.get('nombre', 'Exploradora'),
-                    "ciudad": usuario.get('ciudad', 'Tu ciudad'),
-                    "fecha": usuario.get('fecha_nacimiento', '')
-                }
-            }), 200
-        else:
-            return jsonify({"status": "error", "message": "Usuario no encontrado."}), 404
-
-    except Exception as e:
-        print(f"Error al obtener datos: {str(e)}", flush=True)
-        return jsonify({"status": "error", "message": "Error interno."}), 500
+        res = supabase.table('usuarios_refugio').select('*').eq('email', email).execute()
+        if len(res.data) > 0:
+            u = res.data[0]
+            return jsonify({"status": "exito", "datos": {"nombre": u.get('nombre'), "ciudad": u.get('ciudad'), "fecha": u.get('fecha_nacimiento')}}), 200
+        return jsonify({"status": "error"}), 404
+    except: return jsonify({"status": "error"}), 500
