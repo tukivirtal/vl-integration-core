@@ -516,6 +516,8 @@
                     btn.textContent = "Mi Refugio (Gratis)";
                     btn.disabled = false;
                 } else if (resultado.status === "exito") {
+                    localStorage.setItem('refugio_nombre', datos.nombre);
+                    localStorage.setItem('refugio_email', datos.email); // <-- LÍNEA NUEVA
                     window.location.href = "refugio.html";
                 } else {
                     mensaje.textContent = "Ocurrió un error: " + resultado.message;
@@ -572,14 +574,18 @@
             document.getElementById('modal-login').classList.add('hidden');
         }
 
-        async function accederUsuario(event) {
-            event.preventDefault();
-            const btn = document.getElementById('btn-login-submit');
-            btn.textContent = "Verificando...";
-            setTimeout(() => {
-                window.location.href = "refugio.html";
-            }, 1500);
-        }
+       async function accederUsuario(event) {
+         event.preventDefault();
+         const btn = document.getElementById('btn-login-submit');
+         const emailLogin = document.getElementById('login-email').value; // <-- CAPTURAMOS EL EMAIL
+         btn.textContent = "Verificando...";
+
+         // Simulamos el login por ahora (o si ya lo conectaste a tu backend, ponlo ahí)
+         setTimeout(() => {
+             localStorage.setItem('refugio_email', emailLogin); // <-- LÍNEA NUEVA
+             window.location.href = "refugio.html";
+         }, 1500);
+     }
     </script>
 </body>
 </html>
