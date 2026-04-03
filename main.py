@@ -1,4 +1,5 @@
 import os
+from werkzeug.security import generate_password_hash
 from flask import Flask, request, jsonify
 from supabase import create_client, Client
 
@@ -24,17 +25,17 @@ def get_supabase_client():
 # ==========================================
 @app.route('/registro', methods=['POST'])
 def registro():
-    # Obtener el cliente DENTRO de la función para evitar problemas de contexto global
     supabase = get_supabase_client()
     
     if not supabase:
-        return jsonify({"status": "error", "message": "Error interno: Base de datos no configurada o inaccesible."}), 500
+        return jsonify({"status": "error", "message": "Error interno: Base de datos no configurada."}), 500
 
     data = request.json
     email = data.get('email')
+    password = data.get('password')
 
-    if not email:
-        return jsonify({"status": "error", "message": "El correo es obligatorio."}), 400
+    if not email or not password:
+        return jsonify({"status": "error", "message": "Correo y contraseña son obligatorios."}), 400
 
     try:
         # 1. Verificar si el correo ya existe
@@ -46,10 +47,16 @@ def registro():
                 "message": "Este correo ya tiene un refugio creado. Por favor, accede a tu cuenta en el menú superior."
             }), 200
 
-        # 2. El lugar completo viene del buscador inteligente en mayúsculas
+        # 2. Encriptar la contraseña (¡Magia de Seguridad!)
+        if len(password) < 6:
+            return jsonify({"status": "error", "message": "La contraseña debe tener al menos 6 caracteres."}), 400
+        
+        contrasena_encriptada = generate_password_hash(password)
+
+        # 3. El lugar completo en mayúsculas
         lugar_completo = data.get('ciudad', '').strip().upper()
 
-        # 3. Empaquetar las coordenadas en la columna JSONB que SÍ tienes (datos_natales)
+        # 4. Empaquetar las coordenadas JSONB
         datos_natales_json = {
             "geo": {
                 "lat": float(data.get('lat')) if data.get('lat') else None,
@@ -58,10 +65,11 @@ def registro():
             "auth": "PENDING_CALCULATION"
         }
 
-        # 4. Estructura EXACTA coincidiendo con tu tabla de Supabase
+        # 5. Estructura FINAL insertando la contraseña encriptada
         nuevo_usuario = {
             "nombre": data.get('nombre'),
             "email": email,
+            "contrasena": contrasena_encriptada, # <- SE GUARDA ENCRIPTADA
             "fecha_nacimiento": data.get('fecha'),
             "hora_nacimiento": data.get('hora'),
             "ciudad": lugar_completo,
