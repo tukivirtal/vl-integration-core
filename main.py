@@ -4,25 +4,31 @@ from supabase import create_client, Client
 
 app = Flask(__name__)
 
-# ==========================================
-# CONEXIÓN A SUPABASE
-# ==========================================
-url: str = os.environ.get("SUPABASE_URL")
-key: str = os.environ.get("SUPABASE_KEY")
-
-if url and key:
-    supabase: Client = create_client(url, key)
-else:
-    supabase = None
-    print("ADVERTENCIA: Faltan llaves de Supabase en Vercel.", flush=True)
+# Función para obtener el cliente de Supabase bajo demanda
+def get_supabase_client():
+    url = os.environ.get("SUPABASE_URL")
+    key = os.environ.get("SUPABASE_KEY")
+    
+    if not url or not key:
+        print("CRÍTICO: SUPABASE_URL o SUPABASE_KEY no encontradas en Vercel.", flush=True)
+        return None
+    
+    try:
+        return create_client(url, key)
+    except Exception as e:
+        print(f"Error al inicializar cliente Supabase: {str(e)}", flush=True)
+        return None
 
 # ==========================================
 # RUTA DE REGISTRO
 # ==========================================
 @app.route('/registro', methods=['POST'])
 def registro():
+    # Obtener el cliente DENTRO de la función para evitar problemas de contexto global
+    supabase = get_supabase_client()
+    
     if not supabase:
-        return jsonify({"status": "error", "message": "Base de datos no configurada."}), 500
+        return jsonify({"status": "error", "message": "Error interno: Base de datos no configurada o inaccesible."}), 500
 
     data = request.json
     email = data.get('email')
@@ -40,7 +46,7 @@ def registro():
                 "message": "Este correo ya tiene un refugio creado. Por favor, accede a tu cuenta en el menú superior."
             }), 200
 
-        # 2. El lugar completo viene del buscador inteligente en mayúsculas (Ej: "CARMELO, COLONIA, URUGUAY")
+        # 2. El lugar completo viene del buscador inteligente en mayúsculas
         lugar_completo = data.get('ciudad', '').strip().upper()
 
         # 3. Empaquetar las coordenadas en la columna JSONB que SÍ tienes (datos_natales)
@@ -52,16 +58,16 @@ def registro():
             "auth": "PENDING_CALCULATION"
         }
 
-        # 4. Estructura EXACTA coincidiendo con tu tabla de Supabase (usuarios_refugio)
+        # 4. Estructura EXACTA coincidiendo con tu tabla de Supabase
         nuevo_usuario = {
             "nombre": data.get('nombre'),
             "email": email,
             "fecha_nacimiento": data.get('fecha'),
             "hora_nacimiento": data.get('hora'),
             "ciudad": lugar_completo,
-            "pais": data.get('pais', ''), # Quedará vacío porque la ciudad ya trae todo, pero evita errores
+            "pais": data.get('pais', ''),
             "nivel_suscripcion": "free",
-            "datos_natales": datos_natales_json # Aquí entran las coordenadas
+            "datos_natales": datos_natales_json 
         }
 
         # Insertar en Supabase
@@ -73,5 +79,5 @@ def registro():
         }), 201
 
     except Exception as e:
-        print(f"Error en registro: {str(e)}", flush=True) 
+        print(f"Error en registro con BD: {str(e)}", flush=True) 
         return jsonify({"status": "error", "message": "Fallo en el núcleo de registro."}), 500
