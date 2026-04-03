@@ -235,8 +235,7 @@
             padding: 22px !important; gap: 15px !important; 
         }
         
-        /* FILA 1: Nombre y Correo */
-      /* =========================================
+       /* =========================================
            FORMULARIO DE CRISTAL (4 FILAS)
            ========================================= */
         /* FILA 1: Nombre y Correo */
@@ -247,17 +246,17 @@
         #reg-pass { flex: 2 1 40% !important; min-width: 200px !important; }
         #reg-fecha, #reg-hora { flex: 1 1 20% !important; min-width: 120px !important; }
         
-        /* FILA 3: Buscador Largo */
-        .lugar-list-container { flex: 1 1 100% !important; min-width: 250px !important; position: relative;}
+        /* FILA 3: Buscador Corto y Centrado */
+        .lugar-list-container { 
+            flex: 0 1 60% !important; /* Le quitamos el 100% para que no se estire */
+            min-width: 280px !important; 
+            max-width: 500px !important; /* Ancho máximo para mantener la elegancia */
+            margin: 5px auto 0 auto !important; /* El 'auto' a los lados lo centra perfectamente */
+            position: relative;
+        }
         
         /* FILA 4: Botón centrado abajo */
         #btn-registro { flex: 1 1 100% !important; max-width: 280px !important; margin: 15px auto 5px auto !important; }
-        .input-lujo {
-            background: rgba(255, 255, 255, 0.08) !important; border: 1px solid rgba(255, 255, 255, 0.4) !important; 
-            color: #FDFBF7 !important; padding: 12px 15px; font-size: 0.9rem !important;
-            font-family: 'Inter', sans-serif; outline: none; border-radius: 30px !important;
-            transition: all 0.3s ease; box-sizing: border-box; width: 100%;
-        }
         
         .input-lujo:-webkit-autofill, .input-lujo:-webkit-autofill:hover, .input-lujo:-webkit-autofill:focus, .input-lujo:-webkit-autofill:active{
             -webkit-box-shadow: 0 0 0 30px #2a0a3a inset !important; -webkit-text-fill-color: #FDFBF7 !important; border-radius: 30px !important;
