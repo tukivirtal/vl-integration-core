@@ -1,41 +1,216 @@
 <!DOCTYPE html>
 <html lang="es">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Tu Refugio | Cargando Coordenadas</title>
-    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;1,400&family=Great+Vibes&family=Lato:wght@300;400&display=swap" rel="stylesheet">
+    <title>Mi Refugio | Decodificando tu diseño vital</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Great+Vibes&family=Inter:wght@300;400;500;600&family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400;1,600&display=swap" rel="stylesheet">
+
     <style>
+        :root {
+            --dark-purple: #14001A;
+            --orchid-glow: #8B1C62;
+            --jewel-fuchsia: #D4208C;
+            --jewel-purple: #5E1494;
+            --text-cream: #FDFBF7;
+            --text-pearl: rgba(255, 255, 255, 0.88);
+            --text-muted: #D1C5D8;
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+
+        @keyframes pulseGlow {
+            0% { background-position: 50% 50%; }
+            50% { background-position: 50% 40%; }
+            100% { background-position: 50% 50%; }
+        }
+
         body {
-            margin: 0;
-            min-height: 100vh;
-            background: radial-gradient(circle at center, #4A0E4E 0%, #14001A 100%);
-            color: #FDFBF7;
-            font-family: 'Lato', sans-serif;
+            font-family: 'Inter', sans-serif;
+            color: var(--text-muted);
+            background-color: var(--dark-purple);
+            background-image: radial-gradient(circle at 50% 30%, var(--orchid-glow) 0%, var(--dark-purple) 70%, #0A000D 100%);
+            background-size: 150% 150%;
+            background-attachment: fixed;
+            animation: pulseGlow 15s ease-in-out infinite;
+            line-height: 1.7;
+            overflow-x: hidden;
             display: flex;
             flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            text-align: center;
+            min-height: 100vh;
         }
-        h1 {
+
+        h1, h2, h3, h4, .serif {
             font-family: 'Playfair Display', serif;
-            font-size: 2.5rem;
-            letter-spacing: 1px;
-            font-weight: 400;
+            color: var(--text-pearl);
+            font-weight: 600;
         }
-        .mensaje {
-            max-width: 600px;
-            line-height: 1.7;
-            font-size: 1.1rem;
-            opacity: 0.9;
+
+        a { text-decoration: none; color: inherit; }
+
+        .container {
+            max-width: 1000px; /* Un poco más estrecho para lectura cómoda */
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        /* Nav Minimalista */
+        header { padding: 30px 0; width: 100%; border-bottom: 1px solid rgba(255,255,255,0.05); }
+        .header-content { display: flex; justify-content: space-between; align-items: center; }
+        .logo-text { font-family: 'Great Vibes', cursive; font-size: 2rem; color: var(--text-cream); }
+        .btn-outline { border: 1px solid rgba(255,255,255,0.3); padding: 8px 20px; border-radius: 20px; font-size: 0.9rem; transition: all 0.3s; }
+        .btn-outline:hover { background: rgba(255,255,255,0.1); border-color: var(--text-cream); }
+
+        /* Contenido Principal */
+        main { padding: 80px 0; flex-grow: 1; }
+
+        .welcome-section { text-align: center; margin-bottom: 70px; }
+        .welcome-section h1 { font-size: 3.5rem; margin-bottom: 20px; text-shadow: 0 0 20px rgba(255,255,255,0.2); }
+        .welcome-section p { font-size: 1.2rem; max-width: 700px; margin: 0 auto; color: var(--text-muted); font-weight: 300; }
+        
+        .datos-tecnicos {
+            display: inline-block;
+            background: rgba(0,0,0,0.4);
+            padding: 10px 25px;
+            border-radius: 30px;
+            font-size: 0.9rem;
+            letter-spacing: 1px;
+            margin-top: 20px;
+            border: 1px solid rgba(255,255,255,0.1);
+        }
+
+        /* Tarjetas de Cristal (Lectura) */
+        .glass-card {
+            background: rgba(20, 0, 26, 0.45);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            border-top: 1px solid rgba(255, 255, 255, 0.25);
+            border-radius: 20px;
+            padding: 40px;
+            margin-bottom: 40px;
+            box-shadow: inset 0 0 30px rgba(0, 0, 0, 0.6), 0 20px 40px rgba(0, 0, 0, 0.8);
+            transition: transform 0.4s;
+        }
+
+        .glass-card:hover { transform: translateY(-5px); }
+
+        .card-header { display: flex; align-items: center; gap: 15px; margin-bottom: 25px; border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 15px; }
+        .card-icon { font-size: 2rem; filter: drop-shadow(0 0 10px rgba(212, 32, 140, 0.5)); }
+        .card-title h2 { font-size: 1.8rem; margin: 0; }
+        .card-title span { display: block; font-family: 'Inter', sans-serif; font-size: 0.85rem; text-transform: uppercase; letter-spacing: 2px; color: var(--jewel-fuchsia); font-weight: 600;}
+
+        .card-body p { margin-bottom: 15px; font-weight: 300; font-size: 1.1rem; line-height: 1.8;}
+        .card-body strong { color: var(--text-cream); font-weight: 500; }
+        
+        .technical-note {
+            background: rgba(255,255,255,0.03);
+            border-left: 3px solid var(--jewel-purple);
+            padding: 15px 20px;
+            margin-top: 25px;
+            font-size: 0.95rem;
+            font-style: italic;
+        }
+
+        /* Upsell / Cierre */
+        .upsell-section {
+            text-align: center;
+            margin-top: 80px;
+            padding: 60px 40px;
+            background: linear-gradient(180deg, transparent, rgba(139, 28, 98, 0.1));
+            border-radius: 30px;
+            border: 1px solid rgba(212, 32, 140, 0.2);
+        }
+
+        .upsell-section h3 { font-size: 2.2rem; margin-bottom: 20px; }
+        .upsell-section p { font-size: 1.1rem; margin-bottom: 30px; max-width: 600px; margin-left: auto; margin-right: auto; }
+
+        .btn-magia {
+            background: linear-gradient(135deg, var(--jewel-fuchsia) 0%, var(--jewel-purple) 100%);
+            color: white; border: none; padding: 18px 40px; border-radius: 40px;
+            font-weight: 600; font-family: 'Inter', sans-serif; cursor: pointer; font-size: 1.1rem;
+            box-shadow: 0 0 20px rgba(212, 32, 140, 0.4); transition: transform 0.2s, box-shadow 0.2s;
+            text-transform: uppercase; letter-spacing: 1px;
+        }
+        .btn-magia:hover { transform: scale(1.03); box-shadow: 0 0 30px rgba(212, 32, 140, 0.7); }
+
+        footer { text-align: center; padding: 30px 0; font-size: 0.9rem; color: rgba(255,255,255,0.3); border-top: 1px solid rgba(255,255,255,0.05); margin-top: auto;}
+
+        @media (max-width: 768px) {
+            .welcome-section h1 { font-size: 2.5rem; }
+            .glass-card { padding: 30px 20px; }
         }
     </style>
 </head>
+
 <body>
 
-    <h1>Bienvenida a tu Refugio</h1>
-    <p class="mensaje">Tus coordenadas matemáticas están siendo alineadas.<br>En unos minutos recibirás tu análisis preliminar en tu correo.</p>
+    <header>
+        <div class="container header-content">
+            <div class="logo-text">Refugio</div>
+            <a href="index.html" class="btn-outline">Cerrar Sesión</a>
+        </div>
+    </header>
 
-    </body>
+    <main>
+        <div class="container">
+            
+            <section class="welcome-section">
+                <h1>Bienvenida a tu espacio seguro, <span id="user-name">Fátima</span></h1>
+                <p>Las coordenadas celestes exactas de tu nacimiento han sido procesadas. Aquí no hay adivinación, solo la geometría de cómo estás diseñada para operar en el mundo.</p>
+                <div class="datos-tecnicos">
+                    CALC: 18/04/1980 • 09:45 • CARMELO, UY • JPL/NASA DATA
+                </div>
+            </section>
+
+            <article class="glass-card">
+                <div class="card-header">
+                    <span class="card-icon">☀️</span>
+                    <div class="card-title">
+                        <span>Núcleo Vital</span>
+                        <h2>Tu Matriz de Energía Dominante</h2>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <p>En el lenguaje astronómico, tu núcleo se ubica en el espectro del <strong>Elemento Tierra</strong>. ¿Qué significa esto en tu día a día?</p>
+                    <p>Que tu mente y tu cuerpo buscan instintivamente la estructura. Estás diseñada para ser el pilar, la que sostiene, la que materializa ideas en la realidad. Pero ojo, esta es también tu mayor trampa: <strong>tiendes a cargar con pesos que no son tuyos</strong> simplemente porque "sabes cómo resolverlos".</p>
+                    <div class="technical-note">
+                        Nota técnica: La concentración de masa planetaria en tu cuadrante inferior izquierdo indica una fuerte dependencia de la tangibilidad. Te agota el exceso de teoría sin acción.
+                    </div>
+                </div>
+            </article>
+
+            <article class="glass-card">
+                <div class="card-header">
+                    <span class="card-icon">🌙</span>
+                    <div class="card-title">
+                        <span>Sistema de Procesamiento</span>
+                        <h2>Tu Refugio Emocional Interno</h2>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <p>Mientras tu exterior es estructura, tu algoritmo de procesamiento interno está anclado en un <strong>Elemento de Aire rápido</strong>.</p>
+                    <p>Esto genera una fricción fascinante: Por fuera pides orden, pero <strong>por dentro tu mente no para de analizar y saltar entre opciones</strong>. Te drenas emocionalmente cuando te encierran en rutinas inflexibles o cuando las personas a tu alrededor no se comunican con claridad. Tu descanso real no es dormir, es <em>entender</em>.</p>
+                </div>
+            </article>
+
+            <section class="upsell-section">
+                <h3>El mapa completo de tu arquitectura vital</h3>
+                <p>Estas dos coordenadas son solo la superficie. Hemos calculado el estado exacto de tu Eje de Fricción, tus puntos de fuga de energía y el manual preciso para dejar de luchar contra tu propio diseño.</p>
+                <button class="btn-magia">Desbloquear Análisis Profundo</button>
+            </section>
+
+        </div>
+    </main>
+
+    <footer>
+        <div class="container">
+            &copy; 2026 Refugio. Datos astronómicos basados en JPL Horizons.
+        </div>
+    </footer>
+
+</body>
 </html>
