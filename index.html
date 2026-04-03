@@ -339,7 +339,7 @@
                 <a href="#como-funciona">Cómo Funciona</a>
                 <a href="#testimonios">Testimonios</a>
             </nav>
-            <a href="#accender" class="header-cta">Mi Cuenta</a>
+           <a href="#" class="header-cta" onclick="abrirModal(event)">Mi Cuenta</a>
         </div>
     </header>
 
@@ -626,6 +626,30 @@
         document.addEventListener('click', (e) => { 
             if (e.target !== lugarInput) lugarList.classList.add('hidden'); 
         });
+
+        // =========================================
+     // LÓGICA DEL MODAL DE ACCESO
+     // =========================================
+     function abrirModal(event) {
+         event.preventDefault(); // Evita que la página salte hacia arriba
+         document.getElementById('modal-login').classList.remove('hidden');
+     }
+
+     function cerrarModal() {
+         document.getElementById('modal-login').classList.add('hidden');
+     }
+
+     // Lógica falsa por ahora para el botón del login
+     async function accederUsuario(event) {
+         event.preventDefault();
+         const btn = document.getElementById('btn-login-submit');
+         btn.textContent = "Verificando...";
+
+         // Aquí luego conectaremos con Supabase
+         setTimeout(() => {
+             window.location.href = "refugio.html";
+         }, 1500);
+     }
     </script>
     <div id="modal-login" class="modal-overlay hidden">
         <div class="modal-cristal">
