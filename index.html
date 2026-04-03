@@ -193,7 +193,21 @@
         .author-info h4 { font-size: 1.1rem; margin-bottom: 4px; letter-spacing: 0.5px; }
         .author-info p { font-size: 0.95rem; font-weight: 300; }
 
-        .btn-dominante { font-size: 1.2rem; padding: 24px 60px; border-radius: 50px; text-transform: uppercase; letter-spacing: 2px; font-weight: 600; }
+       /* ESTILOS DEL BOTÓN FINAL (Que se habían borrado) */
+        .btn {
+            display: inline-block; padding: 16px 36px; border-radius: 40px; font-weight: 600;
+            cursor: pointer; text-align: center; border: 1px solid rgba(255, 255, 255, 0.2);
+            font-size: 1.05rem; font-family: 'Inter', sans-serif; transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+        .btn-primary {
+            background: linear-gradient(135deg, var(--jewel-fuchsia) 0%, var(--jewel-purple) 100%);
+            color: var(--text-cream); box-shadow: 0 0 20px rgba(200, 40, 150, 0.5), inset 0 0 10px rgba(255, 255, 255, 0.2);
+            text-shadow: 0 1px 3px rgba(0, 0, 0, 0.5);
+        }
+        .btn-primary:hover {
+            transform: scale(1.06) translateY(-4px); box-shadow: 0 0 30px rgba(200, 40, 150, 0.7), inset 0 0 15px rgba(255, 255, 255, 0.4);
+            filter: brightness(1.2);
+        }
         .cierre-emocional { padding: 120px 0 160px; text-align: center; }
         .cierre-emocional h2 { font-size: 3.8rem; margin-bottom: 24px; letter-spacing: 1px; }
         .cierre-emocional p { font-size: 1.25rem; max-width: 650px; margin: 0 auto 50px; color: var(--text-muted); font-weight: 300; }
