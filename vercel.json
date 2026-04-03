@@ -7,7 +7,15 @@
   ],
   "routes": [
     {
-      "src": "/(.*)",
+      "src": "/registro",
+      "dest": "main.py"
+    },
+    {
+      "src": "/login",
+      "dest": "main.py"
+    },
+    {
+      "src": "/obtener_datos",
       "dest": "main.py"
     }
   ]
