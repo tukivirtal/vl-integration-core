@@ -77,73 +77,57 @@
         .hero h1 em { font-style: italic; font-weight: 400; color: var(--text-cream); }
         .hero p { font-size: 1.25rem; max-width: 700px; margin: 0 auto 60px; color: var(--text-muted); font-weight: 300; letter-spacing: 0.5px; text-shadow: 0 2px 8px rgba(0, 0, 0, 0.8); }
 
-        /* =========================================
-           FORMULARIO DE CRISTAL (SÍMETRICO Y BLINDADO)
-           ========================================= */
+        /* FORMULARIO DE CRISTAL */
         .formulario-refugio { display: flex; justify-content: center; width: 100%; max-width: 980px; margin: 0 auto; }
         
         .caja-cristal {
-            display: flex; 
-            flex-wrap: wrap !important; 
-            justify-content: space-between !important;
-            align-items: center !important; /* EL SALVAVIDAS: Evita que las cajas se estiren hacia abajo */
-            background: rgba(0, 0, 0, 0.4);
-            border: 1px solid rgba(255, 255, 255, 0.15); 
-            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5);
-            backdrop-filter: blur(10px); 
-            width: 100%; 
-            border-radius: 25px !important;
-            padding: 25px !important; 
-            gap: 15px 0 !important; 
+            display: flex; flex-wrap: wrap !important; justify-content: space-between !important; align-items: center !important;
+            background: rgba(0, 0, 0, 0.4); border: 1px solid rgba(255, 255, 255, 0.15); box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5);
+            backdrop-filter: blur(10px); width: 100%; border-radius: 25px !important; padding: 25px !important; gap: 15px 0 !important; 
         }
         
-        /* FILAS 1 y 2: Nombre, Email, Password, Ciudad (Mitad y mitad exactas) */
-        #reg-nombre, #reg-email, #reg-pass, .lugar-list-container { 
-            flex: 0 0 48.5% !important; 
-            max-width: 48.5% !important; 
-            margin: 0 !important;
-        }
-        
-        /* FILA 3: Fecha (1/4), Hora (1/4), Botón (1/2) */
+        #reg-nombre, #reg-email, #reg-pass, .lugar-list-container { flex: 0 0 48.5% !important; max-width: 48.5% !important; margin: 0 !important; }
         #reg-fecha { flex: 0 0 23% !important; max-width: 23% !important; margin: 0 !important; }
         #reg-hora  { flex: 0 0 23% !important; max-width: 23% !important; margin: 0 !important; }
         #btn-registro { flex: 0 0 48.5% !important; max-width: 48.5% !important; margin: 0 !important; }
 
-        /* ESTILO BASE DE LAS CAJAS DE TEXTO */
         .input-lujo {
-            background: rgba(255, 255, 255, 0.08) !important; 
-            border: 1px solid rgba(255, 255, 255, 0.4) !important; 
-            color: #FDFBF7 !important; 
-            padding: 15px 18px !important; 
-            font-size: 0.95rem !important;
-            font-family: 'Inter', sans-serif; 
-            outline: none; 
-            border-radius: 30px !important;
-            transition: all 0.3s ease; 
-            box-sizing: border-box; 
-            width: 100% !important;
+            background: rgba(255, 255, 255, 0.08) !important; border: 1px solid rgba(255, 255, 255, 0.4) !important; 
+            color: #FDFBF7 !important; padding: 15px 18px !important; font-size: 0.95rem !important;
+            font-family: 'Inter', sans-serif; outline: none; border-radius: 30px !important;
+            transition: all 0.3s ease; box-sizing: border-box; width: 100% !important;
         }
         
-        /* BLINDAJE CONTRA EL AUTOCOMPLETADO BLANCO DE CHROME */
-        .input-lujo:-webkit-autofill, 
-        .input-lujo:-webkit-autofill:hover, 
-        .input-lujo:-webkit-autofill:focus, 
-        .input-lujo:-webkit-autofill:active {
-            -webkit-box-shadow: 0 0 0 30px #2a0a3a inset !important; 
-            -webkit-text-fill-color: #FDFBF7 !important; 
-            border-radius: 30px !important;
-            transition: background-color 5000s ease-in-out 0s;
+        .input-lujo:-webkit-autofill, .input-lujo:-webkit-autofill:hover, .input-lujo:-webkit-autofill:focus, .input-lujo:-webkit-autofill:active {
+            -webkit-box-shadow: 0 0 0 30px #2a0a3a inset !important; -webkit-text-fill-color: #FDFBF7 !important; border-radius: 30px !important; transition: background-color 5000s ease-in-out 0s;
         }
         
         .input-lujo::placeholder { color: rgba(253, 251, 247, 0.6) !important; }
         .input-lujo:focus { background: rgba(255, 255, 255, 0.15) !important; border: 1px solid rgba(212, 32, 140, 1) !important; box-shadow: 0 0 12px rgba(212, 32, 140, 0.6) !important; }
         .input-lujo::-webkit-calendar-picker-indicator { filter: invert(1); cursor: pointer; opacity: 0.7; }
 
-       .btn-magia {
+        /* BOTONES */
+        .btn {
+            display: inline-block; padding: 16px 36px; border-radius: 40px; font-weight: 600;
+            cursor: pointer; text-align: center; border: 1px solid rgba(255, 255, 255, 0.2);
+            font-size: 1.05rem; font-family: 'Inter', sans-serif; transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+        .btn-primary {
+            background: linear-gradient(135deg, var(--jewel-fuchsia) 0%, var(--jewel-purple) 100%);
+            color: var(--text-cream); box-shadow: 0 0 20px rgba(200, 40, 150, 0.5), inset 0 0 10px rgba(255, 255, 255, 0.2);
+            text-shadow: 0 1px 3px rgba(0, 0, 0, 0.5);
+        }
+        .btn-primary:hover {
+            transform: scale(1.06) translateY(-4px); box-shadow: 0 0 30px rgba(200, 40, 150, 0.7), inset 0 0 15px rgba(255, 255, 255, 0.4);
+            filter: brightness(1.2);
+        }
+
+        .btn-dominante { font-size: 1.2rem; padding: 24px 60px; border-radius: 50px; text-transform: uppercase; letter-spacing: 2px; font-weight: 600; }
+
+        .btn-magia {
             background: linear-gradient(135deg, var(--jewel-fuchsia) 0%, var(--jewel-purple) 100%); color: white;
             border: none; padding: 15px 25px; border-radius: 40px; font-weight: 600; font-family: 'Inter', sans-serif;
-            cursor: pointer; font-size: 1.05rem; box-shadow: 0 0 15px rgba(212, 32, 140, 0.3); transition: transform 0.2s, box-shadow 0.2s; white-space: nowrap; 
-            /* Se eliminó la altura para que vuelva a su tamaño elegante */
+            cursor: pointer; font-size: 1.05rem; box-shadow: 0 0 15px rgba(212, 32, 140, 0.3); transition: transform 0.2s, box-shadow 0.2s; white-space: nowrap;
         }
         .btn-magia:hover { transform: scale(1.02); box-shadow: 0 0 25px rgba(212, 32, 140, 0.6); }
 
@@ -193,21 +177,6 @@
         .author-info h4 { font-size: 1.1rem; margin-bottom: 4px; letter-spacing: 0.5px; }
         .author-info p { font-size: 0.95rem; font-weight: 300; }
 
-       /* ESTILOS DEL BOTÓN FINAL (Que se habían borrado) */
-        .btn {
-            display: inline-block; padding: 16px 36px; border-radius: 40px; font-weight: 600;
-            cursor: pointer; text-align: center; border: 1px solid rgba(255, 255, 255, 0.2);
-            font-size: 1.05rem; font-family: 'Inter', sans-serif; transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-        }
-        .btn-primary {
-            background: linear-gradient(135deg, var(--jewel-fuchsia) 0%, var(--jewel-purple) 100%);
-            color: var(--text-cream); box-shadow: 0 0 20px rgba(200, 40, 150, 0.5), inset 0 0 10px rgba(255, 255, 255, 0.2);
-            text-shadow: 0 1px 3px rgba(0, 0, 0, 0.5);
-        }
-        .btn-primary:hover {
-            transform: scale(1.06) translateY(-4px); box-shadow: 0 0 30px rgba(200, 40, 150, 0.7), inset 0 0 15px rgba(255, 255, 255, 0.4);
-            filter: brightness(1.2);
-        }
         .cierre-emocional { padding: 120px 0 160px; text-align: center; }
         .cierre-emocional h2 { font-size: 3.8rem; margin-bottom: 24px; letter-spacing: 1px; }
         .cierre-emocional p { font-size: 1.25rem; max-width: 650px; margin: 0 auto 50px; color: var(--text-muted); font-weight: 300; }
@@ -223,7 +192,7 @@
         .scientific-note { display: block; margin-top: 12px; color: rgba(253, 251, 247, 0.7); font-style: italic; font-size: 0.85rem; line-height: 1.5; }
         .footer-scientific-note { max-width: 750px; margin: 0 auto 30px; font-size: 0.85rem; color: rgba(255, 255, 255, 0.4); font-weight: 300; line-height: 1.6; }
 
-        /* ESTILOS DEL MODAL (POPUP) */
+        /* MODAL */
         .modal-overlay {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
             background: rgba(10, 0, 15, 0.8); backdrop-filter: blur(8px);
@@ -267,11 +236,7 @@
             .step-card, .feature-card, .testimonial-card { min-width: 100%; }
             .cierre-emocional { padding: 80px 0 100px; }
             .cierre-emocional h2 { font-size: 2.5rem; }
-            
-            /* En móviles forzamos a que todo se apile al 100% */
-            #reg-nombre, #reg-email, #reg-pass, .lugar-list-container, #reg-fecha, #reg-hora, #btn-registro { 
-                flex: 0 0 100% !important; max-width: 100% !important; 
-            }
+            #reg-nombre, #reg-email, #reg-pass, .lugar-list-container, #reg-fecha, #reg-hora, #btn-registro { flex: 0 0 100% !important; max-width: 100% !important; }
         }
     </style>
 </head>
@@ -466,8 +431,7 @@
         </div>
     </div>
 
-   <script>
-        // 1. Navegación fluida
+    <script>
         document.querySelectorAll('a[href^="#"]').forEach(anchor => {
             anchor.addEventListener('click', function (e) {
                 const targetId = this.getAttribute('href');
@@ -478,10 +442,13 @@
         });
 
         function focusForm() {
-            setTimeout(() => { const nameInput = document.getElementById('reg-nombre'); if (nameInput) nameInput.focus(); }, 500);
+            setTimeout(() => {
+                const nameInput = document.getElementById('reg-nombre');
+                if (nameInput) nameInput.focus();
+            }, 500);
         }
 
-        // 2. REGISTRO
+        // --- FETCH ACTUALIZADO AL /api/registro ---
         async function registrarUsuario(event) {
             event.preventDefault(); 
             const btn = document.getElementById('btn-registro');
@@ -503,20 +470,17 @@
             };
 
             try {
-                const response = await fetch('/registro', {
+                const response = await fetch('/api/registro', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify(datos)
                 });
-
                 const resultado = await response.json();
-
                 if (resultado.status === "existe") {
                     mensaje.innerHTML = `<span style="color: #ffaaee;">${resultado.message}</span>`;
                     btn.textContent = "Mi Refugio (Gratis)";
                     btn.disabled = false;
                 } else if (resultado.status === "exito") {
-                    // GUARDAMOS EN MEMORIA PARA EL REFUGIO
                     localStorage.setItem('refugio_nombre', datos.nombre);
                     localStorage.setItem('refugio_email', datos.email);
                     window.location.href = "refugio.html";
@@ -532,7 +496,6 @@
             }
         }
 
-        // 3. BUSCADOR KOMOOT
         const lugarInput = document.getElementById('reg-lugar');
         const lugarList = document.getElementById('lugar-list');
 
@@ -565,7 +528,6 @@
             if (e.target !== lugarInput) lugarList.classList.add('hidden'); 
         });
 
-        // 4. MODAL LOGIN (ACCESO)
         function abrirModal(event) {
             event.preventDefault(); 
             document.getElementById('modal-login').classList.remove('hidden');
@@ -575,6 +537,7 @@
             document.getElementById('modal-login').classList.add('hidden');
         }
 
+        // --- FETCH ACTUALIZADO AL /api/login ---
         async function accederUsuario(event) {
             event.preventDefault();
             const btn = document.getElementById('btn-login-submit');
@@ -587,7 +550,7 @@
             mensaje.textContent = "";
 
             try {
-                const response = await fetch('/login', {
+                const response = await fetch('/api/login', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({ email: email, password: pass })
@@ -596,7 +559,6 @@
                 const resultado = await response.json();
 
                 if (resultado.status === "exito") {
-                    // GUARDAMOS EN MEMORIA PARA EL REFUGIO
                     localStorage.setItem('refugio_email', resultado.datos.email);
                     localStorage.setItem('refugio_nombre', resultado.datos.nombre);
                     window.location.href = "refugio.html";
@@ -606,7 +568,6 @@
                     btn.textContent = "Entrar a mi Refugio";
                 }
             } catch (error) {
-                // ¡AQUÍ ESTÁ LA MAGIA! Ahora nos dirá exactamente qué se rompió en Vercel
                 mensaje.textContent = "Fallo del servidor: " + error.message;
                 btn.disabled = false;
                 btn.textContent = "Entrar a mi Refugio";
