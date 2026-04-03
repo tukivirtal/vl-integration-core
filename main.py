@@ -64,7 +64,45 @@ def registro():
             },
             "auth": "PENDING_CALCULATION"
         }
+# ==========================================
+# RUTA PARA OBTENER DATOS DEL REFUGIO
+# ==========================================
+@app.route('/obtener_datos', methods=['POST'])
+def obtener_datos():
+    supabase = get_supabase_client()
+    if not supabase:
+        return jsonify({"status": "error", "message": "Base de datos desconectada."}), 500
 
+    data = request.json
+    email = data.get('email')
+
+    if not email:
+        return jsonify({"status": "error", "message": "Email no proporcionado."}), 400
+
+    try:
+        # Buscar al usuario por su email
+        respuesta = supabase.table('usuarios_refugio').select('*').eq('email', email).execute()
+
+        if len(respuesta.data) > 0:
+            usuario = respuesta.data[0]
+            
+            # Aquí en el futuro puedes procesar las coordenadas de la NASA.
+            # Por ahora, devolvemos los datos guardados para inyectarlos en la web.
+            return jsonify({
+                "status": "exito",
+                "datos": {
+                    "nombre": usuario.get('nombre', 'Exploradora'),
+                    "ciudad": usuario.get('ciudad', 'Tu ciudad'),
+                    "fecha": usuario.get('fecha_nacimiento', '')
+                }
+            }), 200
+        else:
+            return jsonify({"status": "error", "message": "Usuario no encontrado."}), 404
+
+    except Exception as e:
+        print(f"Error al obtener datos: {str(e)}", flush=True)
+        return jsonify({"status": "error", "message": "Error interno."}), 500
+        
         # 5. Estructura FINAL insertando la contraseña encriptada
         nuevo_usuario = {
             "nombre": data.get('nombre'),
