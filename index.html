@@ -466,7 +466,8 @@
         </div>
     </div>
 
-    <script>
+   <script>
+        // 1. Navegación fluida
         document.querySelectorAll('a[href^="#"]').forEach(anchor => {
             anchor.addEventListener('click', function (e) {
                 const targetId = this.getAttribute('href');
@@ -477,13 +478,10 @@
         });
 
         function focusForm() {
-            setTimeout(() => {
-                const nameInput = document.getElementById('reg-nombre');
-                if (nameInput) nameInput.focus();
-            }, 500);
+            setTimeout(() => { const nameInput = document.getElementById('reg-nombre'); if (nameInput) nameInput.focus(); }, 500);
         }
 
-        // REGISTRO
+        // 2. REGISTRO
         async function registrarUsuario(event) {
             event.preventDefault(); 
             const btn = document.getElementById('btn-registro');
@@ -510,14 +508,17 @@
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify(datos)
                 });
+
                 const resultado = await response.json();
+
                 if (resultado.status === "existe") {
                     mensaje.innerHTML = `<span style="color: #ffaaee;">${resultado.message}</span>`;
                     btn.textContent = "Mi Refugio (Gratis)";
                     btn.disabled = false;
                 } else if (resultado.status === "exito") {
+                    // GUARDAMOS EN MEMORIA PARA EL REFUGIO
                     localStorage.setItem('refugio_nombre', datos.nombre);
-                    localStorage.setItem('refugio_email', datos.email); // <-- LÍNEA NUEVA
+                    localStorage.setItem('refugio_email', datos.email);
                     window.location.href = "refugio.html";
                 } else {
                     mensaje.textContent = "Ocurrió un error: " + resultado.message;
@@ -531,7 +532,7 @@
             }
         }
 
-        // BUSCADOR KOMOOT
+        // 3. BUSCADOR KOMOOT
         const lugarInput = document.getElementById('reg-lugar');
         const lugarList = document.getElementById('lugar-list');
 
@@ -564,7 +565,7 @@
             if (e.target !== lugarInput) lugarList.classList.add('hidden'); 
         });
 
-        // MODAL LOGIN
+        // 4. MODAL LOGIN (ACCESO)
         function abrirModal(event) {
             event.preventDefault(); 
             document.getElementById('modal-login').classList.remove('hidden');
@@ -574,18 +575,6 @@
             document.getElementById('modal-login').classList.add('hidden');
         }
 
-       async function accederUsuario(event) {
-         event.preventDefault();
-         const btn = document.getElementById('btn-login-submit');
-         const emailLogin = document.getElementById('login-email').value; // <-- CAPTURAMOS EL EMAIL
-         btn.textContent = "Verificando...";
-
-         // Simulamos el login por ahora (o si ya lo conectaste a tu backend, ponlo ahí)
-         setTimeout(() => {
-             localStorage.setItem('refugio_email', emailLogin); // <-- LÍNEA NUEVA
-             window.location.href = "refugio.html";
-         }, 1500);
-     }
         async function accederUsuario(event) {
             event.preventDefault();
             const btn = document.getElementById('btn-login-submit');
@@ -607,7 +596,7 @@
                 const resultado = await response.json();
 
                 if (resultado.status === "exito") {
-                    // AQUÍ ESTÁ EL TRUCO: Guardamos los datos correctos antes de entrar
+                    // GUARDAMOS EN MEMORIA PARA EL REFUGIO
                     localStorage.setItem('refugio_email', resultado.datos.email);
                     localStorage.setItem('refugio_nombre', resultado.datos.nombre);
                     window.location.href = "refugio.html";
@@ -617,7 +606,8 @@
                     btn.textContent = "Entrar a mi Refugio";
                 }
             } catch (error) {
-                mensaje.textContent = "Error de conexión con la bóveda.";
+                // ¡AQUÍ ESTÁ LA MAGIA! Ahora nos dirá exactamente qué se rompió en Vercel
+                mensaje.textContent = "Fallo del servidor: " + error.message;
                 btn.disabled = false;
                 btn.textContent = "Entrar a mi Refugio";
             }
