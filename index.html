@@ -236,16 +236,22 @@
         }
         
         /* FILA 1: Nombre y Correo */
+      /* =========================================
+           FORMULARIO DE CRISTAL (4 FILAS)
+           ========================================= */
+        /* FILA 1: Nombre y Correo */
         #reg-nombre { flex: 1 1 35% !important; min-width: 200px !important; }
         #reg-email { flex: 2 1 55% !important; min-width: 250px !important; }
         
-        /* FILA 2: Fecha, Hora y Buscador */
+        /* FILA 2: Contraseña, Fecha y Hora */
+        #reg-pass { flex: 2 1 40% !important; min-width: 200px !important; }
         #reg-fecha, #reg-hora { flex: 1 1 20% !important; min-width: 120px !important; }
-        .lugar-list-container { flex: 3 1 45% !important; min-width: 220px !important; position: relative;}
         
-        /* FILA 3: Botón centrado abajo */
+        /* FILA 3: Buscador Largo */
+        .lugar-list-container { flex: 1 1 100% !important; min-width: 250px !important; position: relative;}
+        
+        /* FILA 4: Botón centrado abajo */
         #btn-registro { flex: 1 1 100% !important; max-width: 280px !important; margin: 15px auto 5px auto !important; }
-
         .input-lujo {
             background: rgba(255, 255, 255, 0.08) !important; border: 1px solid rgba(255, 255, 255, 0.4) !important; 
             color: #FDFBF7 !important; padding: 12px 15px; font-size: 0.9rem !important;
@@ -349,11 +355,13 @@
             <p>Usamos matemáticas exactas y cálculos astronómicos para ofrecerte claridad, descanso y orientación en
                 medio del agotamiento diario. Tu momento de pausa racional y reconfortante.</p>
 
-            <form id="registroRefugio" class="formulario-refugio" onsubmit="registrarUsuario(event)">
+          <form id="registroRefugio" class="formulario-refugio" onsubmit="registrarUsuario(event)">
                 <div class="caja-cristal">
                     
                     <input type="text" id="reg-nombre" class="input-lujo" placeholder="Tu nombre" required oninput="this.value = this.value.toUpperCase()">
                     <input type="email" id="reg-email" class="input-lujo" placeholder="Tu correo electrónico" required>
+                    
+                    <input type="password" id="reg-pass" class="input-lujo" placeholder="Crea tu contraseña (Mín. 6 caracteres)" required minlength="6">
                     
                     <input type="date" id="reg-fecha" class="input-lujo" required>
                     <input type="time" id="reg-hora" class="input-lujo" required>
@@ -369,7 +377,6 @@
                 <input type="hidden" id="lat">
                 <input type="hidden" id="lon">
             </form>
-
             <div id="mensaje-sistema" style="text-align: center; margin-top: 15px; font-family: 'Playfair Display', serif; font-style: italic; color: #D1C5D8; font-size: 1.1rem; text-shadow: 0 0 5px rgba(0,0,0,0.8);"></div>
 
         </div>
