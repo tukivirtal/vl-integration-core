@@ -594,6 +594,24 @@
             if (e.target !== lugarInput) lugarList.classList.add('hidden'); 
         });
     </script>
+    <div id="modal-login" class="modal-overlay hidden">
+        <div class="modal-cristal">
+            <button class="btn-cerrar" onclick="cerrarModal()">×</button>
+            
+            <div class="modal-header">
+                <h3 class="serif">Bienvenida de vuelta</h3>
+                <p>Ingresa al refugio de tu mapa vital</p>
+            </div>
+
+            <form id="form-acceso" onsubmit="accederUsuario(event)">
+                <input type="email" id="login-email" class="input-lujo" placeholder="Tu correo electrónico" required style="width: 100%; margin-bottom: 20px;">
+                
+                <button type="submit" class="btn-magia" style="width: 100%;" id="btn-login-submit">Entrar a mi Refugio</button>
+            </form>
+            
+            <div id="mensaje-login" style="text-align: center; margin-top: 15px; font-size: 0.9rem; color: #ffaaee;"></div>
+        </div>
+    </div>
 </body>
 
 </html>
