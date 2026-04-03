@@ -586,6 +586,42 @@
              window.location.href = "refugio.html";
          }, 1500);
      }
+        async function accederUsuario(event) {
+            event.preventDefault();
+            const btn = document.getElementById('btn-login-submit');
+            const mensaje = document.getElementById('mensaje-login');
+            const email = document.getElementById('login-email').value;
+            const pass = document.getElementById('login-pass').value;
+
+            btn.disabled = true;
+            btn.textContent = "Verificando identidad...";
+            mensaje.textContent = "";
+
+            try {
+                const response = await fetch('/login', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ email: email, password: pass })
+                });
+
+                const resultado = await response.json();
+
+                if (resultado.status === "exito") {
+                    // AQUÍ ESTÁ EL TRUCO: Guardamos los datos correctos antes de entrar
+                    localStorage.setItem('refugio_email', resultado.datos.email);
+                    localStorage.setItem('refugio_nombre', resultado.datos.nombre);
+                    window.location.href = "refugio.html";
+                } else {
+                    mensaje.textContent = resultado.message;
+                    btn.disabled = false;
+                    btn.textContent = "Entrar a mi Refugio";
+                }
+            } catch (error) {
+                mensaje.textContent = "Error de conexión con la bóveda.";
+                btn.disabled = false;
+                btn.textContent = "Entrar a mi Refugio";
+            }
+        }
     </script>
 </body>
 </html>
