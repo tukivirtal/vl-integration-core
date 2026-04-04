@@ -18,12 +18,11 @@ def get_supabase_client():
 @app.route('/', defaults={'path': ''}, methods=['POST', 'OPTIONS'])
 @app.route('/<path:path>', methods=['POST', 'OPTIONS'])
 def enrutador(path):
-    # 1. Manejo de la solicitud "pre-flight" de seguridad del navegador
     if request.method == 'OPTIONS':
         return jsonify({"status": "ok"}), 200
         
-    # 2. Procesamiento de la petición real
     ruta_solicitada = request.path
+    # ... resto del código
     
     # Busca la palabra clave en la URL sin importar cómo la envíe Vercel
     if 'registro' in ruta_solicitada: return registro()
