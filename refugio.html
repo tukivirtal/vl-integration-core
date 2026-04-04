@@ -149,16 +149,25 @@
     </header>
 
     <main>
+       <section class="hero">
         <div class="container">
             
-            <section class="welcome-section">
-                <h1>El mapa de tu diseño, <br><span id="user-name" style="color: var(--text-cream); font-style: italic;">...</span></h1>
-                <p>Tu carta no es una sentencia, es tu arquitectura. Hemos decodificado tus coordenadas celestes exactas para que dejes de luchar contra tu propia gravedad.</p>
-                
-                <div class="datos-tecnicos" id="datos-tecnicos">
-                    Sincronizando coordenadas con la bóveda celeste...
-                </div>
-            </section>
+            <h1>El mapa de tu diseño,<br><em id="user-name">...</em></h1>
+            
+            <div id="contenedor-mensaje-diario" style="max-width: 600px; margin: 0 auto 40px auto; padding: 20px 25px; border-left: 2px solid var(--jewel-fuchsia); background: rgba(212, 32, 140, 0.05); border-radius: 0 15px 15px 0; text-align: left; backdrop-filter: blur(5px);">
+                <p id="texto-diario" style="font-style: italic; font-family: 'Playfair Display', serif; color: var(--text-pearl); font-size: 1.15rem; line-height: 1.6; margin: 0;">
+                    Sintonizando con tu energía...
+                </p>
+            </div>
+    
+            <div style="background: rgba(0,0,0,0.4); border: 1px solid rgba(255,255,255,0.1); border-radius: 30px; display: inline-block; padding: 10px 25px; margin-bottom: 50px;">
+                <span id="user-calc-data" style="color: var(--jewel-fuchsia); font-size: 0.85rem; letter-spacing: 2px; text-transform: uppercase;">
+                    Sincronizando coordenadas...
+                </span>
+            </div>
+        
+        </div>
+    </section>
 
             <article class="glass-card">
                 <div class="card-header">
