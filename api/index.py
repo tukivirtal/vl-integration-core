@@ -13,9 +13,10 @@ def get_supabase_client():
     except: return None
 
 # ==========================================
-# 1. RUTA DE REGISTRO
+# 1. RUTA DE REGISTRO (Doble cerradura)
 # ==========================================
 @app.route('/api/registro', methods=['POST'])
+@app.route('/registro', methods=['POST'])
 def registro():
     supabase = get_supabase_client()
     if not supabase: return jsonify({"status": "error", "message": "Falta conectar la base de datos a Vercel."}), 500
@@ -42,9 +43,10 @@ def registro():
         return jsonify({"status": "error", "message": "Error al guardar en Supabase."}), 500
 
 # ==========================================
-# 2. RUTA DE LOGIN
+# 2. RUTA DE LOGIN (Doble cerradura)
 # ==========================================
 @app.route('/api/login', methods=['POST'])
+@app.route('/login', methods=['POST'])
 def login():
     supabase = get_supabase_client()
     data = request.get_json(silent=True) or {}
@@ -73,9 +75,10 @@ def login():
         return jsonify({"status": "error", "message": "Error interno del servidor."}), 500
 
 # ==========================================
-# 3. RUTA PARA OBTENER DATOS
+# 3. RUTA PARA OBTENER DATOS (Doble cerradura)
 # ==========================================
 @app.route('/api/obtener_datos', methods=['POST'])
+@app.route('/obtener_datos', methods=['POST'])
 def obtener_datos():
     supabase = get_supabase_client()
     data = request.get_json(silent=True) or {}
