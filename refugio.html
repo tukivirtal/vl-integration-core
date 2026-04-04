@@ -136,20 +136,10 @@
             </a>
             <a href="index.html" class="btn-outline" onclick="cerrarSesion()">Cerrar Sesión</a>
         </div>
-        <div id="contenedor-mensaje-diario" style="margin-top: 20px; padding: 20px; border-left: 2px solid var(--jewel-fuchsia); background: rgba(212, 32, 140, 0.05); border-radius: 0 15px 15px 0;">
-    <p id="texto-diario" style="font-style: italic; font-family: 'Playfair Display', serif; color: var(--text-pearl); font-size: 1.1rem; line-height: 1.6;">
-        Cargando tu consejo del día...
-    </p>
-    <div class="mensaje-contenedor" style="margin: 20px 0; padding-left: 15px; border-left: 2px solid #D4208C;">
-    <p id="texto-diario" style="font-style: italic; color: rgba(255,255,255,0.9);">
-        Sintonizando con tu energía...
-    </p>
-</div>
-</div>
     </header>
 
     <main>
-       <section class="hero">
+       <section class="welcome-section">
         <div class="container">
             
             <h1>El mapa de tu diseño,<br><em id="user-name">...</em></h1>
@@ -169,6 +159,7 @@
         </div>
     </section>
 
+        <div class="container">
             <article class="glass-card">
                 <div class="card-header">
                     <span class="card-icon">☀️</span>
@@ -217,52 +208,57 @@
 
     <script>
      document.addEventListener('DOMContentLoaded', async () => {
-    const emailGuardado = localStorage.getItem('refugio_email');
-    if (!emailGuardado) { 
-        window.location.href = "index.html"; 
-        return; 
-    }
-
-    try {
-        const response = await fetch('/api/obtener_datos', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ email: emailGuardado })
-        });
-
-        const resultado = await response.json();
-
-        if (resultado.status === "exito") {
-            const d = resultado.datos;
-
-            // Inyectar Nombre
-            if (d.nombre) {
-                const nombreFormateado = d.nombre.charAt(0).toUpperCase() + d.nombre.slice(1).toLowerCase();
-                document.getElementById('user-name').textContent = nombreFormateado;
-            }
-
-            // Inyectar Mensaje Diario
-            if (d.mensaje_del_dia) {
-                document.getElementById('texto-diario').textContent = d.mensaje_del_dia;
-            }
-
-            // Inyectar Datos Técnicos (CALC)
-            const calcElement = document.getElementById('user-calc-data');
-            if (calcElement) {
-                calcElement.textContent = `CALC: ${d.fecha} • ${d.ciudad} • NASA DATA`;
-            }
-            
-            // Mostrar la barra si estaba oculta
-            const dataBar = document.getElementById('data-bar');
-            if (dataBar) dataBar.style.display = 'flex';
-
-        } else {
-            console.error("Error de base de datos:", resultado.message);
+        const emailGuardado = localStorage.getItem('refugio_email');
+        if (!emailGuardado) { 
+            window.location.href = "index.html"; 
+            return; 
         }
-    } catch (error) {
-        console.error("Error de conexión:", error);
+
+        try {
+            const response = await fetch('/api/obtener_datos', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ email: emailGuardado })
+            });
+
+            const resultado = await response.json();
+
+            if (resultado.status === "exito") {
+                const d = resultado.datos;
+
+                // Inyectar Nombre
+                if (d.nombre) {
+                    const nombreFormateado = d.nombre.charAt(0).toUpperCase() + d.nombre.slice(1).toLowerCase();
+                    document.getElementById('user-name').textContent = nombreFormateado;
+                }
+
+                // Inyectar Mensaje Diario
+                if (d.mensaje_del_dia) {
+                    document.getElementById('texto-diario').textContent = d.mensaje_del_dia;
+                }
+
+                // Inyectar Datos Técnicos (CALC)
+                const calcElement = document.getElementById('user-calc-data');
+                if (calcElement) {
+                    calcElement.textContent = `CALC: ${d.fecha} • ${d.ciudad} • NASA DATA`;
+                }
+                
+                // Mostrar la barra si estaba oculta
+                const dataBar = document.getElementById('data-bar');
+                if (dataBar) dataBar.style.display = 'flex';
+
+            } else {
+                console.error("Error de base de datos:", resultado.message);
+            }
+        } catch (error) {
+            console.error("Error de conexión:", error);
+        }
+    });
+
+    function cerrarSesion() {
+        localStorage.removeItem('refugio_email');
+        localStorage.removeItem('refugio_nombre');
     }
-});
     </script>
 
 </body>
