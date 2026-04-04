@@ -207,68 +207,53 @@
     </footer>
 
     <script>
-        // EL CEREBRO: Esto se ejecuta apenas el usuario entra a la página
-        document.addEventListener('DOMContentLoaded', async () => {
-            const emailGuardado = localStorage.getItem('refugio_email');
-            
-            // Si alguien intenta entrar aquí sin haberse registrado o logueado, lo pateamos al index
-            if (!emailGuardado) {
-                window.location.href = "index.html";
-                return;
-            }
+     document.addEventListener('DOMContentLoaded', async () => {
+    const emailGuardado = localStorage.getItem('refugio_email');
+    if (!emailGuardado) { 
+        window.location.href = "index.html"; 
+        return; 
+    }
 
-            try {
-                // Hacemos la llamada silenciosa a tu motor en Python (Vercel)
-                const respuesta = await fetch('/obtener_datos', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ email: emailGuardado })
-                });
-
-                const resultado = await respuesta.json();
-
-               if (resultado.status === "exito") {
-                    const datos = resultado.datos;
-                    
-                    // 1. INYECTAMOS EL NOMBRE REAL (Lo que ya tenías)
-                    if (datos.nombre) {
-                        const nombreFinal = datos.nombre.charAt(0).toUpperCase() + datos.nombre.slice(1).toLowerCase();
-                        document.getElementById('user-name').textContent = nombreFinal;
-                    }
-                
-                    // 2. INYECTAMOS EL MENSAJE PSICOLÓGICO (Lo nuevo)
-                    if (datos.mensaje_del_dia) {
-                        document.getElementById('texto-diario').textContent = datos.mensaje_del_dia;
-                    }
-                }
-
-                    // 2. INYECTAMOS LA CIUDAD Y LA FECHA REAL DE LA BASE DE DATOS
-                    const bloqueTecnico = document.getElementById('datos-tecnicos');
-                    if (bloqueTecnico) {
-                        // Formateamos la fecha si viene en formato YYYY-MM-DD
-                        let fechaLimpia = datos.fecha;
-                        if (datos.fecha && datos.fecha.includes('-')) {
-                            const partes = datos.fecha.split('-');
-                            fechaLimpia = `${partes[2]}/${partes[1]}/${partes[0]}`; // Lo pasamos a DD/MM/YYYY
-                        }
-                        
-                        bloqueTecnico.innerHTML = `CALC: ${fechaLimpia} • ${datos.ciudad} • JPL/NASA DATA`;
-                    }
-                } else {
-                    // Si hubo un error en la base de datos, mostramos un mensaje sutil
-                    document.getElementById('datos-tecnicos').innerHTML = "No se pudieron recuperar las coordenadas.";
-                }
-            } catch (error) {
-                console.error("Error conectando con la Refugio:", error);
-                document.getElementById('datos-tecnicos').innerHTML = "Error de sincronización con el servidor.";
-            }
+    try {
+        const response = await fetch('/api/obtener_datos', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ email: emailGuardado })
         });
 
-        // Limpiamos la memoria al salir
-        function cerrarSesion() {
-            localStorage.removeItem('refugio_nombre');
-            localStorage.removeItem('refugio_email');
+        const resultado = await response.json();
+
+        if (resultado.status === "exito") {
+            const d = resultado.datos;
+
+            // Inyectar Nombre
+            if (d.nombre) {
+                const nombreFormateado = d.nombre.charAt(0).toUpperCase() + d.nombre.slice(1).toLowerCase();
+                document.getElementById('user-name').textContent = nombreFormateado;
+            }
+
+            // Inyectar Mensaje Diario
+            if (d.mensaje_del_dia) {
+                document.getElementById('texto-diario').textContent = d.mensaje_del_dia;
+            }
+
+            // Inyectar Datos Técnicos (CALC)
+            const calcElement = document.getElementById('user-calc-data');
+            if (calcElement) {
+                calcElement.textContent = `CALC: ${d.fecha} • ${d.ciudad} • NASA DATA`;
+            }
+            
+            // Mostrar la barra si estaba oculta
+            const dataBar = document.getElementById('data-bar');
+            if (dataBar) dataBar.style.display = 'flex';
+
+        } else {
+            console.error("Error de base de datos:", resultado.message);
         }
+    } catch (error) {
+        console.error("Error de conexión:", error);
+    }
+});
     </script>
 
 </body>
