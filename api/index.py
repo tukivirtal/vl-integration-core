@@ -2,7 +2,7 @@ import os
 from werkzeug.security import generate_password_hash, check_password_hash
 from flask import Flask, request, jsonify
 from supabase import create_client
-
+import datetime
 app = Flask(__name__)
 
 def get_supabase_client():
@@ -77,21 +77,41 @@ def login():
     except Exception as e:
         return jsonify({"status": "error", "message": str(e)}), 500
 
+
 def obtener_datos():
     supabase = get_supabase_client()
     if not supabase: return jsonify({"status": "error", "message": "Falta BD."}), 500
     
     data = request.get_json(silent=True) or {}
     email = data.get('email')
-    if not email: return jsonify({"status": "error", "message": "Falta correo"}), 400
     
+    # --- LÓGICA DE PSICOLOGÍA DIARIA ---
+    mensajes_diarios = [
+        "Hoy el cielo te pide pausa. No tienes que resolverlo todo en las próximas 24 horas.",
+        "Tu energía está en expansión. Es un gran momento para esa conversación que vienes postergando.",
+        "La Luna sugiere introspección. Tu refugio hoy es tu propio silencio.",
+        "Hay una alineación que favorece tu creatividad. Permítete jugar un poco más hoy.",
+        "Momento de poner límites sanos. Decir 'no' a otros es decirte 'sí' a ti misma.",
+        "La claridad llega tras la calma. Respira, los datos de tu mapa indican que el caos es temporal.",
+        "Hoy tu intuición está afilada. Confía en ese primer pensamiento que tuviste al despertar."
+    ]
+    # Elegimos un mensaje basado en el día de la semana (0-6)
+    dia_semana = datetime.datetime.now().weekday()
+    mensaje_hoy = mensajes_diarios[dia_semana]
+    # ----------------------------------
+
     try:
         res = supabase.table('usuarios_refugio').select('*').eq('email', email).execute()
         if len(res.data) > 0:
             u = res.data[0]
             return jsonify({
                 "status": "exito", 
-                "datos": {"nombre": u.get('nombre', 'Exploradora'), "ciudad": u.get('ciudad', 'Tu ciudad'), "fecha": u.get('fecha_nacimiento', '--/--/----')}
+                "datos": {
+                    "nombre": u.get('nombre', 'Exploradora'), 
+                    "ciudad": u.get('ciudad', 'Tu ciudad'), 
+                    "fecha": u.get('fecha_nacimiento', '--/--/----'),
+                    "mensaje_del_dia": mensaje_hoy  # <--- Enviamos el mensaje aquí
+                }
             }), 200
         return jsonify({"status": "error", "message": "Usuario no encontrado"}), 404
     except Exception as e:
