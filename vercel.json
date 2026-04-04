@@ -1,8 +1,8 @@
 {
   "rewrites": [
-    {
-      "source": "/(.*)",
-      "destination": "/api/index.py"
-    }
+    { "source": "/api/login", "destination": "/api/index.py" },
+    { "source": "/api/obtener_datos", "destination": "/api/index.py" },
+    { "source": "/api/registro", "destination": "/api/index.py" },
+    { "source": "/api/(.*)", "destination": "/api/index.py" }
   ]
 }
