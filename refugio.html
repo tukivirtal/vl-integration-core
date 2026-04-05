@@ -112,8 +112,10 @@
         .day-pip { flex: 1; background: rgba(0,0,0,0.2); border: 1px solid rgba(255,255,255,0.05); border-radius: 8px; padding: 8px 4px; text-align: center; }
         .day-pip .dn { font-size: 10px; color: rgba(255,255,255,0.4); letter-spacing: 1px; text-transform: uppercase; display: block; margin-bottom: 6px; }
         .day-pip .db { width: 10px; height: 10px; border-radius: 50%; margin: 0 auto; }
-        .day-pip.today-pip { border: 1px solid rgba(212, 32, 140, 0.5); background: rgba(212, 32, 140, 0.1); }
-        .day-pip.today-pip .dn { color: var(--text-cream); font-weight: bold; }
+        
+        /* Modificado para que el JS controle la clase today-pip */
+        .today-pip { border: 1px solid rgba(212, 32, 140, 0.5) !important; background: rgba(212, 32, 140, 0.1) !important; }
+        .today-pip .dn { color: var(--text-cream) !important; font-weight: bold; }
 
         .pip-flow { background: #7dd3a8; } .pip-expand { background: #f0c060; } .pip-intro { background: #b79fe8; } .pip-caution { background: #e07575; }
 
@@ -230,13 +232,13 @@
                             <div class="week-strip">
                                 <div class="week-label">Tránsitos de tu semana actual</div>
                                 <div class="week-days">
-                                    <div class="day-pip"><span class="dn">Lun</span><div class="db pip-caution"></div></div>
-                                    <div class="day-pip"><span class="dn">Mar</span><div class="db pip-intro"></div></div>
-                                    <div class="day-pip"><span class="dn">Mié</span><div class="db pip-flow"></div></div>
-                                    <div class="day-pip today-pip"><span class="dn">Hoy</span><div class="db pip-expand" id="pip-hoy"></div></div>
-                                    <div class="day-pip"><span class="dn">Vie</span><div class="db pip-flow"></div></div>
-                                    <div class="day-pip"><span class="dn">Sáb</span><div class="db pip-intro"></div></div>
-                                    <div class="day-pip"><span class="dn">Dom</span><div class="db pip-flow"></div></div>
+                                    <div class="day-pip" id="day-1"><span class="dn">Lun</span><div class="db pip-caution"></div></div>
+                                    <div class="day-pip" id="day-2"><span class="dn">Mar</span><div class="db pip-intro"></div></div>
+                                    <div class="day-pip" id="day-3"><span class="dn">Mié</span><div class="db pip-flow"></div></div>
+                                    <div class="day-pip" id="day-4"><span class="dn">Jue</span><div class="db pip-expand"></div></div>
+                                    <div class="day-pip" id="day-5"><span class="dn">Vie</span><div class="db pip-flow"></div></div>
+                                    <div class="day-pip" id="day-6"><span class="dn">Sáb</span><div class="db pip-intro"></div></div>
+                                    <div class="day-pip" id="day-0"><span class="dn">Dom</span><div class="db pip-flow"></div></div>
                                 </div>
                                 <div style="display:flex;gap:14px;margin-top:12px;flex-wrap:wrap;">
                                     <span style="display:flex;align-items:center;gap:5px;font-size:10px;color:rgba(255,255,255,0.4);"><span style="width:8px;height:8px;border-radius:50%;background:#7dd3a8;display:inline-block;"></span>Flujo</span>
@@ -377,13 +379,11 @@
         return { sign: "Piscis", elem: "Agua", nasa: "Acuario", cualidad: "Sensibilidad absoluta, permeabilidad." };
     }
 
-    // --- MOTOR PSEUDO-ALEATORIO (Para que cambie según la usuaria) ---
+    // --- MOTOR PSEUDO-ALEATORIO ---
     function generarDatosUnicos(nombre) {
-        // Convertimos el nombre en un número
         let hash = 0;
         for (let i = 0; i < nombre.length; i++) { hash += nombre.charCodeAt(i); }
         
-        // Mensaje diario basado en el nombre
         const mensajes = [
             "Hoy tu intuición está afilada. Confía en tu primer pensamiento al despertar.",
             "El mapa indica una ventana de calma. Es un buen día para organizar ideas.",
@@ -392,7 +392,6 @@
             "Día de expansión intelectual. Esa conversación que posponías hoy fluirá natural."
         ];
         
-        // Estados de vectores
         const estados = [
             { txt: "Favorable", col: "#7dd3a8", bg: "rgba(125,211,168,0.15)" },
             { txt: "Tenso", col: "#e07575", bg: "rgba(224,117,117,0.15)" },
@@ -400,7 +399,7 @@
         ];
 
         return {
-            sincronia: 65 + (hash % 30), // De 65 a 95
+            sincronia: 65 + (hash % 30),
             mensaje: mensajes[hash % mensajes.length],
             vecRac: estados[(hash + 1) % 3],
             vecLim: estados[(hash + 2) % 3],
@@ -457,7 +456,6 @@
                 const d = resultado.datos;
                 const nombreFormateado = d.nombre ? d.nombre.charAt(0).toUpperCase() + d.nombre.slice(1).toLowerCase() : "Exploradora";
                 
-                // Generamos los datos dinámicos basados en quién entró
                 const perfilUnico = generarDatosUnicos(d.nombre || "x");
 
                 // --- 1. LÓGICA DEL LOADER ---
@@ -486,33 +484,37 @@
                 // --- 2. INYECTAR TEXTOS DEL DASHBOARD DINÁMICO ---
                 document.getElementById('user-name').textContent = nombreFormateado;
                 
-                // Fecha Natal en el top
                 const fechaMostrar = d.fecha ? d.fecha.split('-').reverse().join('/') : "Calculando...";
                 const ciudadMostrar = d.ciudad ? d.ciudad.toUpperCase() : "NASA DATA";
                 document.getElementById('dash-fecha-top').textContent = `COORDENADAS NATALES · ${fechaMostrar} · ${ciudadMostrar}`;
 
-                // Inyectamos el mensaje dinámico
                 document.getElementById('dash-mensaje').textContent = `"${perfilUnico.mensaje}"`;
                 document.getElementById('dash-fuente').textContent = `CÁLCULO DE EFEMÉRIDES PARA ${nombreFormateado.toUpperCase()}`;
                 
-                // Cálculo Astronómico
                 const astro = calcularSignos(d.fecha);
 
-                // Tarjetas Dinámicas
                 document.getElementById('card-zodiaco').innerHTML = `<strong style="color:var(--text-cream);font-size:13px;">${astro.sign}</strong><br>${astro.cualidad}`;
                 document.getElementById('card-nasa').innerHTML = `<strong style="color:var(--text-cream);font-size:13px;">${astro.nasa}</strong><br>El cielo astronómico real en el momento de tu nacimiento.`;
                 document.getElementById('card-elemento').innerHTML = `<strong style="color:var(--text-cream);font-size:13px;">${astro.elem}</strong><br>Esta es la fuerza que rige tus decisiones inconscientes.`;
 
-                // Badge de Contraste
                 document.getElementById('badge-signo-trad').textContent = astro.sign.toUpperCase();
                 document.getElementById('badge-signo-nasa').textContent = astro.nasa.toUpperCase();
 
-                // Gráfico de Sincronía Único
                 document.getElementById('dash-sync-num').textContent = perfilUnico.sincronia;
                 drawCanvas(perfilUnico.sincronia);
                 
-                // Inyectamos el color del día en la semana
-                document.getElementById('pip-hoy').className = `db ${perfilUnico.energiaHoy}`;
+                // --- CALENDARIO DINÁMICO DE LA SEMANA ---
+                const hoyDate = new Date();
+                const diaSemana = hoyDate.getDay(); // 0 es Domingo, 1 es Lunes... 6 es Sábado
+                
+                // Buscamos el elemento que corresponde al día de hoy y lo resaltamos
+                const dayElement = document.getElementById(`day-${diaSemana}`);
+                if (dayElement) {
+                    dayElement.classList.add('today-pip');
+                    dayElement.querySelector('.dn').textContent = "HOY";
+                    // Le aplicamos el color de energía único de la usuaria a ese día
+                    dayElement.querySelector('.db').className = `db ${perfilUnico.energiaHoy}`;
+                }
 
                 // Inyectamos los Vectores Únicos
                 const vr = document.getElementById('vec-rac');
