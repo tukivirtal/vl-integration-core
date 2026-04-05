@@ -74,19 +74,13 @@
         .welcome-section h1 { font-size: 3.2rem; margin-bottom: 20px; line-height: 1.2;}
         
         /* -----------------------------------------------------
-           PANEL DASHBOARD TIPO NASA (Estilos de Claude integrados)
+           PANEL DASHBOARD TIPO NASA 
            ----------------------------------------------------- */
         .refugio-wrap {
-            background: rgba(20, 0, 26, 0.45);
-            backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
-            border: 1px solid rgba(255, 255, 255, 0.15);
-            border-top: 1px solid rgba(255, 255, 255, 0.25);
-            border-radius: 20px;
-            box-shadow: inset 0 0 30px rgba(0, 0, 0, 0.6), 0 20px 40px rgba(0, 0, 0, 0.8);
-            padding: 32px 28px 36px;
-            margin-bottom: 60px;
-            position: relative; overflow: hidden;
-            text-align: left;
+            background: rgba(20, 0, 26, 0.45); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.15); border-top: 1px solid rgba(255, 255, 255, 0.25);
+            border-radius: 20px; box-shadow: inset 0 0 30px rgba(0, 0, 0, 0.6), 0 20px 40px rgba(0, 0, 0, 0.8);
+            padding: 32px 28px 36px; margin-bottom: 60px; position: relative; overflow: hidden; text-align: left;
         }
 
         .refugio-wrap::before {
@@ -96,15 +90,10 @@
             pointer-events: none; animation: drift 30s linear infinite; opacity: 0.3;
         }
 
-        @keyframes drift {
-            from { background-position: 0 0, 20px 20px; }
-            to { background-position: 80px 80px, 100px 100px; }
-        }
-
         .today-row { display: flex; align-items: center; gap: 8px; margin-bottom: 25px; position: relative; z-index: 2; }
         .today-dot { width: 7px; height: 7px; border-radius: 50%; background: var(--jewel-fuchsia); animation: glow-pulse 2.5s ease-in-out infinite; flex-shrink: 0; }
         @keyframes glow-pulse { 0%, 100% { opacity: 1; transform: scale(1); } 50% { opacity: 0.5; transform: scale(1.4); } }
-        .today-label { font-size: 11px; letter-spacing: 2.5px; color: var(--jewel-fuchsia); text-transform: uppercase; font-weight: 500; }
+        .today-label { font-size: 11px; letter-spacing: 2.5px; color: var(--text-cream); text-transform: uppercase; font-weight: 500; }
 
         .main-grid { display: grid; grid-template-columns: 1fr 180px; gap: 40px; position: relative; z-index: 2; align-items: start; }
         
@@ -134,9 +123,8 @@
         .sync-num { font-family: 'Playfair Display', serif; font-size: 32px; font-weight: 600; color: var(--text-cream); display: block; line-height: 1; }
         .sync-sub { font-size: 9px; color: rgba(255,255,255,0.5); letter-spacing: 2px; text-transform: uppercase; display: block; margin-top: 5px; }
 
-        .phase-badge { background: rgba(212, 32, 140, 0.15); border: 1px solid rgba(212, 32, 140, 0.3); border-radius: 20px; padding: 8px 15px; text-align: center; width: 100%; margin-top: 10px;}
-        .phase-name { font-size: 11px; color: var(--jewel-fuchsia); letter-spacing: 1px; text-transform: uppercase; font-weight: 600; display: block; }
-        .phase-desc { font-size: 10px; color: rgba(255,255,255,0.6); display: block; margin-top: 4px; }
+        .phase-badge { background: rgba(212, 32, 140, 0.05); border: 1px solid rgba(212, 32, 140, 0.3); border-radius: 12px; padding: 12px 15px; width: 100%; text-align: left; }
+        .phase-name { font-size: 10px; color: rgba(255,255,255,0.5); letter-spacing: 1px; text-transform: uppercase; display: block; margin-bottom: 8px; }
         
         .dash-divider { width: 100%; height: 1px; background: rgba(255,255,255,0.1); margin: 10px 0; }
 
@@ -210,36 +198,36 @@
                 <div class="refugio-wrap">
                     <div class="today-row">
                         <div class="today-dot"></div>
-                        <span class="today-label" id="dash-fecha-top">Sincronizando tiempo real...</span>
+                        <span class="today-label" id="dash-fecha-top">COORDENADAS NATALES · CALCULANDO...</span>
                     </div>
 
                     <div class="main-grid">
                         <div class="left-col">
                             <div class="message-block">
                                 <p class="message-text" id="dash-mensaje">"Sintonizando con tu energía y calculando efemérides exactas..."</p>
-                                <p class="message-source" id="dash-fuente">CALCULANDO EFEMÉRIDES · NASA DATA</p>
+                                <p class="message-source" id="dash-fuente">CÁLCULO DE EFEMÉRIDES · NASA DATA</p>
                             </div>
 
                             <div class="cards-row">
                                 <div class="day-card">
-                                    <span class="card-icon">🌙</span>
-                                    <div class="day-card-title">Luna actual</div>
-                                    <div class="day-card-body">En tu sector introspectivo. Emociones intensificadas.</div>
+                                    <span class="card-icon">☀️</span>
+                                    <div class="day-card-title">Identidad (Zodíaco)</div>
+                                    <div class="day-card-body" id="card-zodiaco">Calculando tu sol...</div>
                                 </div>
                                 <div class="day-card">
-                                    <span class="card-icon">♃</span>
-                                    <div class="day-card-title">Tránsito activo</div>
-                                    <div class="day-card-body">Expansión en puerta. Día ideal para tomar decisiones.</div>
+                                    <span class="card-icon">🔭</span>
+                                    <div class="day-card-title">Posición Real (NASA)</div>
+                                    <div class="day-card-body" id="card-nasa">Calculando constelación...</div>
                                 </div>
                                 <div class="day-card">
                                     <span class="card-icon">✦</span>
-                                    <div class="day-card-title">Energía Natal</div>
-                                    <div class="day-card-body" id="dash-energia">Cargando tu elemento...</div>
+                                    <div class="day-card-title">Energía Dominante</div>
+                                    <div class="day-card-body" id="card-elemento">Calculando tu centro...</div>
                                 </div>
                             </div>
 
                             <div class="week-strip">
-                                <div class="week-label">Tu semana · energía por día</div>
+                                <div class="week-label">Tránsitos de tu semana actual</div>
                                 <div class="week-days">
                                     <div class="day-pip"><span class="dn">Lun</span><div class="db pip-caution"></div></div>
                                     <div class="day-pip"><span class="dn">Mar</span><div class="db pip-intro"></div></div>
@@ -268,8 +256,15 @@
                             </div>
 
                             <div class="phase-badge">
-                                <span class="phase-name">Cálculo de Bóveda</span>
-                                <span class="phase-desc" id="dash-data-badge">Verificando coordenadas...</span>
+                                <span class="phase-name">Contraste de Bóveda</span>
+                                <div style="display:flex; justify-content: space-between; margin-bottom: 6px;">
+                                    <span style="font-size: 10.5px; color: rgba(255,255,255,0.7);">Zodíaco (Revista):</span>
+                                    <span id="badge-signo-trad" style="font-size: 11px; color: var(--text-cream); font-weight: 600;">--</span>
+                                </div>
+                                <div style="display:flex; justify-content: space-between;">
+                                    <span style="font-size: 10.5px; color: rgba(255,255,255,0.7);">Posición Real (NASA):</span>
+                                    <span id="badge-signo-nasa" style="font-size: 11px; color: var(--jewel-fuchsia); font-weight: 600;">--</span>
+                                </div>
                             </div>
 
                             <div class="dash-divider"></div>
@@ -284,10 +279,6 @@
                                     <div style="display:flex;justify-content:space-between;align-items:center;">
                                         <span style="font-size:11px;color:rgba(255,255,255,0.7);">Límites</span>
                                         <span style="font-size:10px;background:rgba(224,117,117,0.15);color:#e07575;border:0.5px solid rgba(224,117,117,0.3);padding:2px 8px;border-radius:20px;">Tenso</span>
-                                    </div>
-                                    <div style="display:flex;justify-content:space-between;align-items:center;">
-                                        <span style="font-size:11px;color:rgba(255,255,255,0.7);">Comunicación</span>
-                                        <span style="font-size:10px;background:rgba(240,192,96,0.15);color:#f0c060;border:0.5px solid rgba(240,192,96,0.3);padding:2px 8px;border-radius:20px;">Neutro</span>
                                     </div>
                                 </div>
                             </div>
@@ -304,7 +295,7 @@
                         </div>
                     </div>
                     <div class="card-body">
-                        <p>En el lenguaje astronómico, la concentración de tu energía natal se ubica en el espectro del <strong id="pilar1-elemento">Elemento Tierra</strong>. Esto determina cómo tu psique asume responsabilidades.</p>
+                        <p>En el lenguaje astronómico, la concentración de tu energía natal se ubica en la energía de <strong id="pilar1-elemento">Elemento Tierra</strong>. Esto determina cómo tu psique asume responsabilidades.</p>
                         <p id="pilar1-texto">Estás diseñada para materializar y sostener. Tu mente busca instintivamente la estructura y la tangibilidad. Sin embargo, tu principal fuga de energía radica en asumiendo el peso de otros.</p>
                     </div>
                 </article>
@@ -318,7 +309,7 @@
                         </div>
                     </div>
                     <div class="card-body">
-                        <p>Mientras tu exterior demanda estructura, el filtro a través del cual procesas el caos opera bajo un <strong id="pilar2-elemento">Elemento de Aire rápido</strong>.</p>
+                        <p>Mientras tu exterior demanda estructura, el filtro a través del cual procesas el caos opera bajo la energía de <strong id="pilar2-elemento">Elemento de Aire rápido</strong>.</p>
                         <p id="pilar2-texto">Esta es tu paradoja principal: por fuera pides orden, pero por dentro tu mente sobre-analiza cada escenario buscando entenderlo todo.</p>
                     </div>
                 </article>
@@ -363,14 +354,34 @@
     </div>
 
     <script>
-    // --- FUNCIÓN PARA DIBUJAR EL CANVAS DEL DASHBOARD ---
+    // --- MOTOR ASTRONÓMICO DE PRUEBA EN JAVASCRIPT ---
+    // (Esto simula lo que hará tu Python para que puedas ver el dashboard funcionando ya mismo)
+    function calcularSignos(fechaStr) {
+        if (!fechaStr) return { sign: "Aries", elem: "Fuego", nasa: "Piscis", cualidad: "Impulso, inicio, acción directa." };
+        const parts = fechaStr.split('-');
+        if (parts.length !== 3) return { sign: "Aries", elem: "Fuego", nasa: "Piscis", cualidad: "Impulso, inicio, acción directa." };
+        const m = parseInt(parts[1]), d = parseInt(parts[2]);
+
+        if ((m===3 && d>=21) || (m===4 && d<=19)) return { sign: "Aries", elem: "Fuego", nasa: "Piscis", cualidad: "Impulso, inicio, acción directa." };
+        if ((m===4 && d>=20) || (m===5 && d<=20)) return { sign: "Tauro", elem: "Tierra", nasa: "Aries", cualidad: "Estructura, paciencia, materialización." };
+        if ((m===5 && d>=21) || (m===6 && d<=20)) return { sign: "Géminis", elem: "Aire", nasa: "Tauro", cualidad: "Análisis mental, comunicación rápida." };
+        if ((m===6 && d>=21) || (m===7 && d<=22)) return { sign: "Cáncer", elem: "Agua", nasa: "Géminis", cualidad: "Empatía profunda, nutrición emocional." };
+        if ((m===7 && d>=23) || (m===8 && d<=22)) return { sign: "Leo", elem: "Fuego", nasa: "Cáncer", cualidad: "Liderazgo, expresión, brillo personal." };
+        if ((m===8 && d>=23) || (m===9 && d<=22)) return { sign: "Virgo", elem: "Tierra", nasa: "Leo", cualidad: "Orden, detalle, servicio estructurado." };
+        if ((m===9 && d>=23) || (m===10 && d<=22)) return { sign: "Libra", elem: "Aire", nasa: "Virgo", cualidad: "Equilibrio, diplomacia, mente vincular." };
+        if ((m===10 && d>=23) || (m===11 && d<=21)) return { sign: "Escorpio", elem: "Agua", nasa: "Libra", cualidad: "Intensidad, transformación profunda." };
+        if ((m===11 && d>=22) || (m===12 && d<=21)) return { sign: "Sagitario", elem: "Fuego", nasa: "Escorpio", cualidad: "Búsqueda de sentido, expansión, fe." };
+        if ((m===12 && d>=22) || (m===1 && d<=19)) return { sign: "Capricornio", elem: "Tierra", nasa: "Sagitario", cualidad: "Responsabilidad, metas, carga estructural." };
+        if ((m===1 && d>=20) || (m===2 && d<=18)) return { sign: "Acuario", elem: "Aire", nasa: "Capricornio", cualidad: "Innovación, desapego, visión global." };
+        return { sign: "Piscis", elem: "Agua", nasa: "Acuario", cualidad: "Sensibilidad absoluta, permeabilidad." };
+    }
+
     function drawCanvas(score) {
         const c = document.getElementById('syncArc');
         if (!c) return;
         const ctx = c.getContext('2d');
-        const cx = 70, cy = 70, r = 55; // Ajustado para 140x140
+        const cx = 70, cy = 70, r = 55;
 
-        // Círculo base oscuro
         ctx.beginPath();
         ctx.arc(cx, cy, r, Math.PI * 0.75, Math.PI * 2.25);
         ctx.strokeStyle = 'rgba(255,255,255,0.08)';
@@ -378,16 +389,14 @@
         ctx.lineCap = 'round';
         ctx.stroke();
 
-        // Círculo fucsia dinámico
         const endAngle = Math.PI * 0.75 + (score / 100) * Math.PI * 1.5;
         ctx.beginPath();
         ctx.arc(cx, cy, r, Math.PI * 0.75, endAngle);
-        ctx.strokeStyle = '#D4208C'; // Usando tu fucsia joya
+        ctx.strokeStyle = '#D4208C';
         ctx.lineWidth = 8;
         ctx.lineCap = 'round';
         ctx.stroke();
 
-        // Círculo interior
         ctx.beginPath();
         ctx.arc(cx, cy, r - 14, 0, Math.PI * 2);
         ctx.strokeStyle = 'rgba(212, 32, 140, 0.15)';
@@ -439,37 +448,42 @@
                     }
                 }, 900);
 
-                // --- 2. INYECTAR TEXTOS DEL DASHBOARD (NUEVO) ---
+                // --- 2. INYECTAR TEXTOS DEL DASHBOARD (CORREGIDO) ---
                 document.getElementById('user-name').textContent = nombreFormateado;
                 
-                // Fecha de hoy dinámica en español
-                const meses = ["enero", "febrero", "marzo", "abril", "mayo", "junio", "julio", "agosto", "septiembre", "octubre", "noviembre", "diciembre"];
-                const dias = ["Domingo", "Lunes", "Martes", "Miércoles", "Jueves", "Viernes", "Sábado"];
-                const hoy = new Date();
-                document.getElementById('dash-fecha-top').textContent = `${dias[hoy.getDay()]} ${hoy.getDate()} de ${meses[hoy.getMonth()]}, ${hoy.getFullYear()} · Tu refugio activo`;
+                // Fecha Natal en el top
+                const fechaMostrar = d.fecha ? d.fecha.split('-').reverse().join('/') : "Calculando...";
+                const ciudadMostrar = d.ciudad ? d.ciudad.toUpperCase() : "NASA DATA";
+                document.getElementById('dash-fecha-top').textContent = `COORDENADAS NATALES · ${fechaMostrar} · ${ciudadMostrar}`;
 
-                // Inyectar consejo y origen
                 if (d.mensaje_del_dia) {
                     document.getElementById('dash-mensaje').textContent = `"${d.mensaje_del_dia}"`;
                 }
-                document.getElementById('dash-fuente').textContent = `CÁLCULO DE EFEMÉRIDES PARA ${nombreFormateado.toUpperCase()} · ${d.ciudad}`;
+                document.getElementById('dash-fuente').textContent = `CÁLCULO DE EFEMÉRIDES PARA ${nombreFormateado.toUpperCase()}`;
                 
-                // Inyectar Ciudad en el Badge
-                document.getElementById('dash-data-badge').textContent = d.ciudad;
+                // Cálculo Astronómico Dinámico
+                const astro = calcularSignos(d.fecha);
+
+                // Tarjetas Dinámicas
+                document.getElementById('card-zodiaco').innerHTML = `<strong style="color:var(--text-cream);font-size:13px;">${astro.sign}</strong><br>${astro.cualidad}`;
+                document.getElementById('card-nasa').innerHTML = `<strong style="color:var(--text-cream);font-size:13px;">${astro.nasa}</strong><br>El cielo astronómico real en el momento de tu nacimiento.`;
+                document.getElementById('card-elemento').innerHTML = `<strong style="color:var(--text-cream);font-size:13px;">${astro.elem}</strong><br>Esta es la fuerza que rige tus decisiones inconscientes.`;
+
+                // Badge de Contraste
+                document.getElementById('badge-signo-trad').textContent = astro.sign.toUpperCase();
+                document.getElementById('badge-signo-nasa').textContent = astro.nasa.toUpperCase();
 
                 // Gráfico y sincronía
-                const pseudoSyncScore = 70 + (nombreFormateado.length % 25); // Un número "mágico" y estable para cada usuaria
+                const pseudoSyncScore = 82; // Un número de alineación para la bóveda
                 document.getElementById('dash-sync-num').textContent = pseudoSyncScore;
                 drawCanvas(pseudoSyncScore);
 
-                // --- 3. INYECTAR PILARES DINÁMICOS DESDE PYTHON ---
+                // --- 3. INYECTAR PILARES DESDE PYTHON ---
                 if (d.pilar1) {
                     document.getElementById('pilar1-titulo').textContent = `Arquitectura Base: ${d.pilar1.titulo}`;
-                    document.getElementById('pilar1-elemento').textContent = d.pilar1.elemento;
+                    // Forzamos el elemento visual si coincide
+                    document.getElementById('pilar1-elemento').textContent = `Elemento ${astro.elem}`;
                     document.getElementById('pilar1-texto').textContent = d.pilar1.texto;
-                    
-                    // Inyectar el elemento de fuego/tierra en la tarjeta pequeña del dashboard
-                    document.getElementById('dash-energia').textContent = `Tu centro de gravedad está en el ${d.pilar1.elemento.replace('Elemento ', '')}. Día para avanzar desde tu centro.`;
                 }
 
                 if (d.pilar2) {
