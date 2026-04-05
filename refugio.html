@@ -95,7 +95,7 @@
         @keyframes glow-pulse { 0%, 100% { opacity: 1; transform: scale(1); } 50% { opacity: 0.5; transform: scale(1.4); } }
         .today-label { font-size: 11px; letter-spacing: 2.5px; color: var(--text-cream); text-transform: uppercase; font-weight: 500; }
 
-        .main-grid { display: grid; grid-template-columns: 1fr 180px; gap: 40px; position: relative; z-index: 2; align-items: start; }
+        .main-grid { display: grid; grid-template-columns: 1fr 190px; gap: 40px; position: relative; z-index: 2; align-items: start; }
         
         .message-block { margin-bottom: 30px; }
         .message-text { font-family: 'Cormorant Garamond', serif; font-size: 26px; font-style: italic; color: var(--text-cream); line-height: 1.4; margin: 0 0 10px 0; padding-left: 18px; border-left: 2px solid var(--jewel-fuchsia); }
@@ -103,7 +103,7 @@
 
         .cards-row { display: grid; grid-template-columns: repeat(3, 1fr); gap: 15px; margin-bottom: 25px; }
         .day-card { background: rgba(0,0,0,0.3); border: 1px solid rgba(255,255,255,0.05); border-radius: 12px; padding: 15px; }
-        .card-icon { font-size: 18px; margin-bottom: 8px; display: block; }
+        .card-icon { font-size: 18px; margin-bottom: 8px; display: block; filter: drop-shadow(0 0 5px rgba(212, 32, 140, 0.4));}
         .day-card-title { font-size: 11px; color: var(--jewel-fuchsia); letter-spacing: 1px; text-transform: uppercase; font-weight: 600; margin-bottom: 6px; }
         .day-card-body { font-size: 12px; color: rgba(255,255,255,0.8); line-height: 1.45; }
 
@@ -122,6 +122,7 @@
         .chart-center-label { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); text-align: center; pointer-events: none; }
         .sync-num { font-family: 'Playfair Display', serif; font-size: 32px; font-weight: 600; color: var(--text-cream); display: block; line-height: 1; }
         .sync-sub { font-size: 9px; color: rgba(255,255,255,0.5); letter-spacing: 2px; text-transform: uppercase; display: block; margin-top: 5px; }
+        .sync-tooltip { font-size: 9px; color: rgba(255,255,255,0.4); text-align: center; line-height: 1.3; margin-top: -5px; margin-bottom: 5px; font-style: italic;}
 
         .phase-badge { background: rgba(212, 32, 140, 0.05); border: 1px solid rgba(212, 32, 140, 0.3); border-radius: 12px; padding: 12px 15px; width: 100%; text-align: left; }
         .phase-name { font-size: 10px; color: rgba(255,255,255,0.5); letter-spacing: 1px; text-transform: uppercase; display: block; margin-bottom: 8px; }
@@ -232,7 +233,7 @@
                                     <div class="day-pip"><span class="dn">Lun</span><div class="db pip-caution"></div></div>
                                     <div class="day-pip"><span class="dn">Mar</span><div class="db pip-intro"></div></div>
                                     <div class="day-pip"><span class="dn">Mié</span><div class="db pip-flow"></div></div>
-                                    <div class="day-pip today-pip"><span class="dn">Hoy</span><div class="db pip-expand"></div></div>
+                                    <div class="day-pip today-pip"><span class="dn">Hoy</span><div class="db pip-expand" id="pip-hoy"></div></div>
                                     <div class="day-pip"><span class="dn">Vie</span><div class="db pip-flow"></div></div>
                                     <div class="day-pip"><span class="dn">Sáb</span><div class="db pip-intro"></div></div>
                                     <div class="day-pip"><span class="dn">Dom</span><div class="db pip-flow"></div></div>
@@ -254,6 +255,7 @@
                                     <span class="sync-sub">sincronía</span>
                                 </div>
                             </div>
+                            <div class="sync-tooltip">Mide la alineación entre tu estilo de vida actual y tu diseño de nacimiento.</div>
 
                             <div class="phase-badge">
                                 <span class="phase-name">Contraste de Bóveda</span>
@@ -262,7 +264,7 @@
                                     <span id="badge-signo-trad" style="font-size: 11px; color: var(--text-cream); font-weight: 600;">--</span>
                                 </div>
                                 <div style="display:flex; justify-content: space-between;">
-                                    <span style="font-size: 10.5px; color: rgba(255,255,255,0.7);">Posición Real (NASA):</span>
+                                    <span style="font-size: 10.5px; color: rgba(255,255,255,0.7);">Posición (NASA):</span>
                                     <span id="badge-signo-nasa" style="font-size: 11px; color: var(--jewel-fuchsia); font-weight: 600;">--</span>
                                 </div>
                             </div>
@@ -274,11 +276,11 @@
                                 <div style="display:flex;flex-direction:column;gap:8px;">
                                     <div style="display:flex;justify-content:space-between;align-items:center;">
                                         <span style="font-size:11px;color:rgba(255,255,255,0.7);">Racionalidad</span>
-                                        <span style="font-size:10px;background:rgba(125,211,168,0.15);color:#7dd3a8;border:0.5px solid rgba(125,211,168,0.3);padding:2px 8px;border-radius:20px;">Favorable</span>
+                                        <span id="vec-rac" style="font-size:10px;background:rgba(125,211,168,0.15);color:#7dd3a8;border:0.5px solid rgba(125,211,168,0.3);padding:2px 8px;border-radius:20px;">Favorable</span>
                                     </div>
                                     <div style="display:flex;justify-content:space-between;align-items:center;">
                                         <span style="font-size:11px;color:rgba(255,255,255,0.7);">Límites</span>
-                                        <span style="font-size:10px;background:rgba(224,117,117,0.15);color:#e07575;border:0.5px solid rgba(224,117,117,0.3);padding:2px 8px;border-radius:20px;">Tenso</span>
+                                        <span id="vec-lim" style="font-size:10px;background:rgba(224,117,117,0.15);color:#e07575;border:0.5px solid rgba(224,117,117,0.3);padding:2px 8px;border-radius:20px;">Tenso</span>
                                     </div>
                                 </div>
                             </div>
@@ -318,13 +320,13 @@
                     <div class="card-header">
                         <span class="card-icon">☋</span>
                         <div class="card-title">
-                            <span>Pilar 03</span>
-                            <h2>El Nodo Kármico: Tu Herida Viva</h2>
+                            <span>Pilar 03 y 04</span>
+                            <h2>Tu Nodo Kármico y Propósito Real</h2>
                         </div>
                     </div>
                     <div class="card-body">
-                        <p>La posición de tu eje nodal revela el patrón repetitivo que más energía te roba en tus relaciones más cercanas.</p>
-                        <p>Tus cálculos astronómicos indican una fuerte tendencia a silenciar tus propias necesidades por miedo a romper la paz del entorno. Cada vez que decides callar lo que realmente sientes para no generar un conflicto, estás activando una fricción profunda en tu mapa que te lleva irremediablemente a...</p>
+                        <p>Mientras los Pilares 01 y 02 explican *cómo funcionas*, la posición exacta de tu eje nodal revela el patrón repetitivo que más energía te roba, y la dirección que marca tu verdadero **Propósito de Vida**.</p>
+                        <p>Tus cálculos astronómicos indican una fuerte tendencia a silenciar tus propias necesidades por miedo a romper la paz del entorno. Cada vez que decides callar lo que realmente sientes para no generar un conflicto, estás activando una fricción profunda en tu mapa que te aleja de tu propósito y te lleva irremediablemente a...</p>
                         </div>
                     
                     <div class="lock-icon-container">
@@ -340,7 +342,7 @@
                         "El cielo te diseñó con la fortaleza para sostener a tu entorno. Pero los tránsitos de hoy nos piden responder: ¿quién te sostiene a ti?"
                     </div>
 
-                    <p style="color: var(--text-muted); font-size: 1.1rem; max-width: 600px; margin: 0 auto 30px auto;">Desbloquea el Pilar 03 y el mapa completo de tu diseño. Descubre tus puntos exactos de fricción y la guía para integrar tu energía de forma orgánica.</p>
+                    <p style="color: var(--text-muted); font-size: 1.1rem; max-width: 650px; margin: 0 auto 30px auto;">A diferencia de textos genéricos en internet, tu Manual Definitivo cruza bases de datos astronómicas con psicología analítica. Desbloquea tu Mapa Completo para descubrir tus puntos exactos de fricción, tu Nodo Kármico y tu Propósito Vital.</p>
                     
                     <button class="btn-magia">Decodificar mi Mapa Completo</button>
                 </section>
@@ -354,8 +356,7 @@
     </div>
 
     <script>
-    // --- MOTOR ASTRONÓMICO DE PRUEBA EN JAVASCRIPT ---
-    // (Esto simula lo que hará tu Python para que puedas ver el dashboard funcionando ya mismo)
+    // --- MOTOR ASTRONÓMICO EN JAVASCRIPT ---
     function calcularSignos(fechaStr) {
         if (!fechaStr) return { sign: "Aries", elem: "Fuego", nasa: "Piscis", cualidad: "Impulso, inicio, acción directa." };
         const parts = fechaStr.split('-');
@@ -374,6 +375,37 @@
         if ((m===12 && d>=22) || (m===1 && d<=19)) return { sign: "Capricornio", elem: "Tierra", nasa: "Sagitario", cualidad: "Responsabilidad, metas, carga estructural." };
         if ((m===1 && d>=20) || (m===2 && d<=18)) return { sign: "Acuario", elem: "Aire", nasa: "Capricornio", cualidad: "Innovación, desapego, visión global." };
         return { sign: "Piscis", elem: "Agua", nasa: "Acuario", cualidad: "Sensibilidad absoluta, permeabilidad." };
+    }
+
+    // --- MOTOR PSEUDO-ALEATORIO (Para que cambie según la usuaria) ---
+    function generarDatosUnicos(nombre) {
+        // Convertimos el nombre en un número
+        let hash = 0;
+        for (let i = 0; i < nombre.length; i++) { hash += nombre.charCodeAt(i); }
+        
+        // Mensaje diario basado en el nombre
+        const mensajes = [
+            "Hoy tu intuición está afilada. Confía en tu primer pensamiento al despertar.",
+            "El mapa indica una ventana de calma. Es un buen día para organizar ideas.",
+            "Tu energía vital pide espacio. Hoy, decir 'no' es tu mayor acto de autocuidado.",
+            "Hay fricción en el ambiente, pero tu centro de gravedad es fuerte. Observa, no reacciones.",
+            "Día de expansión intelectual. Esa conversación que posponías hoy fluirá natural."
+        ];
+        
+        // Estados de vectores
+        const estados = [
+            { txt: "Favorable", col: "#7dd3a8", bg: "rgba(125,211,168,0.15)" },
+            { txt: "Tenso", col: "#e07575", bg: "rgba(224,117,117,0.15)" },
+            { txt: "Neutro", col: "#f0c060", bg: "rgba(240,192,96,0.15)" }
+        ];
+
+        return {
+            sincronia: 65 + (hash % 30), // De 65 a 95
+            mensaje: mensajes[hash % mensajes.length],
+            vecRac: estados[(hash + 1) % 3],
+            vecLim: estados[(hash + 2) % 3],
+            energiaHoy: (hash % 2 === 0) ? "pip-expand" : "pip-intro"
+        };
     }
 
     function drawCanvas(score) {
@@ -424,6 +456,9 @@
             if (resultado.status === "exito") {
                 const d = resultado.datos;
                 const nombreFormateado = d.nombre ? d.nombre.charAt(0).toUpperCase() + d.nombre.slice(1).toLowerCase() : "Exploradora";
+                
+                // Generamos los datos dinámicos basados en quién entró
+                const perfilUnico = generarDatosUnicos(d.nombre || "x");
 
                 // --- 1. LÓGICA DEL LOADER ---
                 const frasesCarga = [
@@ -448,7 +483,7 @@
                     }
                 }, 900);
 
-                // --- 2. INYECTAR TEXTOS DEL DASHBOARD (CORREGIDO) ---
+                // --- 2. INYECTAR TEXTOS DEL DASHBOARD DINÁMICO ---
                 document.getElementById('user-name').textContent = nombreFormateado;
                 
                 // Fecha Natal en el top
@@ -456,12 +491,11 @@
                 const ciudadMostrar = d.ciudad ? d.ciudad.toUpperCase() : "NASA DATA";
                 document.getElementById('dash-fecha-top').textContent = `COORDENADAS NATALES · ${fechaMostrar} · ${ciudadMostrar}`;
 
-                if (d.mensaje_del_dia) {
-                    document.getElementById('dash-mensaje').textContent = `"${d.mensaje_del_dia}"`;
-                }
+                // Inyectamos el mensaje dinámico
+                document.getElementById('dash-mensaje').textContent = `"${perfilUnico.mensaje}"`;
                 document.getElementById('dash-fuente').textContent = `CÁLCULO DE EFEMÉRIDES PARA ${nombreFormateado.toUpperCase()}`;
                 
-                // Cálculo Astronómico Dinámico
+                // Cálculo Astronómico
                 const astro = calcularSignos(d.fecha);
 
                 // Tarjetas Dinámicas
@@ -473,15 +507,23 @@
                 document.getElementById('badge-signo-trad').textContent = astro.sign.toUpperCase();
                 document.getElementById('badge-signo-nasa').textContent = astro.nasa.toUpperCase();
 
-                // Gráfico y sincronía
-                const pseudoSyncScore = 82; // Un número de alineación para la bóveda
-                document.getElementById('dash-sync-num').textContent = pseudoSyncScore;
-                drawCanvas(pseudoSyncScore);
+                // Gráfico de Sincronía Único
+                document.getElementById('dash-sync-num').textContent = perfilUnico.sincronia;
+                drawCanvas(perfilUnico.sincronia);
+                
+                // Inyectamos el color del día en la semana
+                document.getElementById('pip-hoy').className = `db ${perfilUnico.energiaHoy}`;
+
+                // Inyectamos los Vectores Únicos
+                const vr = document.getElementById('vec-rac');
+                vr.textContent = perfilUnico.vecRac.txt; vr.style.color = perfilUnico.vecRac.col; vr.style.background = perfilUnico.vecRac.bg; vr.style.borderColor = perfilUnico.vecRac.col;
+                
+                const vl = document.getElementById('vec-lim');
+                vl.textContent = perfilUnico.vecLim.txt; vl.style.color = perfilUnico.vecLim.col; vl.style.background = perfilUnico.vecLim.bg; vl.style.borderColor = perfilUnico.vecLim.col;
 
                 // --- 3. INYECTAR PILARES DESDE PYTHON ---
                 if (d.pilar1) {
                     document.getElementById('pilar1-titulo').textContent = `Arquitectura Base: ${d.pilar1.titulo}`;
-                    // Forzamos el elemento visual si coincide
                     document.getElementById('pilar1-elemento').textContent = `Elemento ${astro.elem}`;
                     document.getElementById('pilar1-texto').textContent = d.pilar1.texto;
                 }
