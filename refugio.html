@@ -41,7 +41,7 @@
         a { text-decoration: none; color: inherit; }
         .container { max-width: 900px; margin: 0 auto; padding: 0 20px; }
 
-        /* PANTALLA DE CARGA (LA ILUSIÓN DE COMPLEJIDAD) */
+        /* PANTALLA DE CARGA */
         #vault-loader {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
             background: #0A000D; z-index: 9999;
@@ -59,22 +59,18 @@
             font-size: 0.9rem; letter-spacing: 2px; text-transform: uppercase;
         }
 
-        /* OCULTAR CONTENIDO MIENTRAS CARGA */
         #main-wrapper { opacity: 0; transition: opacity 1.5s ease; }
 
-        /* HEADER E IDENTIDAD */
         header { padding: 30px 0; width: 100%; border-bottom: 1px solid rgba(255,255,255,0.05); }
         .header-content { display: flex; justify-content: space-between; align-items: center; }
         .logo-container { display: flex; flex-direction: column; align-items: center; gap: 5px; text-decoration: none; }
         .logo-text { font-family: 'Great Vibes', cursive; font-size: 2.2rem; color: var(--text-cream); text-shadow: 0px 4px 6px rgba(0, 0, 0, 0.8); line-height: 1; }
         .btn-outline { border: 1px solid rgba(255,255,255,0.3); color: var(--text-cream); padding: 8px 24px; border-radius: 30px; font-size: 0.9rem; text-transform: uppercase; letter-spacing: 1px; }
 
-        /* CONTENIDO Y BIENVENIDA */
         main { padding: 80px 0; flex-grow: 1; }
         .welcome-section { text-align: center; margin-bottom: 70px; }
         .welcome-section h1 { font-size: 3.2rem; margin-bottom: 20px; line-height: 1.2;}
         
-        /* TARJETAS DE LECTURA */
         .glass-card {
             background: rgba(20, 0, 26, 0.45); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
             border: 1px solid rgba(255, 255, 255, 0.15); border-top: 1px solid rgba(255, 255, 255, 0.25);
@@ -91,16 +87,8 @@
         .card-body p { margin-bottom: 20px; font-weight: 300; font-size: 1.1rem; line-height: 1.8; color: var(--text-pearl);}
         .card-body strong { color: var(--text-cream); font-weight: 500; }
         
-        .technical-note {
-            background: rgba(255,255,255,0.03); border-radius: 8px;
-            border-left: 3px solid var(--text-muted); padding: 15px 20px;
-            margin-top: 25px; font-size: 0.95rem; font-style: italic; color: rgba(255,255,255,0.6);
-        }
-
-        /* EFECTO FADE-OUT (EL MISTERIO VISUAL) */
         .locked-card .card-body {
             position: relative;
-            /* Aquí está la magia del difuminado CSS */
             mask-image: linear-gradient(to bottom, black 25%, transparent 85%);
             -webkit-mask-image: linear-gradient(to bottom, black 25%, transparent 85%);
             padding-bottom: 80px; 
@@ -112,7 +100,6 @@
         .lock-icon-container svg { width: 35px; height: 35px; fill: var(--jewel-fuchsia); filter: drop-shadow(0 0 10px rgba(212,32,140,0.5));}
         .lock-text { font-size: 0.85rem; text-transform: uppercase; letter-spacing: 2px; color: var(--jewel-fuchsia); font-weight: 600; }
 
-        /* UPSELL Y GOLPE FILOSÓFICO */
         .upsell-section {
             text-align: center; margin-top: 60px; padding: 70px 40px;
             background: linear-gradient(180deg, rgba(20, 0, 26, 0.8), rgba(139, 28, 98, 0.15));
@@ -120,7 +107,6 @@
             box-shadow: 0 20px 50px rgba(0,0,0,0.5);
         }
         
-        /* La frase que conecta la emoción */
         .philosophical-quote {
             font-family: 'Playfair Display', serif; font-style: italic; font-size: 1.6rem;
             color: var(--text-cream); max-width: 700px; margin: 0 auto 40px auto;
@@ -189,12 +175,12 @@
                         <span class="card-icon">☀️</span>
                         <div class="card-title">
                             <span>Pilar 01</span>
-                            <h2>Arquitectura Base: Tu Gravedad</h2>
+                            <h2 id="pilar1-titulo">Arquitectura Base: Tu Gravedad</h2>
                         </div>
                     </div>
                     <div class="card-body">
-                        <p>En el lenguaje astronómico, la concentración de tu energía natal se ubica en el espectro del <strong>Elemento Tierra</strong>. Esto determina cómo tu psique asume responsabilidades.</p>
-                        <p>Estás diseñada para materializar y sostener. Tu mente busca instintivamente la estructura y la tangibilidad. Sin embargo, tu principal fuga de energía radica en <strong>asumir el peso de las dinámicas de otros</strong>, confundiendo tu capacidad de resolver con un "falso deber".</p>
+                        <p>En el lenguaje astronómico, la concentración de tu energía natal se ubica en el espectro del <strong id="pilar1-elemento">Elemento Tierra</strong>. Esto determina cómo tu psique asume responsabilidades.</p>
+                        <p id="pilar1-texto">Estás diseñada para materializar y sostener. Tu mente busca instintivamente la estructura y la tangibilidad. Sin embargo, tu principal fuga de energía radica en asumiendo el peso de otros.</p>
                     </div>
                 </article>
 
@@ -203,12 +189,12 @@
                         <span class="card-icon">🌙</span>
                         <div class="card-title">
                             <span>Pilar 02</span>
-                            <h2>Algoritmo Interno: Tu Filtro</h2>
+                            <h2 id="pilar2-titulo">Algoritmo Interno: Tu Filtro</h2>
                         </div>
                     </div>
                     <div class="card-body">
-                        <p>Mientras tu exterior demanda estructura, el filtro a través del cual procesas el caos opera bajo un <strong>Elemento de Aire rápido</strong>.</p>
-                        <p>Esta es tu paradoja principal: por fuera pides orden, pero <strong>por dentro tu mente sobre-analiza cada escenario buscando entenderlo todo</strong>. Te drenas cuando te encierran en rutinas inflexibles o no hay claridad en la comunicación.</p>
+                        <p>Mientras tu exterior demanda estructura, el filtro a través del cual procesas el caos opera bajo un <strong id="pilar2-elemento">Elemento de Aire rápido</strong>.</p>
+                        <p id="pilar2-texto">Esta es tu paradoja principal: por fuera pides orden, pero por dentro tu mente sobre-analiza cada escenario buscando entenderlo todo.</p>
                     </div>
                 </article>
 
@@ -273,7 +259,7 @@
                 const d = resultado.datos;
                 const nombreFormateado = d.nombre ? d.nombre.charAt(0).toUpperCase() + d.nombre.slice(1).toLowerCase() : "Exploradora";
 
-                // --- 1. LÓGICA DEL LOADER (La ilusión de complejidad) ---
+                // --- 1. LÓGICA DEL LOADER ---
                 const frasesCarga = [
                     "Estableciendo conexión segura...",
                     `Calculando efemérides para ${d.fecha || 'tu fecha'}...`,
@@ -287,7 +273,6 @@
                         loaderText.textContent = frasesCarga[i];
                         i++;
                     } else {
-                        // Termina la carga, revela la página
                         clearInterval(intervalo);
                         loader.style.opacity = '0';
                         setTimeout(() => {
@@ -295,10 +280,9 @@
                             mainWrapper.style.opacity = '1';
                         }, 1000);
                     }
-                }, 900); // 900ms por frase
-                // --------------------------------------------------------
+                }, 900);
 
-                // Inyectamos los datos reales
+                // --- 2. INYECTAR TEXTOS Y DATOS BÁSICOS ---
                 document.getElementById('user-name').textContent = nombreFormateado;
                 
                 if (d.mensaje_del_dia) {
@@ -310,7 +294,19 @@
                     calcElement.textContent = `CALC: ${d.fecha} • ${d.ciudad} • NASA DATA`;
                 }
 
-                // --- 3. INYECTAR EL GOLPE FILOSÓFICO ---
+                // --- 3. INYECTAR PILARES DINÁMICOS DESDE PYTHON ---
+                if (d.pilar1) {
+                    document.getElementById('pilar1-titulo').textContent = `Arquitectura Base: ${d.pilar1.titulo}`;
+                    document.getElementById('pilar1-elemento').textContent = d.pilar1.elemento;
+                    document.getElementById('pilar1-texto').textContent = d.pilar1.texto;
+                }
+
+                if (d.pilar2) {
+                    document.getElementById('pilar2-elemento').textContent = d.pilar2.elemento;
+                    document.getElementById('pilar2-texto').textContent = d.pilar2.texto;
+                }
+
+                // --- 4. INYECTAR LA FRASE PSICOLÓGICA ---
                 const fraseElement = document.getElementById('frase-filosofica');
                 if (fraseElement) {
                     fraseElement.textContent = `"${nombreFormateado}, el mapa te diseñó con la fortaleza para sostener a tu entorno. Pero el cielo de hoy nos pide responder: ¿quién te sostiene a ti?"`;
