@@ -4,7 +4,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Tu Refugio | El mapa de tu diseño</title>
+    <title>Refugio | Tu Bóveda Celeste Personal</title>
+    <meta name="description" content="Decodificamos tu mapa de vida a través de cálculos astronómicos exactos de la NASA para darte paz y claridad mental.">
+
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Great+Vibes&family=Cormorant+Garamond:ital,wght@0,400;0,600;1,400;1,600&family=Inter:wght@300;400;500;600&family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400;1,600&display=swap" rel="stylesheet">
@@ -22,539 +24,558 @@
 
         * { box-sizing: border-box; margin: 0; padding: 0; }
 
-        @keyframes pulseGlow {
-            0% { background-position: 50% 50%; }
-            50% { background-position: 50% 40%; }
-            100% { background-position: 50% 50%; }
-        }
-
         body {
-            font-family: 'Inter', sans-serif; color: var(--text-muted);
+            font-family: 'Inter', sans-serif; 
+            color: var(--text-muted);
             background-color: var(--dark-purple);
-            background-image: radial-gradient(circle at 50% 30%, var(--orchid-glow) 0%, var(--dark-purple) 70%, #0A000D 100%);
-            background-size: 150% 150%; background-attachment: fixed;
-            animation: pulseGlow 15s ease-in-out infinite;
-            line-height: 1.7; overflow-x: hidden; display: flex; flex-direction: column; min-height: 100vh;
+            min-height: 100vh;
+            overflow-x: hidden;
+            position: relative;
         }
 
-        h1, h2, h3, h4, .serif { font-family: 'Playfair Display', serif; color: var(--text-pearl); font-weight: 600; }
+        /* FONDO DE ESTRELLAS EN MOVIMIENTO */
+        #cosmos {
+            position: fixed;
+            inset: 0;
+            z-index: -2;
+            pointer-events: none;
+        }
+
+        .glow-orb {
+            position: absolute;
+            width: 600px; height: 600px;
+            background: radial-gradient(circle, var(--orchid-glow) 0%, transparent 70%);
+            top: -100px; left: -100px;
+            opacity: 0.15;
+            z-index: -1;
+            filter: blur(50px);
+        }
+
+        h1, h2, h3, .serif { font-family: 'Playfair Display', serif; color: var(--text-cream); }
         a { text-decoration: none; color: inherit; }
-        .container { max-width: 900px; margin: 0 auto; padding: 0 20px; }
+        .container { max-width: 1200px; margin: 0 auto; padding: 0 20px; }
 
-        /* LOADER */
-        #vault-loader {
-            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: #0A000D; z-index: 9999;
-            display: flex; flex-direction: column; align-items: center; justify-content: center;
-            transition: opacity 1s ease, visibility 1s;
-        }
-        .loader-spinner {
-            width: 50px; height: 50px; border: 3px solid rgba(212, 32, 140, 0.2);
-            border-top: 3px solid var(--jewel-fuchsia); border-radius: 50%;
-            animation: spin 1s linear infinite; margin-bottom: 25px;
-        }
-        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
-        #loader-text {
-            font-family: 'Inter', monospace; color: var(--jewel-fuchsia);
-            font-size: 0.9rem; letter-spacing: 2px; text-transform: uppercase;
-        }
-
-        #main-wrapper { opacity: 0; transition: opacity 1.5s ease; }
-
-        /* HEADER */
-        header { padding: 30px 0; width: 100%; border-bottom: 1px solid rgba(255,255,255,0.05); }
+        /* HEADER ORIGINAL RESTAURADO */
+        header { padding: 30px 0; position: absolute; top: 0; left: 0; right: 0; z-index: 100; background: transparent; border-bottom: 1px solid rgba(255,255,255,0.05); }
         .header-content { display: flex; justify-content: space-between; align-items: center; }
-        .logo-container { display: flex; flex-direction: column; align-items: center; gap: 5px; text-decoration: none; }
-        .logo-text { font-family: 'Great Vibes', cursive; font-size: 2.2rem; color: var(--text-cream); text-shadow: 0px 4px 6px rgba(0, 0, 0, 0.8); line-height: 1; }
-        .btn-outline { border: 1px solid rgba(255,255,255,0.3); color: var(--text-cream); padding: 8px 24px; border-radius: 30px; font-size: 0.9rem; text-transform: uppercase; letter-spacing: 1px; }
-
-        /* BIENVENIDA */
-        main { padding: 80px 0; flex-grow: 1; }
-        .welcome-section { text-align: center; margin-bottom: 40px; }
-        .welcome-section h1 { font-size: 3.2rem; margin-bottom: 20px; line-height: 1.2;}
+        .logo-container { display: flex; flex-direction: column; align-items: center; gap: 5px; text-decoration: none; transition: transform 0.4s ease; }
+        .logo-container:hover { transform: translateY(-2px); }
+        .logo-text { font-family: 'Great Vibes', cursive; font-size: 2.2rem; color: var(--text-cream); letter-spacing: normal; text-transform: none; font-weight: 400; text-shadow: 0px 4px 6px rgba(0, 0, 0, 0.8), 0px 0px 15px rgba(255, 255, 255, 0.2); line-height: 1; }
         
-        /* -----------------------------------------------------
-           PANEL DASHBOARD TIPO NASA 
-           ----------------------------------------------------- */
-        .refugio-wrap {
+        .nav-links { display: flex; gap: 40px; }
+        .nav-links a { font-family: 'Inter', sans-serif; font-size: 13px; font-weight: 300; text-transform: uppercase; letter-spacing: 1.8px; color: rgba(255, 255, 255, 0.6); padding-bottom: 4px; border-bottom: 1px solid transparent; transition: all 0.4s ease; }
+        .nav-links a:hover { color: var(--text-cream); text-shadow: 0 0 10px rgba(253, 251, 247, 0.5); border-bottom: 1px solid rgba(253, 251, 247, 0.4); }
+        
+        .header-cta { background: rgba(255, 255, 255, 0.1); backdrop-filter: blur(10px); border: 1px solid rgba(255, 255, 255, 0.3); color: var(--text-cream); padding: 10px 24px; border-radius: 30px; font-size: 13px; text-transform: uppercase; letter-spacing: 1px; font-weight: 400; transition: all 0.4s ease; box-shadow: 0 0 10px rgba(255, 255, 255, 0.05); cursor: pointer;}
+        .header-cta:hover { background: rgba(255, 255, 255, 0.2); border-color: rgba(255, 255, 255, 0.6); box-shadow: 0 0 15px rgba(255, 255, 255, 0.3), inset 0 0 15px rgba(255, 255, 255, 0.2); color: #FFF; }
+
+        /* HERO SECTION */
+        .hero { min-height: 100vh; display: flex; align-items: center; padding: 120px 0 60px; position: relative; z-index: 10; }
+        .hero-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 60px; align-items: center; }
+
+        .hero-content h1 { font-size: 4rem; line-height: 1.1; margin-bottom: 25px; letter-spacing: -1px; text-shadow: 0 0 20px rgba(255, 255, 255, 0.3); }
+        .hero-content h1 span { color: var(--jewel-fuchsia); font-style: italic; font-family: 'Playfair Display', serif;}
+        .hero-content p { font-size: 1.15rem; line-height: 1.8; margin-bottom: 40px; color: var(--text-pearl); max-width: 90%; font-weight: 300; }
+
+        .badge-nasa { display: inline-flex; align-items: center; gap: 10px; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); padding: 8px 20px; border-radius: 30px; font-size: 0.85rem; letter-spacing: 2px; text-transform: uppercase; color: var(--jewel-fuchsia); margin-bottom: 30px; }
+
+        /* FORMULARIO DE ACCESO */
+        .auth-card {
             background: rgba(20, 0, 26, 0.45); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
             border: 1px solid rgba(255, 255, 255, 0.15); border-top: 1px solid rgba(255, 255, 255, 0.25);
-            border-radius: 20px; box-shadow: inset 0 0 30px rgba(0, 0, 0, 0.6), 0 20px 40px rgba(0, 0, 0, 0.8);
-            padding: 32px 28px 36px; margin-bottom: 60px; position: relative; overflow: hidden; text-align: left;
+            border-radius: 20px; padding: 40px; box-shadow: inset 0 0 30px rgba(0, 0, 0, 0.4), 0 20px 40px rgba(0, 0, 0, 0.8);
         }
 
-        .refugio-wrap::before {
-            content: ''; position: absolute; inset: 0;
-            background-image: radial-gradient(circle, rgba(255,255,255,0.18) 1px, transparent 1px), radial-gradient(circle, rgba(255,255,255,0.10) 1px, transparent 1px);
-            background-size: 80px 80px, 40px 40px; background-position: 0 0, 20px 20px;
-            pointer-events: none; animation: drift 30s linear infinite; opacity: 0.3;
-        }
+        .tabs { display: flex; gap: 20px; margin-bottom: 30px; border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 10px; }
+        .tab { background: none; border: none; color: var(--text-muted); font-size: 1rem; cursor: pointer; font-family: 'Inter', sans-serif; padding: 5px 0; position: relative; transition: color 0.3s;}
+        .tab.active { color: var(--jewel-fuchsia); font-weight: 600; }
+        .tab.active::after { content: ''; position: absolute; bottom: -11px; left: 0; width: 100%; height: 2px; background: var(--jewel-fuchsia); }
 
-        .today-row { display: flex; align-items: center; gap: 8px; margin-bottom: 25px; position: relative; z-index: 2; }
-        .today-dot { width: 7px; height: 7px; border-radius: 50%; background: var(--jewel-fuchsia); animation: glow-pulse 2.5s ease-in-out infinite; flex-shrink: 0; }
-        @keyframes glow-pulse { 0%, 100% { opacity: 1; transform: scale(1); } 50% { opacity: 0.5; transform: scale(1.4); } }
-        .today-label { font-size: 11px; letter-spacing: 2.5px; color: var(--text-cream); text-transform: uppercase; font-weight: 500; }
-
-        .main-grid { display: grid; grid-template-columns: 1fr 190px; gap: 40px; position: relative; z-index: 2; align-items: start; }
+        .form-group { margin-bottom: 20px; position: relative;}
+        .form-group label { display: block; font-size: 0.85rem; margin-bottom: 8px; color: rgba(255,255,255,0.7); text-transform: uppercase; letter-spacing: 1px; }
+        .form-group input { width: 100%; background: rgba(0,0,0,0.3); border: 1px solid rgba(255,255,255,0.1); padding: 15px; border-radius: 10px; color: white; font-family: 'Inter', sans-serif; transition: border-color 0.3s; }
+        .form-group input:focus { outline: none; border-color: var(--jewel-fuchsia); background: rgba(0,0,0,0.5); }
+        .form-group input::-webkit-calendar-picker-indicator { filter: invert(1); cursor: pointer; opacity: 0.7; }
         
-        .message-block { margin-bottom: 30px; }
-        .message-text { font-family: 'Cormorant Garamond', serif; font-size: 26px; font-style: italic; color: var(--text-cream); line-height: 1.4; margin: 0 0 10px 0; padding-left: 18px; border-left: 2px solid var(--jewel-fuchsia); }
-        .message-source { font-size: 11px; color: rgba(255, 255, 255, 0.5); letter-spacing: 1.5px; padding-left: 18px; margin: 0; text-transform: uppercase; }
+        .geo-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; }
 
-        .cards-row { display: grid; grid-template-columns: repeat(3, 1fr); gap: 15px; margin-bottom: 25px; }
-        .day-card { background: rgba(0,0,0,0.3); border: 1px solid rgba(255,255,255,0.05); border-radius: 12px; padding: 15px; }
-        .card-icon { font-size: 18px; margin-bottom: 8px; display: block; filter: drop-shadow(0 0 5px rgba(212, 32, 140, 0.4));}
-        .day-card-title { font-size: 11px; color: var(--jewel-fuchsia); letter-spacing: 1px; text-transform: uppercase; font-weight: 600; margin-bottom: 6px; }
-        .day-card-body { font-size: 12px; color: rgba(255,255,255,0.8); line-height: 1.45; }
+        /* Autocompletar Ciudades */
+        #lugar-list { position: absolute; top: 100%; left: 0; width: 100%; background: rgba(20, 0, 26, 0.95); border: 1px solid rgba(255, 255, 255, 0.2); border-radius: 8px; z-index: 100; max-height: 200px; overflow-y: auto; margin-top: 5px; text-align: left; }
+        .hidden { display: none !important; }
+        .autocomplete-item { padding: 10px; cursor: pointer; font-size: 0.85rem; color: #FDFBF7; border-bottom: 1px solid rgba(255, 255, 255, 0.05); }
+        .autocomplete-item:hover { background: rgba(255, 255, 255, 0.1); }
 
-        .week-label { font-size: 10px; letter-spacing: 2px; color: rgba(255,255,255,0.4); text-transform: uppercase; margin-bottom: 12px; }
-        .week-days { display: flex; gap: 8px; }
-        .day-pip { flex: 1; background: rgba(0,0,0,0.2); border: 1px solid rgba(255,255,255,0.05); border-radius: 8px; padding: 8px 4px; text-align: center; }
-        .day-pip .dn { font-size: 10px; color: rgba(255,255,255,0.4); letter-spacing: 1px; text-transform: uppercase; display: block; margin-bottom: 6px; }
-        .day-pip .db { width: 10px; height: 10px; border-radius: 50%; margin: 0 auto; }
-        
-        /* Modificado para que el JS controle la clase today-pip */
-        .today-pip { border: 1px solid rgba(212, 32, 140, 0.5) !important; background: rgba(212, 32, 140, 0.1) !important; }
-        .today-pip .dn { color: var(--text-cream) !important; font-weight: bold; }
+        .btn-magia { width: 100%; background: linear-gradient(135deg, var(--jewel-fuchsia) 0%, var(--jewel-purple) 100%); color: white; border: none; padding: 18px; border-radius: 30px; font-weight: 600; font-family: 'Inter', sans-serif; cursor: pointer; font-size: 1.05rem; letter-spacing: 1.5px; text-transform: uppercase; box-shadow: 0 0 20px rgba(212, 32, 140, 0.4); transition: transform 0.2s; margin-top: 10px; }
+        .btn-magia:hover { transform: translateY(-2px); box-shadow: 0 0 30px rgba(212, 32, 140, 0.6); }
 
-        .pip-flow { background: #7dd3a8; } .pip-expand { background: #f0c060; } .pip-intro { background: #b79fe8; } .pip-caution { background: #e07575; }
+        .status-msg { margin-top: 15px; font-size: 0.9rem; text-align: center; color: #f0c060; }
 
-        .right-col { display: flex; flex-direction: column; align-items: center; gap: 14px; background: rgba(0,0,0,0.2); padding: 20px; border-radius: 15px; border: 1px solid rgba(255,255,255,0.05);}
-        .chart-wrap { position: relative; width: 140px; height: 140px; }
-        .chart-center-label { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); text-align: center; pointer-events: none; }
-        .sync-num { font-family: 'Playfair Display', serif; font-size: 32px; font-weight: 600; color: var(--text-cream); display: block; line-height: 1; }
-        .sync-sub { font-size: 9px; color: rgba(255,255,255,0.5); letter-spacing: 2px; text-transform: uppercase; display: block; margin-top: 5px; }
-        .sync-tooltip { font-size: 9px; color: rgba(255,255,255,0.4); text-align: center; line-height: 1.3; margin-top: -5px; margin-bottom: 5px; font-style: italic;}
+        /* RESTO DEL CONTENIDO (FILOSOFÍA, ETC) */
+        .glass { background: rgba(20, 0, 26, 0.45); backdrop-filter: blur(20px); border: 1px solid rgba(255, 255, 255, 0.15); border-radius: 20px; position: relative; overflow: hidden; }
+        .philosophy { padding: 100px 0; position: relative; z-index: 10;}
+        .philosophy-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 70px; align-items: center; }
+        .philosophy-text h2 { font-size: 3.2rem; margin-bottom: 24px; line-height: 1.2; letter-spacing: 0.5px; }
+        .philosophy-text p { font-size: 1.15rem; margin-bottom: 24px; color: var(--text-muted); font-weight: 300; }
+        .philosophy-card { padding: 60px 40px; text-align: center; }
+        .philosophy-card blockquote { font-size: 1.8rem; color: var(--text-pearl); font-style: italic; line-height: 1.5; letter-spacing: 0.5px; text-shadow: 0 0 10px rgba(255, 255, 255, 0.2); }
 
-        .phase-badge { background: rgba(212, 32, 140, 0.05); border: 1px solid rgba(212, 32, 140, 0.3); border-radius: 12px; padding: 12px 15px; width: 100%; text-align: left; }
-        .phase-name { font-size: 10px; color: rgba(255,255,255,0.5); letter-spacing: 1px; text-transform: uppercase; display: block; margin-bottom: 8px; }
-        
-        .dash-divider { width: 100%; height: 1px; background: rgba(255,255,255,0.1); margin: 10px 0; }
+        .how-it-works { padding: 100px 0; text-align: center; position: relative; z-index: 10;}
+        .how-it-works h2 { font-size: 3.2rem; margin-bottom: 70px; letter-spacing: 0.5px; }
+        .steps-container { display: flex; gap: 35px; justify-content: center; flex-wrap: wrap; }
+        .step-card { flex: 1; min-width: 300px; padding: 60px 40px; text-align: left; }
+        .step-icon { font-size: 2.2rem; margin-bottom: 28px; background: linear-gradient(135deg, var(--jewel-fuchsia) 0%, var(--dark-purple) 100%); border: 1px solid rgba(255, 255, 255, 0.2); width: 80px; height: 80px; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: var(--text-cream); box-shadow: 0 0 20px rgba(139, 28, 98, 0.4), inset 0 0 15px rgba(0, 0, 0, 0.8);}
+        .step-card h3 { font-size: 1.6rem; margin-bottom: 16px; letter-spacing: 0.5px; }
+        .step-card p { font-size: 1.05rem; font-weight: 300; }
 
-        /* TARJETAS DE LECTURA DE PILARES */
-        .glass-card {
-            background: rgba(20, 0, 26, 0.45); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
-            border: 1px solid rgba(255, 255, 255, 0.15); border-top: 1px solid rgba(255, 255, 255, 0.25);
-            border-radius: 20px; padding: 45px; margin-bottom: 40px; position: relative; overflow: hidden;
-        }
-        .glass-card::before { content: ''; position: absolute; top: 0; left: 0; width: 4px; height: 100%; background: linear-gradient(to bottom, var(--jewel-fuchsia), var(--jewel-purple)); opacity: 0.7; }
-        .card-header { display: flex; align-items: center; gap: 20px; margin-bottom: 25px; border-bottom: 1px solid rgba(255,255,255,0.05); padding-bottom: 20px; }
-        .card-icon { font-size: 2.2rem; }
-        .card-title h2 { font-size: 1.8rem; margin: 0; letter-spacing: 0.5px; }
-        .card-title span { display: block; font-size: 0.8rem; text-transform: uppercase; letter-spacing: 2px; color: var(--jewel-fuchsia); font-weight: 600; margin-bottom: 4px;}
-        .card-body p { margin-bottom: 20px; font-weight: 300; font-size: 1.1rem; line-height: 1.8; color: var(--text-pearl);}
-        .card-body strong { color: var(--text-cream); font-weight: 500; }
-        
-        .locked-card .card-body { position: relative; mask-image: linear-gradient(to bottom, black 25%, transparent 85%); -webkit-mask-image: linear-gradient(to bottom, black 25%, transparent 85%); padding-bottom: 80px; }
-        .lock-icon-container { position: absolute; bottom: 30px; left: 0; width: 100%; text-align: center; z-index: 10; display: flex; flex-direction: column; align-items: center; gap: 10px; }
-        .lock-icon-container svg { width: 35px; height: 35px; fill: var(--jewel-fuchsia); filter: drop-shadow(0 0 10px rgba(212,32,140,0.5));}
-        .lock-text { font-size: 0.85rem; text-transform: uppercase; letter-spacing: 2px; color: var(--jewel-fuchsia); font-weight: 600; }
+        .discover { padding: 100px 0 80px; position: relative; z-index: 10;}
+        .discover-header { text-align: center; margin-bottom: 70px; }
+        .discover-header h2 { font-size: 3.2rem; letter-spacing: 0.5px; }
+        .features-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 40px; margin-bottom: 60px; }
+        .feature-card { padding: 50px 40px; text-align: center; }
+        .feature-icon-text { font-size: 3rem; margin-bottom: 24px; display: inline-block; filter: drop-shadow(0 0 10px rgba(255, 255, 255, 0.2)); }
+        .feature-card h3 { font-size: 1.6rem; margin-bottom: 16px; letter-spacing: 0.5px; }
+        .feature-card p { font-weight: 300; font-size: 1.05rem; }
 
-        /* UPSELL */
-        .upsell-section { text-align: center; margin-top: 60px; padding: 70px 40px; background: linear-gradient(180deg, rgba(20, 0, 26, 0.8), rgba(139, 28, 98, 0.15)); border-radius: 30px; border: 1px solid rgba(212, 32, 140, 0.3); box-shadow: 0 20px 50px rgba(0,0,0,0.5); }
-        .philosophical-quote { font-family: 'Playfair Display', serif; font-style: italic; font-size: 1.6rem; color: var(--text-cream); max-width: 700px; margin: 0 auto 40px auto; line-height: 1.5; font-weight: 400; text-shadow: 0 2px 10px rgba(0,0,0,0.5); }
-        .btn-magia { background: linear-gradient(135deg, var(--jewel-fuchsia) 0%, var(--jewel-purple) 100%); color: white; border: none; padding: 20px 45px; border-radius: 40px; font-weight: 600; font-family: 'Inter', sans-serif; cursor: pointer; font-size: 1.15rem; box-shadow: 0 0 20px rgba(212, 32, 140, 0.4); text-transform: uppercase; letter-spacing: 1.5px; transition: transform 0.2s; }
-        .btn-magia:hover { transform: scale(1.04); box-shadow: 0 0 30px rgba(212, 32, 140, 0.7); }
+        .testimonials { padding: 80px 0; text-align: center; position: relative; z-index: 10;}
+        .testimonials h2 { font-size: 3.2rem; margin-bottom: 70px; letter-spacing: 0.5px; }
+        .testimonials-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 40px; text-align: left; }
+        .testimonial-card { padding: 50px 40px; }
+        .testimonial-text { font-style: italic; font-size: 1.15rem; margin-bottom: 35px; color: var(--text-pearl); }
+        .testimonial-author { display: flex; align-items: center; gap: 18px; }
+        .author-avatar { width: 60px; height: 60px; border-radius: 50%; background: linear-gradient(135deg, var(--jewel-fuchsia), var(--dark-purple)); border: 1px solid rgba(255, 255, 255, 0.3); display: flex; align-items: center; justify-content: center; color: var(--text-cream); font-family: 'Playfair Display', serif; font-weight: 700; font-size: 1.6rem; }
+        .author-info h4 { font-size: 1.1rem; margin-bottom: 4px; letter-spacing: 0.5px; }
+        .author-info p { font-size: 0.95rem; font-weight: 300; }
 
-        footer { text-align: center; padding: 40px 0; font-size: 0.9rem; color: rgba(255,255,255,0.3); border-top: 1px solid rgba(255,255,255,0.05); margin-top: auto;}
+        .cierre-emocional { padding: 120px 0 160px; text-align: center; position: relative; z-index: 10;}
+        .cierre-emocional h2 { font-size: 3.8rem; margin-bottom: 24px; letter-spacing: 1px; }
+        .cierre-emocional p { font-size: 1.25rem; max-width: 650px; margin: 0 auto 50px; color: var(--text-muted); font-weight: 300; }
+        .btn-dominante { display: inline-block; padding: 24px 60px; border-radius: 50px; text-transform: uppercase; letter-spacing: 2px; font-weight: 600; background: linear-gradient(135deg, var(--jewel-fuchsia) 0%, var(--jewel-purple) 100%); color: white; transition: transform 0.3s; box-shadow: 0 0 20px rgba(212, 32, 140, 0.4);}
+        .btn-dominante:hover { transform: scale(1.05); }
 
-        @media (max-width: 768px) {
-            .main-grid { grid-template-columns: 1fr; }
-            .cards-row { grid-template-columns: 1fr; }
-            .right-col { width: 100%; }
+        /* FOOTER ORIGINAL RESTAURADO */
+        footer { background: rgba(10, 0, 15, 0.8); border-top: 1px solid rgba(255, 255, 255, 0.1); position: relative; padding: 100px 0 50px; text-align: center; box-shadow: 0 -20px 50px rgba(0, 0, 0, 0.5); z-index: 10;}
+        .footer-logo { font-family: 'Playfair Display', serif; font-size: 2.8rem; margin-bottom: 20px; display: inline-block; color: var(--text-pearl); text-shadow: 0 0 20px rgba(255, 255, 255, 0.2); letter-spacing: 1px; }
+        .footer-msg { color: var(--text-muted); font-style: italic; font-weight: 300; font-size: 1.25rem; margin-bottom: 40px; }
+        .footer-links { display: flex; justify-content: center; gap: 40px; margin-bottom: 40px; flex-wrap: wrap; }
+        .footer-links a, .contact-email { font-family: 'Inter', sans-serif; font-size: 13px; text-transform: uppercase; letter-spacing: 1.5px; color: rgba(255, 255, 255, 0.6); transition: all 0.3s; font-weight: 300; }
+        .contact-email { display: block; margin-bottom: 40px; color: var(--jewel-fuchsia); text-shadow: 0 0 10px rgba(212, 32, 140, 0.4); font-weight: 400; }
+        .footer-links a:hover, .contact-email:hover { color: var(--text-cream); text-shadow: 0 0 10px rgba(255, 255, 255, 0.5); }
+        .copyright { font-family: 'Inter', sans-serif; font-size: 0.9rem; font-weight: 300; color: rgba(209, 197, 216, 0.4); letter-spacing: 0.5px; }
+        .footer-scientific-note { max-width: 750px; margin: 0 auto 30px; font-size: 0.85rem; color: rgba(255, 255, 255, 0.4); font-weight: 300; line-height: 1.6; }
+
+        @media (max-width: 900px) {
+            .hero-grid { grid-template-columns: 1fr; gap: 40px; }
+            .hero-content h1 { font-size: 3rem; }
+            .nav-links { display: none; }
         }
     </style>
 </head>
 
 <body>
+    <canvas id="cosmos"></canvas>
+    <div class="glow-orb"></div>
 
-    <div id="vault-loader">
-        <div class="loader-spinner"></div>
-        <div id="loader-text">Inicializando bóveda segura...</div>
-    </div>
+    <header>
+        <div class="container header-content">
+            <a href="#" class="logo-container">
+                <svg width="45" height="45" viewBox="0 0 60 60" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M 28 10 A 18 18 0 0 0 28 50 A 22 22 0 0 1 28 10 Z" stroke="#FDFBF7" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" />
+                    <polygon points="42,16 44,22 50,24 44,26 42,32 40,26 34,24 40,22" stroke="#FDFBF7" stroke-width="1.5" stroke-linejoin="round" />
+                    <circle cx="48" cy="14" r="1.5" fill="#FDFBF7" opacity="0.8" />
+                    <circle cx="50" cy="34" r="1" fill="#FDFBF7" opacity="0.6" />
+                    <circle cx="34" cy="14" r="1" fill="#FDFBF7" opacity="0.5" />
+                </svg>
+                <span class="logo-text">Refugio</span>
+            </a>
+            <nav class="nav-links">
+                <a href="#filosofia">Nuestra Filosofía</a>
+                <a href="#como-funciona">Cómo Funciona</a>
+                <a href="#testimonios">Testimonios</a>
+            </nav>
+            <a href="#" class="header-cta" onclick="irAlLogin()">Mi Cuenta</a>
+        </div>
+    </header>
 
-    <div id="main-wrapper">
-        <header>
-            <div class="container header-content">
-                <a href="index.html" class="logo-container">
-                    <svg width="45" height="45" viewBox="0 0 60 60" fill="none" xmlns="http://www.w3.org/2000/svg">
-                        <path d="M 28 10 A 18 18 0 0 0 28 50 A 22 22 0 0 1 28 10 Z" stroke="#FDFBF7" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" />
-                        <polygon points="42,16 44,22 50,24 44,26 42,32 40,26 34,24 40,22" stroke="#FDFBF7" stroke-width="1.5" stroke-linejoin="round" />
-                        <circle cx="48" cy="14" r="1.5" fill="#FDFBF7" opacity="0.8" />
-                        <circle cx="50" cy="34" r="1" fill="#FDFBF7" opacity="0.6" />
-                        <circle cx="34" cy="14" r="1" fill="#FDFBF7" opacity="0.5" />
-                    </svg>
-                    <span class="logo-text">Refugio</span>
-                </a>
-                <a href="index.html" class="btn-outline" onclick="cerrarSesion()">Cerrar Sesión</a>
+    <main class="hero">
+        <div class="container hero-grid">
+            
+            <div class="hero-content">
+                <div class="badge-nasa">
+                    <span>✦</span> Datos JPL Horizons / NASA
+                </div>
+                <h1>El mapa de tu vida, decodificado para darte <span>Paz.</span></h1>
+                <p>No es un horóscopo de revista. Es tu arquitectura base calculada con efemérides astronómicas exactas. Descubre tus fugas de energía, tu nodo kármico y el manual para gestionar tu carga mental.</p>
+                
+                <div style="display: flex; gap: 20px; align-items: center; margin-top: 30px;">
+                    <div style="font-size: 0.95rem; color: rgba(255,255,255,0.7); border-left: 2px solid var(--jewel-fuchsia); padding-left: 15px; font-style: italic;">
+                        "La diferencia entre lo místico y lo matemático. Mi Refugio me ayudó a entender mi desgaste."
+                    </div>
+                </div>
             </div>
-        </header>
 
-        <main>
-            <section class="welcome-section">
-                <div class="container">
-                    <h1>El mapa de tu diseño,<br><em id="user-name">...</em></h1>
-                </div>
-            </section>
-
-            <section class="container">
-                <div class="refugio-wrap">
-                    <div class="today-row">
-                        <div class="today-dot"></div>
-                        <span class="today-label" id="dash-fecha-top">COORDENADAS NATALES · CALCULANDO...</span>
-                    </div>
-
-                    <div class="main-grid">
-                        <div class="left-col">
-                            <div class="message-block">
-                                <p class="message-text" id="dash-mensaje">"Sintonizando con tu energía y calculando efemérides exactas..."</p>
-                                <p class="message-source" id="dash-fuente">CÁLCULO DE EFEMÉRIDES · NASA DATA</p>
-                            </div>
-
-                            <div class="cards-row">
-                                <div class="day-card">
-                                    <span class="card-icon">☀️</span>
-                                    <div class="day-card-title">Identidad (Zodíaco)</div>
-                                    <div class="day-card-body" id="card-zodiaco">Calculando tu sol...</div>
-                                </div>
-                                <div class="day-card">
-                                    <span class="card-icon">🔭</span>
-                                    <div class="day-card-title">Posición Real (NASA)</div>
-                                    <div class="day-card-body" id="card-nasa">Calculando constelación...</div>
-                                </div>
-                                <div class="day-card">
-                                    <span class="card-icon">✦</span>
-                                    <div class="day-card-title">Energía Dominante</div>
-                                    <div class="day-card-body" id="card-elemento">Calculando tu centro...</div>
-                                </div>
-                            </div>
-
-                            <div class="week-strip">
-                                <div class="week-label">Tránsitos de tu semana actual</div>
-                                <div class="week-days">
-                                    <div class="day-pip" id="day-1"><span class="dn">Lun</span><div class="db pip-caution"></div></div>
-                                    <div class="day-pip" id="day-2"><span class="dn">Mar</span><div class="db pip-intro"></div></div>
-                                    <div class="day-pip" id="day-3"><span class="dn">Mié</span><div class="db pip-flow"></div></div>
-                                    <div class="day-pip" id="day-4"><span class="dn">Jue</span><div class="db pip-expand"></div></div>
-                                    <div class="day-pip" id="day-5"><span class="dn">Vie</span><div class="db pip-flow"></div></div>
-                                    <div class="day-pip" id="day-6"><span class="dn">Sáb</span><div class="db pip-intro"></div></div>
-                                    <div class="day-pip" id="day-0"><span class="dn">Dom</span><div class="db pip-flow"></div></div>
-                                </div>
-                                <div style="display:flex;gap:14px;margin-top:12px;flex-wrap:wrap;">
-                                    <span style="display:flex;align-items:center;gap:5px;font-size:10px;color:rgba(255,255,255,0.4);"><span style="width:8px;height:8px;border-radius:50%;background:#7dd3a8;display:inline-block;"></span>Flujo</span>
-                                    <span style="display:flex;align-items:center;gap:5px;font-size:10px;color:rgba(255,255,255,0.4);"><span style="width:8px;height:8px;border-radius:50%;background:#f0c060;display:inline-block;"></span>Expansión</span>
-                                    <span style="display:flex;align-items:center;gap:5px;font-size:10px;color:rgba(255,255,255,0.4);"><span style="width:8px;height:8px;border-radius:50%;background:#b79fe8;display:inline-block;"></span>Introspección</span>
-                                    <span style="display:flex;align-items:center;gap:5px;font-size:10px;color:rgba(255,255,255,0.4);"><span style="width:8px;height:8px;border-radius:50%;background:#e07575;display:inline-block;"></span>Tensión</span>
-                                </div>
-                            </div>
-                        </div>
-
-                        <div class="right-col">
-                            <div class="chart-wrap">
-                                <canvas id="syncArc" width="140" height="140"></canvas>
-                                <div class="chart-center-label">
-                                    <span class="sync-num" id="dash-sync-num">--</span>
-                                    <span class="sync-sub">sincronía</span>
-                                </div>
-                            </div>
-                            <div class="sync-tooltip">Mide la alineación entre tu estilo de vida actual y tu diseño de nacimiento.</div>
-
-                            <div class="phase-badge">
-                                <span class="phase-name">Contraste de Bóveda</span>
-                                <div style="display:flex; justify-content: space-between; margin-bottom: 6px;">
-                                    <span style="font-size: 10.5px; color: rgba(255,255,255,0.7);">Zodíaco (Revista):</span>
-                                    <span id="badge-signo-trad" style="font-size: 11px; color: var(--text-cream); font-weight: 600;">--</span>
-                                </div>
-                                <div style="display:flex; justify-content: space-between;">
-                                    <span style="font-size: 10.5px; color: rgba(255,255,255,0.7);">Posición (NASA):</span>
-                                    <span id="badge-signo-nasa" style="font-size: 11px; color: var(--jewel-fuchsia); font-weight: 600;">--</span>
-                                </div>
-                            </div>
-
-                            <div class="dash-divider"></div>
-
-                            <div style="width:100%;">
-                                <div style="font-size:10px;letter-spacing:1.5px;color:rgba(255,255,255,0.4);text-transform:uppercase;margin-bottom:10px;text-align:center;">Vectores Actuales</div>
-                                <div style="display:flex;flex-direction:column;gap:8px;">
-                                    <div style="display:flex;justify-content:space-between;align-items:center;">
-                                        <span style="font-size:11px;color:rgba(255,255,255,0.7);">Racionalidad</span>
-                                        <span id="vec-rac" style="font-size:10px;background:rgba(125,211,168,0.15);color:#7dd3a8;border:0.5px solid rgba(125,211,168,0.3);padding:2px 8px;border-radius:20px;">Favorable</span>
-                                    </div>
-                                    <div style="display:flex;justify-content:space-between;align-items:center;">
-                                        <span style="font-size:11px;color:rgba(255,255,255,0.7);">Límites</span>
-                                        <span id="vec-lim" style="font-size:10px;background:rgba(224,117,117,0.15);color:#e07575;border:0.5px solid rgba(224,117,117,0.3);padding:2px 8px;border-radius:20px;">Tenso</span>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
+            <div class="auth-card" id="tarjeta-acceso">
+                <div class="tabs">
+                    <button class="tab active" onclick="cambiarTab('login')" id="tab-login">Acceso a Refugio</button>
+                    <button class="tab" onclick="cambiarTab('registro')" id="tab-registro">Registrarme</button>
                 </div>
 
-                <article class="glass-card">
-                    <div class="card-header">
-                        <span class="card-icon">☀️</span>
-                        <div class="card-title">
-                            <span>Pilar 01</span>
-                            <h2 id="pilar1-titulo">Arquitectura Base: Tu Gravedad</h2>
-                        </div>
+                <form id="form-login" onsubmit="procesarLogin(event)">
+                    <div class="form-group">
+                        <label>Correo Electrónico</label>
+                        <input type="email" id="login-email" placeholder="Tu correo" required>
                     </div>
-                    <div class="card-body">
-                        <p>En el lenguaje astronómico, la concentración de tu energía natal se ubica en la energía de <strong id="pilar1-elemento">Elemento Tierra</strong>. Esto determina cómo tu psique asume responsabilidades.</p>
-                        <p id="pilar1-texto">Estás diseñada para materializar y sostener. Tu mente busca instintivamente la estructura y la tangibilidad. Sin embargo, tu principal fuga de energía radica en asumiendo el peso de otros.</p>
+                    <div class="form-group">
+                        <label>Contraseña Maestra</label>
+                        <input type="password" id="login-pass" placeholder="••••••••" required>
                     </div>
-                </article>
+                    <button type="submit" class="btn-magia" id="btn-login">Conectar a la Bóveda</button>
+                    <div id="msg-login" class="status-msg"></div>
+                </form>
 
-                <article class="glass-card">
-                    <div class="card-header">
-                        <span class="card-icon">🌙</span>
-                        <div class="card-title">
-                            <span>Pilar 02</span>
-                            <h2 id="pilar2-titulo">Algoritmo Interno: Tu Filtro</h2>
-                        </div>
+                <form id="form-registro" onsubmit="procesarRegistro(event)" style="display: none;">
+                    <div class="form-group">
+                        <label>¿Cómo te llamas?</label>
+                        <input type="text" id="reg-nombre" placeholder="Tu nombre" required>
                     </div>
-                    <div class="card-body">
-                        <p>Mientras tu exterior demanda estructura, el filtro a través del cual procesas el caos opera bajo la energía de <strong id="pilar2-elemento">Elemento de Aire rápido</strong>.</p>
-                        <p id="pilar2-texto">Esta es tu paradoja principal: por fuera pides orden, pero por dentro tu mente sobre-analiza cada escenario buscando entenderlo todo.</p>
+                    <div class="form-group">
+                        <label>Correo Electrónico</label>
+                        <input type="email" id="reg-email" placeholder="Tu correo" required>
                     </div>
-                </article>
-
-                <article class="glass-card locked-card">
-                    <div class="card-header">
-                        <span class="card-icon">☋</span>
-                        <div class="card-title">
-                            <span>Pilar 03 y 04</span>
-                            <h2>Tu Nodo Kármico y Propósito Real</h2>
-                        </div>
-                    </div>
-                    <div class="card-body">
-                        <p>Mientras los Pilares 01 y 02 explican *cómo funcionas*, la posición exacta de tu eje nodal revela el patrón repetitivo que más energía te roba, y la dirección que marca tu verdadero **Propósito de Vida**.</p>
-                        <p>Tus cálculos astronómicos indican una fuerte tendencia a silenciar tus propias necesidades por miedo a romper la paz del entorno. Cada vez que decides callar lo que realmente sientes para no generar un conflicto, estás activando una fricción profunda en tu mapa que te aleja de tu propósito y te lleva irremediablemente a...</p>
-                        </div>
                     
-                    <div class="lock-icon-container">
-                        <svg viewBox="0 0 24 24">
-                            <path d="M18 8h-1V6c0-2.76-2.24-5-5-5S7 3.24 7 6v2H6c-1.1 0-2 .9-2 2v10c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V10c0-1.1-.9-2-2-2zM9 6c0-1.66 1.34-3 3-3s3 1.34 3 3v2H9V6zm9 14H6V10h12v10zm-6-3c1.1 0 2-.9 2-2s-.9-2-2-2-2 .9-2 2 .9 2 2 2z"/>
-                        </svg>
-                        <span class="lock-text">Análisis Encriptado</span>
-                    </div>
-                </article>
-
-                <section class="upsell-section">
-                    <div id="frase-filosofica" class="philosophical-quote">
-                        "El cielo te diseñó con la fortaleza para sostener a tu entorno. Pero los tránsitos de hoy nos piden responder: ¿quién te sostiene a ti?"
+                    <div class="geo-grid">
+                        <div class="form-group">
+                            <label>Nacimiento</label>
+                            <input type="date" id="reg-fecha" required>
+                        </div>
+                        <div class="form-group">
+                            <label>Hora (Aprox)</label>
+                            <input type="time" id="reg-hora" required>
+                        </div>
                     </div>
 
-                    <p style="color: var(--text-muted); font-size: 1.1rem; max-width: 650px; margin: 0 auto 30px auto;">A diferencia de textos genéricos en internet, tu Manual Definitivo cruza bases de datos astronómicas con psicología analítica. Desbloquea tu Mapa Completo para descubrir tus puntos exactos de fricción, tu Nodo Kármico y tu Propósito Vital.</p>
+                    <div class="form-group">
+                        <label>Ciudad de Nacimiento</label>
+                        <input type="text" id="reg-ciudad" placeholder="Ciudad, país" required autocomplete="off">
+                        <div id="lugar-list" class="hidden"></div>
+                    </div>
                     
-                   <button class="btn-magia" onclick="window.location.href='mapa-completo.html'">Decodificar mi Mapa Completo</button>
-                </section>
+                    <input type="hidden" id="reg-lat">
+                    <input type="hidden" id="reg-lon">
 
-            </section>
-        </main>
+                    <div class="form-group">
+                        <label>Crea una Contraseña</label>
+                        <input type="password" id="reg-pass" placeholder="••••••••" required>
+                    </div>
 
-        <footer>
-            <div class="container">&copy; 2026 Refugio. Datos astronómicos de precisión JPL/NASA.</div>
-        </footer>
-    </div>
+                    <button type="submit" class="btn-magia" id="btn-registro">Calcular mi Diseño</button>
+                    <div id="msg-registro" class="status-msg"></div>
+                </form>
+            </div>
+
+        </div>
+    </main>
+
+    <section id="filosofia" class="philosophy container">
+        <div class="philosophy-grid">
+            <div class="philosophy-text">
+                <h2>El alivio de<br>entenderse a una misma</h2>
+                <p>Sabemos que el día a día te exige ser la solución para todos y sostener el peso de la rutina. La carga mental de la mujer moderna es real, silenciosa y agotadora.</p>
+                <p>En Refugio no practicamos la adivinación. Tomamos el dato duro —el cálculo matemático de las posiciones celestes exactas en tu nacimiento— y lo transformamos en una narrativa profunda.</p>
+                <p>Nuestra misión es devolverte el rumbo mediante una introspección racional y estructurada. Creamos este rincón seguro para que sueltes el control y te permitas ser guiada por tu propio diseño.</p>
+            </div>
+            <div class="philosophy-card glass">
+                <blockquote class="serif">
+                    "Transformamos la inmensidad del cielo en un mapa íntimo y exacto, para que puedas frenar, respirar profundo y reconciliarte con tu propia naturaleza."
+                </blockquote>
+            </div>
+        </div>
+    </section>
+
+    <section id="como-funciona" class="how-it-works container">
+        <h2>Un proceso lógico hacia tu bienestar</h2>
+        <div class="steps-container">
+            <div class="step-card glass">
+                <div class="step-icon">📍</div>
+                <h3>1. Ingresas tus datos</h3>
+                <p>Tu nombre, correo, fecha, hora y ciudad exacta conforman la variable de entrada para nuestras coordenadas matemáticas.</p>
+            </div>
+            <div class="step-card glass">
+                <div class="step-icon">⚙️</div>
+                <h3>2. Cálculo Astronómico</h3>
+                <p>Realizamos un cálculo posicional preciso de la bóveda celeste de ese instante, mapeando tu plano con rigor y de forma impecable.</p>
+            </div>
+            <div class="step-card glass">
+                <div class="step-icon">📖</div>
+                <h3>3. Claridad Inmediata</h3>
+                <p>Recibes acceso a tu panel diario gratis y la opción de adquirir tu Mapa Completo en formato premium para mayor profundidad.</p>
+            </div>
+        </div>
+    </section>
+
+    <section class="discover container">
+        <div class="discover-header">
+            <h2>Lo que tu mapa tiene para contarte</h2>
+        </div>
+        <div class="features-grid">
+            <div class="feature-card glass">
+                <span class="feature-icon-text">🌿</span>
+                <h3>Tus áreas de descanso</h3>
+                <p>Identificamos lógicamente dónde tu energía fluye de forma orgánica para dejar de forzar situaciones que te restan salud emocional.</p>
+            </div>
+            <div class="feature-card glass">
+                <span class="feature-icon-text">✨</span>
+                <h3>Tus fortalezas ocultas</h3>
+                <p>Reconocerás talentos que has normalizado con el tiempo, devolviéndote la legitimidad y firmeza en tu toma de decisiones.</p>
+            </div>
+            <div class="feature-card glass">
+                <span class="feature-icon-text">🧭</span>
+                <h3>Tus puntos de expansión</h3>
+                <p>Comprenderás qué direcciones vitales, entornos y retos específicos te traerán verdadera satisfacción y tranquilidad.</p>
+            </div>
+        </div>
+    </section>
+
+    <section id="testimonios" class="testimonials container">
+        <h2>Voces de quienes ya habitan su propio eje</h2>
+        <div class="testimonials-grid">
+            <div class="testimonial-card glass">
+                <p class="testimonial-text">"Entre mi carrera directiva y el hogar, sentía que había perdido mi centro. El enfoque de Refugio fue como si pusieran mi caos interno en palabras racionales. Me devolvió la paz."</p>
+                <div class="testimonial-author">
+                    <div class="author-avatar">LM</div>
+                    <div class="author-info">
+                        <h4>Laura M.</h4>
+                        <p>40 años • Arquitecta</p>
+                    </div>
+                </div>
+            </div>
+            <div class="testimonial-card glass">
+                <p class="testimonial-text">"Me entregó un mapa lógico que me permitió al fin entender por qué me siento tan drenada en ciertos vínculos. Me enseñó a frenar sin culpa. Es un servicio decididamente premium."</p>
+                <div class="testimonial-author">
+                    <div class="author-avatar">ES</div>
+                    <div class="author-info">
+                        <h4>Elena S.</h4>
+                        <p>45 años • Consultora Financiera</p>
+                    </div>
+                </div>
+            </div>
+            <div class="testimonial-card glass">
+                <p class="testimonial-text">"Llevaba meses exhausta necesitando un descanso mental. Leer mi carta acá fue el primer abrazo genuino al intelecto en mucho tiempo. Precisión matemática que verdaderamente consuela."</p>
+                <div class="testimonial-author">
+                    <div class="author-avatar">CT</div>
+                    <div class="author-info">
+                        <h4>Carmen T.</h4>
+                        <p>52 años • Emprendedora</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="cierre-emocional container">
+        <h2>Estás a un paso de retornar a tu propia esencia</h2>
+        <p>Deja de luchar contra tu propia gravedad. Conoce las coordenadas exactas de tu diseño vital y permítete avanzar sin fricción.</p>
+        <a href="#" class="btn-dominante" onclick="irAlRegistro()">DESCUBRE TU HISTORIA</a>
+    </section>
+
+    <footer>
+        <div class="container">
+            <div class="footer-logo">Refugio</div>
+            <p class="serif footer-msg">Dato exacto, cuidado profundo. Para que vuelvas a tu centro.</p>
+            <a href="mailto:contact@emotionalvaults.com" class="contact-email">contact@emotionalvaults.com</a>
+            <div class="footer-links">
+                <a href="#">Aviso Legal</a>
+                <a href="#">Política de Privacidad</a>
+                <a href="#">Términos y Condiciones</a>
+            </div>
+            <p class="footer-scientific-note">Rigor y Transparencia: Todos los mapas y coordenadas celestes generados en este refugio utilizan bases de datos astronómicas oficiales (NASA/JPL) para garantizar que tu lectura esté anclada en la matemática exacta del universo.</p>
+            <p class="copyright">&copy; 2026 Refugio. Todos los derechos reservados.</p>
+        </div>
+    </footer>
 
     <script>
-    // --- MOTOR ASTRONÓMICO EN JAVASCRIPT ---
-    function calcularSignos(fechaStr) {
-        if (!fechaStr) return { sign: "Aries", elem: "Fuego", nasa: "Piscis", cualidad: "Impulso, inicio, acción directa." };
-        const parts = fechaStr.split('-');
-        if (parts.length !== 3) return { sign: "Aries", elem: "Fuego", nasa: "Piscis", cualidad: "Impulso, inicio, acción directa." };
-        const m = parseInt(parts[1]), d = parseInt(parts[2]);
+        // --- MOTOR DE ESTRELLAS (CANVAS) ---
+        const canvas = document.getElementById('cosmos');
+        const ctx = canvas.getContext('2d');
+        let stars = [];
 
-        if ((m===3 && d>=21) || (m===4 && d<=19)) return { sign: "Aries", elem: "Fuego", nasa: "Piscis", cualidad: "Impulso, inicio, acción directa." };
-        if ((m===4 && d>=20) || (m===5 && d<=20)) return { sign: "Tauro", elem: "Tierra", nasa: "Aries", cualidad: "Estructura, paciencia, materialización." };
-        if ((m===5 && d>=21) || (m===6 && d<=20)) return { sign: "Géminis", elem: "Aire", nasa: "Tauro", cualidad: "Análisis mental, comunicación rápida." };
-        if ((m===6 && d>=21) || (m===7 && d<=22)) return { sign: "Cáncer", elem: "Agua", nasa: "Géminis", cualidad: "Empatía profunda, nutrición emocional." };
-        if ((m===7 && d>=23) || (m===8 && d<=22)) return { sign: "Leo", elem: "Fuego", nasa: "Cáncer", cualidad: "Liderazgo, expresión, brillo personal." };
-        if ((m===8 && d>=23) || (m===9 && d<=22)) return { sign: "Virgo", elem: "Tierra", nasa: "Leo", cualidad: "Orden, detalle, servicio estructurado." };
-        if ((m===9 && d>=23) || (m===10 && d<=22)) return { sign: "Libra", elem: "Aire", nasa: "Virgo", cualidad: "Equilibrio, diplomacia, mente vincular." };
-        if ((m===10 && d>=23) || (m===11 && d<=21)) return { sign: "Escorpio", elem: "Agua", nasa: "Libra", cualidad: "Intensidad, transformación profunda." };
-        if ((m===11 && d>=22) || (m===12 && d<=21)) return { sign: "Sagitario", elem: "Fuego", nasa: "Escorpio", cualidad: "Búsqueda de sentido, expansión, fe." };
-        if ((m===12 && d>=22) || (m===1 && d<=19)) return { sign: "Capricornio", elem: "Tierra", nasa: "Sagitario", cualidad: "Responsabilidad, metas, carga estructural." };
-        if ((m===1 && d>=20) || (m===2 && d<=18)) return { sign: "Acuario", elem: "Aire", nasa: "Capricornio", cualidad: "Innovación, desapego, visión global." };
-        return { sign: "Piscis", elem: "Agua", nasa: "Acuario", cualidad: "Sensibilidad absoluta, permeabilidad." };
-    }
-
-    // --- MOTOR PSEUDO-ALEATORIO ---
-    function generarDatosUnicos(nombre) {
-        let hash = 0;
-        for (let i = 0; i < nombre.length; i++) { hash += nombre.charCodeAt(i); }
-        
-        const mensajes = [
-            "Hoy tu intuición está afilada. Confía en tu primer pensamiento al despertar.",
-            "El mapa indica una ventana de calma. Es un buen día para organizar ideas.",
-            "Tu energía vital pide espacio. Hoy, decir 'no' es tu mayor acto de autocuidado.",
-            "Hay fricción en el ambiente, pero tu centro de gravedad es fuerte. Observa, no reacciones.",
-            "Día de expansión intelectual. Esa conversación que posponías hoy fluirá natural."
-        ];
-        
-        const estados = [
-            { txt: "Favorable", col: "#7dd3a8", bg: "rgba(125,211,168,0.15)" },
-            { txt: "Tenso", col: "#e07575", bg: "rgba(224,117,117,0.15)" },
-            { txt: "Neutro", col: "#f0c060", bg: "rgba(240,192,96,0.15)" }
-        ];
-
-        return {
-            sincronia: 65 + (hash % 30),
-            mensaje: mensajes[hash % mensajes.length],
-            vecRac: estados[(hash + 1) % 3],
-            vecLim: estados[(hash + 2) % 3],
-            energiaHoy: (hash % 2 === 0) ? "pip-expand" : "pip-intro"
-        };
-    }
-
-    function drawCanvas(score) {
-        const c = document.getElementById('syncArc');
-        if (!c) return;
-        const ctx = c.getContext('2d');
-        const cx = 70, cy = 70, r = 55;
-
-        ctx.beginPath();
-        ctx.arc(cx, cy, r, Math.PI * 0.75, Math.PI * 2.25);
-        ctx.strokeStyle = 'rgba(255,255,255,0.08)';
-        ctx.lineWidth = 8;
-        ctx.lineCap = 'round';
-        ctx.stroke();
-
-        const endAngle = Math.PI * 0.75 + (score / 100) * Math.PI * 1.5;
-        ctx.beginPath();
-        ctx.arc(cx, cy, r, Math.PI * 0.75, endAngle);
-        ctx.strokeStyle = '#D4208C';
-        ctx.lineWidth = 8;
-        ctx.lineCap = 'round';
-        ctx.stroke();
-
-        ctx.beginPath();
-        ctx.arc(cx, cy, r - 14, 0, Math.PI * 2);
-        ctx.strokeStyle = 'rgba(212, 32, 140, 0.15)';
-        ctx.lineWidth = 1;
-        ctx.stroke();
-    }
-
-    document.addEventListener('DOMContentLoaded', async () => {
-        const emailGuardado = localStorage.getItem('refugio_email');
-        if (!emailGuardado) { window.location.href = "index.html"; return; }
-
-        const mainWrapper = document.getElementById('main-wrapper');
-        const loader = document.getElementById('vault-loader');
-        const loaderText = document.getElementById('loader-text');
-
-        try {
-            const response = await fetch('/api/obtener_datos', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ email: emailGuardado })
-            });
-
-            const resultado = await response.json();
-
-            if (resultado.status === "exito") {
-                const d = resultado.datos;
-                const nombreFormateado = d.nombre ? d.nombre.charAt(0).toUpperCase() + d.nombre.slice(1).toLowerCase() : "Exploradora";
-                
-                const perfilUnico = generarDatosUnicos(d.nombre || "x");
-
-                // --- 1. LÓGICA DEL LOADER ---
-                const frasesCarga = [
-                    "Estableciendo conexión segura...",
-                    `Calculando efemérides para ${d.fecha || 'tu fecha'}...`,
-                    "Alineando vectores planetarios...",
-                    "Decodificando mapa base..."
-                ];
-                
-                let i = 0;
-                const intervalo = setInterval(() => {
-                    if (i < frasesCarga.length) {
-                        loaderText.textContent = frasesCarga[i];
-                        i++;
-                    } else {
-                        clearInterval(intervalo);
-                        loader.style.opacity = '0';
-                        setTimeout(() => {
-                            loader.style.visibility = 'hidden';
-                            mainWrapper.style.opacity = '1';
-                        }, 1000);
-                    }
-                }, 900);
-
-                // --- 2. INYECTAR TEXTOS DEL DASHBOARD DINÁMICO ---
-                document.getElementById('user-name').textContent = nombreFormateado;
-                
-                const fechaMostrar = d.fecha ? d.fecha.split('-').reverse().join('/') : "Calculando...";
-                const ciudadMostrar = d.ciudad ? d.ciudad.toUpperCase() : "NASA DATA";
-                document.getElementById('dash-fecha-top').textContent = `COORDENADAS NATALES · ${fechaMostrar} · ${ciudadMostrar}`;
-
-                document.getElementById('dash-mensaje').textContent = `"${perfilUnico.mensaje}"`;
-                document.getElementById('dash-fuente').textContent = `CÁLCULO DE EFEMÉRIDES PARA ${nombreFormateado.toUpperCase()}`;
-                
-                const astro = calcularSignos(d.fecha);
-
-                document.getElementById('card-zodiaco').innerHTML = `<strong style="color:var(--text-cream);font-size:13px;">${astro.sign}</strong><br>${astro.cualidad}`;
-                document.getElementById('card-nasa').innerHTML = `<strong style="color:var(--text-cream);font-size:13px;">${astro.nasa}</strong><br>El cielo astronómico real en el momento de tu nacimiento.`;
-                document.getElementById('card-elemento').innerHTML = `<strong style="color:var(--text-cream);font-size:13px;">${astro.elem}</strong><br>Esta es la fuerza que rige tus decisiones inconscientes.`;
-
-                document.getElementById('badge-signo-trad').textContent = astro.sign.toUpperCase();
-                document.getElementById('badge-signo-nasa').textContent = astro.nasa.toUpperCase();
-
-                document.getElementById('dash-sync-num').textContent = perfilUnico.sincronia;
-                drawCanvas(perfilUnico.sincronia);
-                
-                // --- CALENDARIO DINÁMICO DE LA SEMANA ---
-                const hoyDate = new Date();
-                const diaSemana = hoyDate.getDay(); // 0 es Domingo, 1 es Lunes... 6 es Sábado
-                
-                // Buscamos el elemento que corresponde al día de hoy y lo resaltamos
-                const dayElement = document.getElementById(`day-${diaSemana}`);
-                if (dayElement) {
-                    dayElement.classList.add('today-pip');
-                    dayElement.querySelector('.dn').textContent = "HOY";
-                    // Le aplicamos el color de energía único de la usuaria a ese día
-                    dayElement.querySelector('.db').className = `db ${perfilUnico.energiaHoy}`;
-                }
-
-                // Inyectamos los Vectores Únicos
-                const vr = document.getElementById('vec-rac');
-                vr.textContent = perfilUnico.vecRac.txt; vr.style.color = perfilUnico.vecRac.col; vr.style.background = perfilUnico.vecRac.bg; vr.style.borderColor = perfilUnico.vecRac.col;
-                
-                const vl = document.getElementById('vec-lim');
-                vl.textContent = perfilUnico.vecLim.txt; vl.style.color = perfilUnico.vecLim.col; vl.style.background = perfilUnico.vecLim.bg; vl.style.borderColor = perfilUnico.vecLim.col;
-
-                // --- 3. INYECTAR PILARES DESDE PYTHON ---
-                if (d.pilar1) {
-                    document.getElementById('pilar1-titulo').textContent = `Arquitectura Base: ${d.pilar1.titulo}`;
-                    document.getElementById('pilar1-elemento').textContent = `Elemento ${astro.elem}`;
-                    document.getElementById('pilar1-texto').textContent = d.pilar1.texto;
-                }
-
-                if (d.pilar2) {
-                    document.getElementById('pilar2-elemento').textContent = d.pilar2.elemento;
-                    document.getElementById('pilar2-texto').textContent = d.pilar2.texto;
-                }
-
-                // --- 4. INYECTAR LA FRASE PSICOLÓGICA ---
-                const fraseElement = document.getElementById('frase-filosofica');
-                if (fraseElement) {
-                    fraseElement.textContent = `"${nombreFormateado}, el mapa te diseñó con la fortaleza para sostener a tu entorno. Pero el cielo de hoy nos pide responder: ¿quién te sostiene a ti?"`;
-                }
-
-            } else {
-                console.error("Error de base de datos:", resultado.message);
-                loaderText.textContent = "Error al conectar con la bóveda.";
-            }
-        } catch (error) {
-            console.error("Error de conexión:", error);
-            loaderText.textContent = "Error de sincronización de red.";
+        function resize() {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
         }
-    });
 
-    function cerrarSesion() {
-        localStorage.removeItem('refugio_email');
-        localStorage.removeItem('refugio_nombre');
-    }
+        function initStars() {
+            stars = [];
+            const count = Math.floor((canvas.width * canvas.height) / 3000);
+            for (let i = 0; i < count; i++) {
+                stars.push({
+                    x: Math.random() * canvas.width,
+                    y: Math.random() * canvas.height,
+                    r: Math.random() * 1.5 + 0.5,
+                    alpha: Math.random() * 0.6 + 0.1,
+                    speed: Math.random() * 0.003 + 0.001,
+                    offset: Math.random() * Math.PI * 2
+                });
+            }
+        }
+
+        function drawStars(t) {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            stars.forEach(s => {
+                const a = s.alpha * (0.6 + 0.4 * Math.sin(t * s.speed + s.offset));
+                ctx.beginPath();
+                ctx.arc(s.x, s.y, s.r, 0, Math.PI * 2);
+                ctx.fillStyle = `rgba(240,232,255,${a})`;
+                ctx.fill();
+            });
+            requestAnimationFrame(drawStars);
+        }
+
+        window.addEventListener('resize', () => { resize(); initStars(); });
+        resize(); initStars(); requestAnimationFrame(drawStars);
+
+        // --- COMPROBAR SESIÓN ---
+        document.addEventListener('DOMContentLoaded', () => {
+            if (localStorage.getItem('refugio_email')) {
+                window.location.href = "refugio.html";
+            }
+        });
+
+        // --- NAVEGACIÓN Y TABS ---
+        function cambiarTab(tab) {
+            document.getElementById('form-login').style.display = tab === 'login' ? 'block' : 'none';
+            document.getElementById('form-registro').style.display = tab === 'registro' ? 'block' : 'none';
+            document.getElementById('tab-login').classList.toggle('active', tab === 'login');
+            document.getElementById('tab-registro').classList.toggle('active', tab === 'registro');
+            document.getElementById('msg-login').textContent = '';
+            document.getElementById('msg-registro').textContent = '';
+        }
+
+        function irAlLogin() {
+            document.getElementById('tarjeta-acceso').scrollIntoView({ behavior: 'smooth', block: 'center' });
+            cambiarTab('login');
+            setTimeout(() => document.getElementById('login-email').focus(), 500);
+        }
+
+        function irAlRegistro() {
+            document.getElementById('tarjeta-acceso').scrollIntoView({ behavior: 'smooth', block: 'center' });
+            cambiarTab('registro');
+            setTimeout(() => document.getElementById('reg-nombre').focus(), 500);
+        }
+
+        // SCROLL SUAVE PARA LINKS DEL HEADER
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                const targetId = this.getAttribute('href');
+                if (targetId === '#' || !targetId) return;
+                const targetElement = document.querySelector(targetId);
+                if (targetElement) { e.preventDefault(); targetElement.scrollIntoView({ behavior: 'smooth', block: 'start' }); }
+            });
+        });
+
+        // --- AUTOCOMPLETAR CIUDAD (PHOTON API) ---
+        const lugarInput = document.getElementById('reg-ciudad');
+        const lugarList = document.getElementById('lugar-list');
+
+        lugarInput.addEventListener('input', async (e) => {
+            const val = e.target.value;
+            if (val.length < 3) { lugarList.classList.add('hidden'); return; }
+            try {
+                const res = await fetch(`https://photon.komoot.io/api/?q=${encodeURIComponent(val)}&limit=5`);
+                const data = await res.json();
+                lugarList.innerHTML = '';
+                lugarList.classList.remove('hidden');
+                data.features.forEach(feat => {
+                    const prop = feat.properties;
+                    const label = [prop.name, prop.state, prop.country].filter(Boolean).join(", ");
+                    const item = document.createElement('div');
+                    item.className = 'autocomplete-item';
+                    item.innerText = label.toUpperCase(); 
+                    item.onclick = () => {
+                        lugarInput.value = label.toUpperCase(); 
+                        document.getElementById('reg-lat').value = feat.geometry.coordinates[1];
+                        document.getElementById('reg-lon').value = feat.geometry.coordinates[0];
+                        lugarList.classList.add('hidden');
+                    };
+                    lugarList.appendChild(item);
+                });
+            } catch (err) { console.error(err); }
+        });
+        document.addEventListener('click', (e) => { if (e.target !== lugarInput) lugarList.classList.add('hidden'); });
+
+        // --- LÓGICAS DE CONEXIÓN ---
+        async function procesarLogin(e) {
+            e.preventDefault();
+            const btn = document.getElementById('btn-login');
+            const msg = document.getElementById('msg-login');
+            const email = document.getElementById('login-email').value;
+            const pass = document.getElementById('login-pass').value;
+
+            btn.disabled = true; btn.textContent = "Sintonizando..."; msg.textContent = "";
+
+            try {
+                const res = await fetch('/api/login', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ email, password: pass })
+                });
+                const data = await res.json();
+
+                if (data.status === "exito") {
+                    localStorage.setItem('refugio_email', data.datos.email);
+                    localStorage.setItem('refugio_nombre', data.datos.nombre);
+                    window.location.href = "refugio.html";
+                } else {
+                    msg.textContent = data.message;
+                    btn.disabled = false; btn.textContent = "Conectar a la Bóveda";
+                }
+            } catch (error) {
+                msg.textContent = "Error conectando al servidor estelar.";
+                btn.disabled = false; btn.textContent = "Conectar a la Bóveda";
+            }
+        }
+
+        async function procesarRegistro(e) {
+            e.preventDefault();
+            const btn = document.getElementById('btn-registro');
+            const msg = document.getElementById('msg-registro');
+            
+            const payload = {
+                nombre: document.getElementById('reg-nombre').value,
+                email: document.getElementById('reg-email').value,
+                password: document.getElementById('reg-pass').value,
+                fecha: document.getElementById('reg-fecha').value,
+                hora: document.getElementById('reg-hora').value,
+                ciudad: document.getElementById('reg-ciudad').value,
+                lat: document.getElementById('reg-lat').value,
+                lon: document.getElementById('reg-lon').value
+            };
+
+            btn.disabled = true; btn.textContent = "Calculando vectores..."; msg.textContent = "";
+
+            try {
+                const res = await fetch('/api/registro', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(payload)
+                });
+                const data = await res.json();
+
+                if (data.status === "exito") {
+                    localStorage.setItem('refugio_email', payload.email);
+                    localStorage.setItem('refugio_nombre', payload.nombre);
+                    window.location.href = "refugio.html";
+                } else if (data.status === "existe") {
+                    msg.textContent = "Este correo ya tiene un Refugio. Usa la pestaña de Acceso.";
+                    btn.disabled = false; btn.textContent = "Calcular mi Diseño";
+                } else {
+                    msg.textContent = data.message;
+                    btn.disabled = false; btn.textContent = "Calcular mi Diseño";
+                }
+            } catch (error) {
+                msg.textContent = "Fallo al conectar con la bóveda.";
+                btn.disabled = false; btn.textContent = "Calcular mi Diseño";
+            }
+        }
     </script>
 </body>
 </html>
