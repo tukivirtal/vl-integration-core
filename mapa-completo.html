@@ -1102,6 +1102,18 @@ setTimeout(() => {
     }, 22);
   }, 2000);
 }, 1500);
+ // --- LEER EL NOMBRE DE LA USUARIA DESDE EL PANEL FREE ---
+document.addEventListener('DOMContentLoaded', () => {
+    const nombreGuardado = localStorage.getItem('refugio_nombre');
+    if (nombreGuardado) {
+        const nombreFormateado = nombreGuardado.charAt(0).toUpperCase() + nombreGuardado.slice(1).toLowerCase();
+        // Cambiamos el título principal para que sea hiper-personalizado
+        const heroName = document.querySelector('.hero-name');
+        if (heroName) {
+            heroName.innerHTML = `Tu Mapa,<br>${nombreFormateado}.`;
+        }
+    }
+});
 </script>
 </body>
 </html>
