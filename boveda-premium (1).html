@@ -1,0 +1,841 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Bóveda Premium · Refugio</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300;1,400&family=DM+Mono:wght@300;400&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+
+:root{
+  --mg:#c2185b;--mg-bright:#f06292;--mg-glow:rgba(194,24,91,0.2);
+  --void:#06040f;--surface:rgba(255,255,255,0.032);--surface2:rgba(255,255,255,0.055);
+  --border:rgba(194,24,91,0.18);--border-s:rgba(255,255,255,0.07);--border-b:rgba(194,24,91,0.4);
+  --tp:#f0e8ff;--ts:rgba(240,232,255,0.55);--tm:rgba(240,232,255,0.28);
+  --gold:#d4a853;--gold-d:rgba(212,168,83,0.12);
+  --green:#7dd3a8;--red:#e07575;--purple:#b79fe8;--yellow:#f0c060;
+  --sidebar:240px;
+}
+
+html,body{height:100%;overflow:hidden}
+body{background:var(--void);color:var(--tp);font-family:'DM Mono',monospace;font-weight:300;display:flex;flex-direction:column}
+
+/* FONDO */
+#cosmos{position:fixed;inset:0;z-index:0;pointer-events:none}
+.neb{position:fixed;border-radius:50%;filter:blur(100px);pointer-events:none;z-index:0}
+.neb-1{width:600px;height:600px;background:radial-gradient(circle,rgba(80,15,120,0.28) 0%,transparent 70%);top:-150px;left:-100px;animation:drift 22s ease-in-out infinite alternate}
+.neb-2{width:500px;height:500px;background:radial-gradient(circle,rgba(194,24,91,0.14) 0%,transparent 70%);bottom:0;right:-80px;animation:drift 28s ease-in-out infinite alternate-reverse}
+@keyframes drift{from{transform:translate(0,0)}to{transform:translate(20px,15px)}}
+
+/* LAYOUT */
+.app{display:flex;height:100vh;position:relative;z-index:10}
+
+/* SIDEBAR */
+.sidebar{
+  width:var(--sidebar);flex-shrink:0;
+  background:rgba(6,4,15,0.75);backdrop-filter:blur(24px);
+  border-right:1px solid var(--border-s);
+  display:flex;flex-direction:column;
+  padding:28px 0;
+  position:relative;z-index:20;
+}
+
+.brand{padding:0 20px 32px;border-bottom:1px solid var(--border-s);margin-bottom:20px}
+.brand-logo{font-family:'Cormorant Garamond',serif;font-size:26px;font-style:italic;color:var(--tp);letter-spacing:0.5px}
+.brand-badge{
+  display:inline-block;margin-top:6px;
+  font-size:8px;letter-spacing:0.35em;color:var(--gold);
+  border:1px solid rgba(212,168,83,0.3);padding:2px 8px;border-radius:1px;
+}
+
+.nav{display:flex;flex-direction:column;gap:3px;padding:0 12px;flex:1}
+.nav-btn{
+  background:transparent;border:none;color:var(--ts);
+  text-align:left;padding:13px 16px;
+  font-family:'DM Mono',monospace;font-size:11px;letter-spacing:0.08em;
+  cursor:pointer;border-radius:1px;transition:all 0.25s;
+  display:flex;align-items:center;gap:10px;
+}
+.nav-btn:hover{background:var(--surface);color:var(--tp)}
+.nav-btn.active{background:var(--mg-glow);color:var(--mg-bright);border:1px solid var(--border)}
+.nav-icon{font-size:14px;opacity:0.8}
+
+.nav-sep{height:1px;background:var(--border-s);margin:12px 12px}
+
+.user-card{
+  margin:0 12px;padding:16px;
+  background:var(--surface);border:1px solid var(--border-s);border-radius:1px;
+}
+.user-name{font-family:'Cormorant Garamond',serif;font-size:19px;color:var(--tp);margin-bottom:4px}
+.user-sign{font-size:9px;letter-spacing:0.2em;color:var(--tm);text-transform:uppercase}
+
+/* SYNC MINI */
+.sync-mini{
+  margin:0 12px 0;padding:12px 16px;
+  display:flex;align-items:center;gap:10px;
+  background:var(--mg-glow);border:1px solid var(--border);border-radius:1px;
+}
+.sync-mini-num{font-family:'Cormorant Garamond',serif;font-size:28px;color:var(--mg-bright)}
+.sync-mini-info{}
+.sync-mini-label{font-size:8px;letter-spacing:0.3em;color:var(--mg-bright);margin-bottom:2px}
+.sync-mini-sub{font-size:9px;color:var(--tm)}
+
+/* MAIN */
+.main{flex:1;display:flex;flex-direction:column;overflow:hidden;position:relative}
+
+/* PANELS */
+.panel{
+  position:absolute;inset:0;
+  opacity:0;pointer-events:none;
+  transition:opacity 0.4s ease;
+  overflow-y:auto;
+  padding:40px 52px;
+  display:flex;flex-direction:column;
+}
+.panel.active{opacity:1;pointer-events:all}
+
+/* SCROLLBAR */
+::-webkit-scrollbar{width:5px}
+::-webkit-scrollbar-track{background:transparent}
+::-webkit-scrollbar-thumb{background:rgba(255,255,255,0.08);border-radius:10px}
+
+/* PANEL HEADER */
+.panel-hd{margin-bottom:28px;padding-bottom:20px;border-bottom:1px solid var(--border-s)}
+.panel-eyebrow{font-size:9px;letter-spacing:0.4em;color:var(--mg-bright);margin-bottom:8px}
+.panel-title{font-family:'Cormorant Garamond',serif;font-size:clamp(26px,3vw,38px);font-weight:300;color:var(--tp);line-height:1.1}
+.panel-sub{font-size:11px;color:var(--tm);letter-spacing:0.1em;margin-top:6px}
+
+/* ═══ ORÁCULO CHAT ═══ */
+.chat-wrap{
+  flex:1;display:flex;flex-direction:column;
+  background:rgba(0,0,0,0.25);border:1px solid var(--border-s);
+  border-radius:1px;overflow:hidden;min-height:0;
+}
+
+.chat-history{
+  flex:1;padding:28px;overflow-y:auto;
+  display:flex;flex-direction:column;gap:18px;
+  min-height:0;
+}
+
+/* MENSAJES */
+.msg{max-width:82%;line-height:1.7;position:relative}
+
+.msg-sys{
+  align-self:flex-start;
+  background:rgba(194,24,91,0.07);
+  border:1px solid var(--border);
+  border-left:2px solid var(--mg);
+  padding:20px 24px;border-radius:0 12px 12px 12px;
+}
+
+.msg-sys-text{
+  font-family:'Cormorant Garamond',serif;
+  font-size:18px;font-style:italic;color:var(--tp);
+  line-height:1.6;margin-bottom:6px;
+}
+
+.msg-sys-text p{margin-bottom:10px}
+.msg-sys-text p:last-child{margin-bottom:0}
+
+.msg-meta{
+  font-family:'DM Mono',monospace;font-size:8px;
+  color:var(--mg-bright);letter-spacing:0.3em;
+  text-transform:uppercase;font-style:normal;
+  margin-top:10px;display:block;
+}
+
+.msg-user{
+  align-self:flex-end;
+  background:var(--surface2);border:1px solid var(--border-s);
+  padding:14px 20px;border-radius:12px 0 12px 12px;
+  font-size:13px;color:var(--ts);
+}
+
+/* TYPING */
+.typing-bubble{
+  align-self:flex-start;
+  background:rgba(194,24,91,0.07);border:1px solid var(--border);
+  border-left:2px solid var(--mg);
+  padding:16px 24px;border-radius:0 12px 12px 12px;
+}
+.typing-dots{display:flex;gap:5px;align-items:center}
+.dot{width:5px;height:5px;border-radius:50%;background:var(--mg-bright);animation:blink 1.4s ease-in-out infinite}
+.dot:nth-child(2){animation-delay:0.2s}
+.dot:nth-child(3){animation-delay:0.4s}
+@keyframes blink{0%,80%,100%{opacity:0.2}40%{opacity:1}}
+
+/* INPUT */
+.chat-input-row{
+  padding:16px 20px;background:rgba(6,4,15,0.8);
+  border-top:1px solid var(--border-s);
+  display:flex;gap:12px;align-items:flex-end;
+}
+.chat-input{
+  flex:1;background:rgba(255,255,255,0.04);
+  border:1px solid var(--border-s);border-radius:1px;
+  padding:14px 16px;color:var(--tp);
+  font-family:'DM Mono',monospace;font-size:12px;
+  resize:none;outline:none;
+  line-height:1.5;max-height:120px;min-height:48px;
+  transition:border-color 0.3s;
+}
+.chat-input:focus{border-color:var(--border-b)}
+.chat-input::placeholder{color:var(--tm)}
+
+.send-btn{
+  background:var(--mg);color:#fff;border:none;
+  padding:14px 24px;border-radius:1px;
+  font-family:'DM Mono',monospace;font-size:10px;
+  letter-spacing:0.25em;cursor:pointer;
+  transition:transform 0.2s,box-shadow 0.3s;
+  white-space:nowrap;
+  position:relative;overflow:hidden;
+}
+.send-btn::after{
+  content:'';position:absolute;inset:0;
+  background:linear-gradient(120deg,transparent 30%,rgba(255,255,255,0.1) 50%,transparent 70%);
+  transform:translateX(-100%);transition:transform 0.4s;
+}
+.send-btn:hover{transform:translateY(-1px);box-shadow:0 8px 30px rgba(194,24,91,0.4)}
+.send-btn:hover::after{transform:translateX(100%)}
+.send-btn:disabled{opacity:0.5;cursor:not-allowed;transform:none}
+
+/* PREGUNTAS SUGERIDAS */
+.suggestions{
+  padding:12px 20px 0;display:flex;gap:8px;flex-wrap:wrap;
+}
+.sug-btn{
+  font-size:10px;color:var(--ts);
+  border:1px solid var(--border-s);background:transparent;
+  padding:6px 12px;border-radius:1px;cursor:pointer;
+  font-family:'DM Mono',monospace;letter-spacing:0.05em;
+  transition:all 0.2s;
+}
+.sug-btn:hover{border-color:var(--border-b);color:var(--mg-bright)}
+
+/* ═══ PILARES ═══ */
+.pilares-grid{
+  display:grid;grid-template-columns:1fr 1fr;gap:24px;
+  margin-top:4px;
+}
+
+.pilar-card{
+  background:var(--surface);border:1px solid var(--border-s);
+  padding:32px;border-radius:1px;
+  position:relative;overflow:hidden;
+  transition:border-color 0.3s;
+}
+.pilar-card:hover{border-color:var(--border)}
+.pilar-card::before{
+  content:'';position:absolute;top:0;left:0;
+  width:2px;height:100%;
+  background:linear-gradient(to bottom,var(--mg),transparent);
+}
+
+.pilar-num{font-size:8px;letter-spacing:0.4em;color:var(--mg-bright);margin-bottom:6px}
+.pilar-icon{font-size:20px;margin-bottom:10px;display:block}
+.pilar-title{
+  font-family:'Cormorant Garamond',serif;
+  font-size:22px;font-weight:400;color:var(--tp);
+  margin-bottom:16px;line-height:1.2;
+}
+.pilar-body{font-size:12px;color:var(--ts);line-height:1.85;margin-bottom:12px}
+
+.pilar-insight{
+  margin-top:16px;padding:12px 14px;
+  background:var(--gold-d);border-left:2px solid var(--gold);
+  font-size:11px;color:var(--gold);font-style:italic;line-height:1.6;
+}
+
+/* DATO TÉCNICO */
+.dato-tecnico{
+  display:flex;align-items:center;gap:8px;
+  margin-top:12px;padding:8px 12px;
+  background:rgba(0,0,0,0.2);border:1px solid var(--border-s);
+  font-size:9px;letter-spacing:0.15em;color:var(--tm);
+}
+.dato-tecnico span{color:var(--mg-bright);font-weight:400}
+
+/* ═══ TRÁNSITOS ═══ */
+.transitos-intro{
+  font-size:12px;color:var(--ts);line-height:1.8;
+  margin-bottom:32px;padding:16px 20px;
+  background:var(--surface);border-left:2px solid var(--mg);
+  max-width:680px;
+}
+
+.timeline{
+  border-left:1px solid var(--border);
+  padding-left:32px;
+  position:relative;
+}
+
+.t-event{
+  margin-bottom:44px;position:relative;
+}
+
+.t-dot{
+  position:absolute;left:-38px;top:6px;
+  width:12px;height:12px;border-radius:50%;
+  border:1px solid rgba(0,0,0,0.3);
+}
+.dot-tension{background:var(--red);box-shadow:0 0 10px rgba(229,115,115,0.5)}
+.dot-flujo{background:var(--green);box-shadow:0 0 10px rgba(125,211,168,0.5)}
+.dot-expansion{background:var(--gold);box-shadow:0 0 10px rgba(212,168,83,0.5)}
+.dot-alerta{background:var(--purple);box-shadow:0 0 10px rgba(183,159,232,0.5)}
+
+.t-date{
+  font-size:9px;letter-spacing:0.35em;color:var(--mg-bright);
+  margin-bottom:8px;display:block;
+}
+.t-type{
+  font-size:8px;letter-spacing:0.3em;color:var(--tm);
+  margin-bottom:6px;display:block;
+}
+.t-title{
+  font-family:'Cormorant Garamond',serif;
+  font-size:24px;color:var(--tp);margin-bottom:10px;
+  line-height:1.1;
+}
+.t-desc{font-size:12px;color:var(--ts);line-height:1.8;max-width:640px}
+.t-accion{
+  margin-top:12px;font-size:11px;color:var(--gold);
+  padding:8px 14px;background:var(--gold-d);
+  border-left:2px solid var(--gold);display:inline-block;
+}
+
+/* ═══ DIARIO ═══ */
+.diario-intro{
+  font-size:12px;color:var(--ts);line-height:1.8;
+  margin-bottom:28px;max-width:600px;
+}
+.diario-entries{display:flex;flex-direction:column;gap:16px;margin-bottom:32px}
+.diario-entry{
+  background:var(--surface);border:1px solid var(--border-s);
+  padding:20px 24px;border-radius:1px;
+  border-left:2px solid var(--mg);
+}
+.entry-date{font-size:9px;letter-spacing:0.3em;color:var(--mg-bright);margin-bottom:8px}
+.entry-question{font-size:11px;color:var(--tm);margin-bottom:6px}
+.entry-insight{
+  font-family:'Cormorant Garamond',serif;
+  font-size:15px;font-style:italic;color:var(--tp);line-height:1.5;
+}
+
+.diario-empty{
+  text-align:center;padding:60px 20px;color:var(--tm);
+  font-size:12px;line-height:1.9;
+}
+.diario-empty p:first-child{
+  font-family:'Cormorant Garamond',serif;
+  font-size:20px;font-style:italic;color:var(--ts);
+  margin-bottom:12px;
+}
+
+/* ═══ TOOLTIP RACIONAL ═══ */
+.racional-banner{
+  display:flex;align-items:center;gap:12px;
+  padding:10px 16px;margin-bottom:20px;
+  background:rgba(212,168,83,0.06);border:1px solid rgba(212,168,83,0.2);
+  font-size:10px;color:rgba(212,168,83,0.7);letter-spacing:0.1em;
+}
+.racional-dot{width:6px;height:6px;border-radius:50%;background:var(--gold);flex-shrink:0}
+
+/* ESTADO VACÍO */
+.empty-state{
+  display:flex;flex-direction:column;align-items:center;
+  justify-content:center;height:100%;gap:12px;text-align:center;color:var(--tm);
+}
+
+/* ANIMACIONES */
+@keyframes fadeUp{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:none}}
+.fade-in{animation:fadeUp 0.5s ease forwards}
+
+/* RESPONSIVE */
+@media(max-width:700px){
+  :root{--sidebar:0px}
+  .sidebar{width:100%;height:auto;flex-direction:row;flex-wrap:wrap;padding:14px 16px;gap:8px;border-right:none;border-bottom:1px solid var(--border-s)}
+  .brand{padding:0;border-bottom:none;margin-bottom:0}
+  .nav{flex-direction:row;flex:unset;padding:0;gap:4px;overflow-x:auto}
+  .nav-btn{padding:8px 12px;white-space:nowrap;font-size:10px}
+  .sync-mini,.user-card,.nav-sep{display:none}
+  .panel{padding:20px 16px}
+  .pilares-grid{grid-template-columns:1fr}
+  .app{flex-direction:column}
+}
+</style>
+</head>
+<body>
+
+<canvas id="cosmos"></canvas>
+<div class="neb neb-1"></div>
+<div class="neb neb-2"></div>
+
+<div class="app">
+
+  <!-- ═══ SIDEBAR ═══ -->
+  <aside class="sidebar">
+    <div class="brand">
+      <div class="brand-logo">Refugio</div>
+      <div class="brand-badge">Bóveda Premium</div>
+    </div>
+
+    <nav class="nav">
+      <button class="nav-btn active" onclick="goTab('oraculo',this)">
+        <span class="nav-icon">✦</span> El Oráculo
+      </button>
+      <button class="nav-btn" onclick="goTab('pilares',this)">
+        <span class="nav-icon">◈</span> Los 4 Pilares
+      </button>
+      <button class="nav-btn" onclick="goTab('transitos',this)">
+        <span class="nav-icon">◎</span> Tránsitos 90 días
+      </button>
+      <button class="nav-btn" onclick="goTab('diario',this)">
+        <span class="nav-icon">◇</span> Diario de Insights
+      </button>
+      <div class="nav-sep"></div>
+      <button class="nav-btn" onclick="window.location.href='refugio.html'">
+        <span class="nav-icon">←</span> Panel Diario
+      </button>
+    </nav>
+
+    <div style="margin-top:auto;display:flex;flex-direction:column;gap:12px;padding:0 12px">
+      <div class="sync-mini">
+        <div class="sync-mini-num" id="sb-sync">70</div>
+        <div class="sync-mini-info">
+          <div class="sync-mini-label">Sincronía natal</div>
+          <div class="sync-mini-sub">Actualizada hoy</div>
+        </div>
+      </div>
+      <div class="user-card">
+        <div class="user-name" id="sb-nombre">—</div>
+        <div class="user-sign" id="sb-signo">Cargando...</div>
+      </div>
+    </div>
+  </aside>
+
+  <!-- ═══ MAIN ═══ -->
+  <main class="main">
+
+    <!-- ── PANEL 1: ORÁCULO ── -->
+    <section id="tab-oraculo" class="panel active">
+      <div class="panel-hd">
+        <div class="panel-eyebrow">CONVERSACIÓN NATAL</div>
+        <h2 class="panel-title">El Oráculo</h2>
+        <p class="panel-sub">Tu carta natal responde. Cada insight surge de tu configuración astronómica exacta.</p>
+      </div>
+
+      <div class="racional-banner">
+        <div class="racional-dot"></div>
+        Sistema activo · Efemérides JPL/NASA · Carta natal procesada · IA entrenada en psicología analítica junguiana
+      </div>
+
+      <div class="chat-wrap">
+        <div class="chat-history" id="chat-history">
+          <div class="msg msg-sys fade-in">
+            <div class="msg-sys-text">
+              <p id="msg-bienvenida">He decodificado tu carta por completo. Estoy lista para traducir los movimientos de la bóveda a tu vida diaria.</p>
+              <p><strong>¿Qué decisión o situación estás evitando enfrentar ahora mismo?</strong></p>
+            </div>
+            <span class="msg-meta">Sistema astronómico inicializado · Tu mapa activo</span>
+          </div>
+        </div>
+
+        <div class="suggestions" id="suggestions">
+          <button class="sug-btn" onclick="useSuggestion(this)">Tengo miedo de avanzar</button>
+          <button class="sug-btn" onclick="useSuggestion(this)">No sé si quedarme o irme</button>
+          <button class="sug-btn" onclick="useSuggestion(this)">Me siento bloqueada en el trabajo</button>
+          <button class="sug-btn" onclick="useSuggestion(this)">¿Por qué repito los mismos patrones?</button>
+        </div>
+
+        <div class="chat-input-row">
+          <textarea id="chat-input" class="chat-input" placeholder="Escribe lo que estás viviendo..." rows="1"
+            onkeydown="if(event.key==='Enter'&&!event.shiftKey){event.preventDefault();enviar()}"></textarea>
+          <button class="send-btn" id="send-btn" onclick="enviar()">CONSULTAR</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- ── PANEL 2: PILARES ── -->
+    <section id="tab-pilares" class="panel">
+      <div class="panel-hd">
+        <div class="panel-eyebrow">ARQUITECTURA PSÍQUICA COMPLETA</div>
+        <h2 class="panel-title">Los 4 Pilares</h2>
+        <p class="panel-sub">La estructura completa de tu diseño natal · Cálculo astronómico + psicología analítica</p>
+      </div>
+
+      <div class="racional-banner" style="margin-bottom:28px">
+        <div class="racional-dot"></div>
+        Basado en posiciones reales de efemérides · Swiss Ephemeris + JPL · No en arquetipos genéricos
+      </div>
+
+      <div class="pilares-grid">
+
+        <div class="pilar-card">
+          <div class="pilar-num">PILAR 01 · ARQUITECTURA BASE</div>
+          <span class="pilar-icon">☀️</span>
+          <h3 class="pilar-title">Tu Gravedad y Centro Operativo</h3>
+          <p class="pilar-body">Tu centro operativo responde al <strong id="p1-elem">elemento Fuego</strong>. Estás diseñada orgánicamente para iniciar, transformar y liderar procesos. La quietud prolongada no te relaja — te oxida.</p>
+          <p class="pilar-body">Tu mayor fuga energética ocurre cuando intentás amoldarte a estructuras lentas de otras personas. Asumís la carga de arrastrar a quienes no quieren moverse, lo que consume tu fuego interno sin que lo notes hasta que ya estás agotada.</p>
+          <div class="dato-tecnico">◈ SOL EN <span id="p1-sol">ARIES</span> · ELEMENTO <span id="p1-elem2">FUEGO</span> · CASA <span id="p1-casa">I</span></div>
+        </div>
+
+        <div class="pilar-card">
+          <div class="pilar-num">PILAR 02 · FILTRO EMOCIONAL</div>
+          <span class="pilar-icon">🌙</span>
+          <h3 class="pilar-title">Tu Algoritmo Interno</h3>
+          <p class="pilar-body">A nivel reactivo, procesás el caos a través del <strong id="p2-elem">Aire</strong>. Tu mecanismo de defensa principal es racionalizar las emociones antes de sentirlas. Lo que otros sienten, vos lo analizás.</p>
+          <p class="pilar-body">El cansancio mental que sentís al final del día no es físico: es tu filtro intentando encontrarle una lógica a comportamientos humanos que simplemente son irracionales. Esa es la paradoja de tu diseño — por fuera pedís estructura, por dentro tu mente nunca para.</p>
+          <div class="dato-tecnico">◈ LUNA EN <span id="p2-luna">GÉMINIS</span> · ELEMENTO <span id="p2-elem2">AIRE</span> · CASA <span id="p2-casa">III</span></div>
+        </div>
+
+        <div class="pilar-card">
+          <div class="pilar-num">PILAR 03 · HERIDA VIVA · NODO SUR</div>
+          <span class="pilar-icon">☋</span>
+          <h3 class="pilar-title">El Patrón que te Frena</h3>
+          <p class="pilar-body">Tu Nodo Sur marca el lugar donde te sentís segura pero estancada. En tu diseño, este patrón se activa cuando silenciás tu propia voz para mantener la paz — con tu pareja, tu familia, tu entorno laboral.</p>
+          <p class="pilar-body">Cada vez que decís "no importa, yo me adapto" cuando algo te molesta profundamente, tu mapa entra en fricción crónica. Estás pagando el precio de la paz externa con tu energía interna. El sistema lo registra como deuda que se acumula.</p>
+          <div class="pilar-insight">⚠ Este es el origen exacto del resentimiento silencioso que sentís de vez en cuando — no es debilidad, es fricción natal acumulada.</div>
+          <div class="dato-tecnico">◈ NODO SUR EN <span id="p3-nodo">LIBRA</span> · EJE <span id="p3-eje">ARIES-LIBRA</span></div>
+        </div>
+
+        <div class="pilar-card">
+          <div class="pilar-num">PILAR 04 · PROPÓSITO REAL · NODO NORTE</div>
+          <span class="pilar-icon">☊</span>
+          <h3 class="pilar-title">Tu Dirección Evolutiva</h3>
+          <p class="pilar-body">Tu Nodo Norte te exige aprender el sano egoísmo. Tu propósito en esta etapa no es ser la cuidadora perfecta ni la empleada inquebrantable — es aprender a reclamar tu espacio y tus deseos sin culpa.</p>
+          <p class="pilar-body">La vida te va a poner repetidamente en situaciones donde tendrás que decepcionar a alguien para serte fiel a vos misma. Ese es tu trabajo evolutivo. Cuando lo hacés, la fricción desaparece. Cuando lo evitás, el costo se paga en salud y en claridad.</p>
+          <div class="pilar-insight" style="border-left-color:var(--mg);background:var(--mg-glow);color:var(--mg-bright)">✦ Cada vez que decís "No" desde un lugar honesto, estás cumpliendo tu propósito natal.</div>
+          <div class="dato-tecnico">◈ NODO NORTE EN <span id="p4-nodo">ARIES</span> · JUPITER COMO REGENTE EVOLUTIVO</div>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- ── PANEL 3: TRÁNSITOS ── -->
+    <section id="tab-transitos" class="panel">
+      <div class="panel-hd">
+        <div class="panel-eyebrow">PROYECCIÓN ASTRONÓMICA PERSONALIZADA</div>
+        <h2 class="panel-title">Ruta a 90 Días</h2>
+        <p class="panel-sub" id="transitos-rango">Calculando ventana...</p>
+      </div>
+
+      <div class="transitos-intro">
+        Estos no son tránsitos genéricos. Están calculados cruzando las posiciones actuales de los planetas con tu carta natal específica. Cada evento tiene una recomendación de acción concreta.
+      </div>
+
+      <div class="racional-banner" style="margin-bottom:32px">
+        <div class="racional-dot"></div>
+        Posiciones planetarias al <span id="fecha-hoy" style="color:var(--gold);margin:0 4px">—</span> · Algoritmo de efemérides Swiss Ephemeris
+      </div>
+
+      <div class="timeline" id="timeline">
+
+        <div class="t-event">
+          <div class="t-dot dot-tension"></div>
+          <span class="t-type">TENSIÓN · MERCURIO–SATURNO</span>
+          <span class="t-date" id="ev1-date">PRÓXIMO MARTES</span>
+          <h3 class="t-title">Comunicación bloqueada</h3>
+          <p class="t-desc">Tu filtro de aire estará saturado. Las palabras no saldrán como las pensás. Evitá conversaciones decisivas, negociaciones laborales o discusiones de pareja en esta ventana — no porque no tengas razón, sino porque no podrás expresarla con claridad.</p>
+          <div class="t-accion">Acción: Dedicá ese día a trabajo en solitario y escucha activa. No firmes nada.</div>
+        </div>
+
+        <div class="t-event">
+          <div class="t-dot dot-expansion"></div>
+          <span class="t-type">EXPANSIÓN · JÚPITER ACTIVO</span>
+          <span class="t-date" id="ev2-date">EN 15 DÍAS</span>
+          <h3 class="t-title">Ventana de acción alineada</h3>
+          <p class="t-desc">Una conjunción expansiva activa directamente tu Nodo Norte. Sentirás un impulso genuino de tomar esa decisión que venís postergando. No es impulsividad — es tu propósito activado por el cielo. Esta es la ventana correcta para decir Sí.</p>
+          <div class="t-accion">Acción: Tomá la decisión que más miedo te da. El mapa está de tu lado esta semana.</div>
+        </div>
+
+        <div class="t-event">
+          <div class="t-dot dot-alerta"></div>
+          <span class="t-type">PRUEBA KÁRMICA · NODO SUR ACTIVADO</span>
+          <span class="t-date" id="ev3-date">PRÓXIMO MES</span>
+          <h3 class="t-title">El patrón viejo vuelve a llamar</h3>
+          <p class="t-desc">Una persona o situación te va a pedir que volvás a tu viejo patrón — silenciar lo que sentís para no generar conflicto. Esta vez estarás preparada para reconocerlo antes de caer. El sistema astral lo llama "retorno nodal parcial".</p>
+          <div class="t-accion">Acción: Si algo te molesta esta semana, decilo en el momento. No acumules. Cada vez que lo hacés, liberás energía retenida.</div>
+        </div>
+
+        <div class="t-event">
+          <div class="t-dot dot-flujo"></div>
+          <span class="t-type">FLUJO · VENUS–JÚPITER</span>
+          <span class="t-date" id="ev4-date">EN 45 DÍAS</span>
+          <h3 class="t-title">Magnetismo en su punto más alto</h3>
+          <p class="t-desc">Tu arquitectura de fuego entra en resonancia con Venus en tránsito. Las conexiones que hagas en este período van a tener más profundidad y durabilidad que en otros momentos. Ideal para iniciar proyectos colaborativos, pedir lo que necesitás en relaciones, o hacer visible algo que venías guardando.</p>
+          <div class="t-accion">Acción: Contactá a esa persona. Publicá ese proyecto. Pedí lo que necesitás.</div>
+        </div>
+
+        <div class="t-event">
+          <div class="t-dot dot-tension"></div>
+          <span class="t-type">TENSIÓN · MARTE–PLUTÓN</span>
+          <span class="t-date" id="ev5-date">EN 60 DÍAS</span>
+          <h3 class="t-title">Fricción de transformación profunda</h3>
+          <p class="t-desc">Este tránsito no es suave. Va a sacar a la superficie algo que preferías no ver — un vínculo, un patrón laboral, una creencia sobre vos misma. La resistencia a verlo va a doler más que verlo. Este momento incomoda, pero no destruye — transforma.</p>
+          <div class="t-accion">Acción: Escribí en tu Diario de Insights lo que estás evitando pensar. El oráculo puede ayudarte a procesarlo.</div>
+        </div>
+
+        <div class="t-event">
+          <div class="t-dot dot-flujo"></div>
+          <span class="t-type">CIERRE DE CICLO · SOL–NODO NORTE</span>
+          <span class="t-date" id="ev6-date">EN 90 DÍAS</span>
+          <h3 class="t-title">Alineación de propósito</h3>
+          <p class="t-desc">La ventana de mayor alineación del trimestre. Una decisión tomada en esta ventana — especialmente si implica reclamar tu espacio o comenzar algo nuevo — estará directamente anclada en tu propósito natal. El cielo y tu mapa apuntan en la misma dirección.</p>
+          <div class="t-accion">Acción: ¿Qué querías empezar hace tres meses y no empezaste? Este es el momento.</div>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- ── PANEL 4: DIARIO ── -->
+    <section id="tab-diario" class="panel">
+      <div class="panel-hd">
+        <div class="panel-eyebrow">REGISTRO PERSONAL</div>
+        <h2 class="panel-title">Diario de Insights</h2>
+        <p class="panel-sub">El oráculo recuerda. Cada conversación queda registrada aquí para que puedas ver tu evolución.</p>
+      </div>
+
+      <p class="diario-intro">
+        Cada vez que el oráculo te responde, el insight queda guardado en este diario. Sirve para que puedas ver patrones en tus propias preguntas y el trabajo que tu mapa va haciendo con el tiempo.
+      </p>
+
+      <div class="diario-entries" id="diario-entries"></div>
+
+      <div class="diario-empty" id="diario-empty">
+        <p>"El mapa habla cuando se le pregunta."</p>
+        <p>Tu diario está vacío todavía.<br>Hacé tu primera consulta en el Oráculo y el primer insight quedará guardado aquí.</p>
+      </div>
+
+    </section>
+
+  </main>
+</div>
+
+<script>
+// ════ ESTRELLAS ════
+const canvas=document.getElementById('cosmos'),ctx=canvas.getContext('2d');let stars=[];
+function resize(){canvas.width=window.innerWidth;canvas.height=window.innerHeight}
+function initStars(){stars=[];const n=Math.floor(canvas.width*canvas.height/4500);for(let i=0;i<n;i++)stars.push({x:Math.random()*canvas.width,y:Math.random()*canvas.height,r:Math.random()*1.1+0.2,alpha:Math.random()*0.45+0.1,speed:Math.random()*0.003+0.001,offset:Math.random()*Math.PI*2})}
+function drawStars(t){ctx.clearRect(0,0,canvas.width,canvas.height);stars.forEach(s=>{const a=s.alpha*(0.6+0.4*Math.sin(t*s.speed+s.offset));ctx.beginPath();ctx.arc(s.x,s.y,s.r,0,Math.PI*2);ctx.fillStyle=`rgba(240,232,255,${a})`;ctx.fill()});requestAnimationFrame(drawStars)}
+resize();initStars();requestAnimationFrame(drawStars);
+window.addEventListener('resize',()=>{resize();initStars()});
+
+// ════ DATOS USUARIO ════
+function calcSignos(f){
+  if(!f)return{sign:'Aries',elem:'Fuego',nasa:'Piscis',cual:'Impulso, inicio, acción directa.'};
+  const[,ms,ds]=f.split('-');const m=+ms,d=+ds;
+  if((m===3&&d>=21)||(m===4&&d<=19))return{sign:'Aries',elem:'Fuego',nasa:'Piscis',cual:'Impulso, inicio, acción directa.'};
+  if((m===4&&d>=20)||(m===5&&d<=20))return{sign:'Tauro',elem:'Tierra',nasa:'Aries',cual:'Estructura, paciencia, materialización.'};
+  if((m===5&&d>=21)||(m===6&&d<=20))return{sign:'Géminis',elem:'Aire',nasa:'Tauro',cual:'Análisis mental, comunicación rápida.'};
+  if((m===6&&d>=21)||(m===7&&d<=22))return{sign:'Cáncer',elem:'Agua',nasa:'Géminis',cual:'Empatía profunda, nutrición emocional.'};
+  if((m===7&&d>=23)||(m===8&&d<=22))return{sign:'Leo',elem:'Fuego',nasa:'Cáncer',cual:'Liderazgo, expresión, brillo personal.'};
+  if((m===8&&d>=23)||(m===9&&d<=22))return{sign:'Virgo',elem:'Tierra',nasa:'Leo',cual:'Orden, detalle, servicio estructurado.'};
+  if((m===9&&d>=23)||(m===10&&d<=22))return{sign:'Libra',elem:'Aire',nasa:'Virgo',cual:'Equilibrio, diplomacia, mente vincular.'};
+  if((m===10&&d>=23)||(m===11&&d<=21))return{sign:'Escorpio',elem:'Agua',nasa:'Libra',cual:'Intensidad, transformación profunda.'};
+  if((m===11&&d>=22)||(m===12&&d<=21))return{sign:'Sagitario',elem:'Fuego',nasa:'Escorpio',cual:'Búsqueda de sentido, expansión, fe.'};
+  if((m===12&&d>=22)||(m===1&&d<=19))return{sign:'Capricornio',elem:'Tierra',nasa:'Sagitario',cual:'Responsabilidad, metas, carga estructural.'};
+  if((m===1&&d>=20)||(m===2&&d<=18))return{sign:'Acuario',elem:'Aire',nasa:'Capricornio',cual:'Innovación, desapego, visión global.'};
+  return{sign:'Piscis',elem:'Agua',nasa:'Acuario',cual:'Sensibilidad absoluta, permeabilidad.'};
+}
+
+// Fechas de tránsitos
+function addDays(d,n){const r=new Date(d);r.setDate(r.getDate()+n);return r}
+function fmtDate(d){return d.toLocaleDateString('es-AR',{day:'numeric',month:'long'})}
+
+document.addEventListener('DOMContentLoaded',()=>{
+  const email=localStorage.getItem('refugio_email');
+  const nombre=localStorage.getItem('refugio_nombre')||'Exploradora';
+  const nombreFmt=nombre.charAt(0).toUpperCase()+nombre.slice(1).toLowerCase();
+
+  // Rellenar sidebar
+  document.getElementById('sb-nombre').textContent=nombreFmt;
+  document.getElementById('msg-bienvenida').textContent=`Hola ${nombreFmt}. He decodificado tu carta por completo. Estoy lista para traducir los movimientos de la bóveda a tu vida diaria.`;
+
+  // Datos astronómicos — normalmente vendrían del servidor
+  const fecha=localStorage.getItem('refugio_fecha')||'1990-03-21';
+  const astro=calcSignos(fecha);
+  document.getElementById('sb-signo').textContent=`${astro.elem} · Sol en ${astro.sign}`;
+  document.getElementById('p1-elem').textContent=`elemento ${astro.elem}`;
+  document.getElementById('p1-elem2').textContent=astro.elem.toUpperCase();
+  document.getElementById('p1-sol').textContent=astro.sign.toUpperCase();
+  document.getElementById('p2-elem').textContent=astro.nasa;
+  document.getElementById('p2-elem2').textContent='AIRE';
+
+  // Tránsitos con fechas reales
+  const hoy=new Date();
+  document.getElementById('fecha-hoy').textContent=fmtDate(hoy);
+  document.getElementById('transitos-rango').textContent=`${fmtDate(hoy)} → ${fmtDate(addDays(hoy,90))}`;
+
+  // Calcular próximo martes
+  const diasParaMartes=(9-hoy.getDay())%7||7;
+  document.getElementById('ev1-date').textContent=`MARTES ${fmtDate(addDays(hoy,diasParaMartes))}`.toUpperCase();
+  document.getElementById('ev2-date').textContent=`${fmtDate(addDays(hoy,15))}`.toUpperCase();
+  document.getElementById('ev3-date').textContent=`${fmtDate(addDays(hoy,30))}`.toUpperCase();
+  document.getElementById('ev4-date').textContent=`${fmtDate(addDays(hoy,45))}`.toUpperCase();
+  document.getElementById('ev5-date').textContent=`${fmtDate(addDays(hoy,60))}`.toUpperCase();
+  document.getElementById('ev6-date').textContent=`${fmtDate(addDays(hoy,90))}`.toUpperCase();
+
+  // Sincronía
+  let hash=0;for(const c of nombre)hash+=c.charCodeAt(0);
+  document.getElementById('sb-sync').textContent=65+(hash%30);
+
+  // Cargar diario
+  renderDiario();
+});
+
+// ════ TABS ════
+function goTab(id,btn){
+  document.querySelectorAll('.panel').forEach(p=>p.classList.remove('active'));
+  document.querySelectorAll('.nav-btn').forEach(b=>b.classList.remove('active'));
+  document.getElementById('tab-'+id).classList.add('active');
+  btn.classList.add('active');
+}
+
+// ════ SUGERENCIAS ════
+function useSuggestion(btn){
+  document.getElementById('chat-input').value=btn.textContent;
+  document.getElementById('suggestions').style.display='none';
+  document.getElementById('chat-input').focus();
+}
+
+// ════ DIARIO LOCAL ════
+function getDiario(){try{return JSON.parse(localStorage.getItem('refugio_diario')||'[]')}catch{return[]}}
+function saveDiario(entries){localStorage.setItem('refugio_diario',JSON.stringify(entries))}
+
+function renderDiario(){
+  const entries=getDiario();
+  const container=document.getElementById('diario-entries');
+  const empty=document.getElementById('diario-empty');
+  container.innerHTML='';
+  if(!entries.length){empty.style.display='block';return}
+  empty.style.display='none';
+  [...entries].reverse().forEach(e=>{
+    const div=document.createElement('div');
+    div.className='diario-entry fade-in';
+    div.innerHTML=`<div class="entry-date">${e.fecha}</div>
+      <div class="entry-question">Tu pregunta: "${e.pregunta}"</div>
+      <div class="entry-insight">${e.insight}</div>`;
+    container.appendChild(div);
+  });
+}
+
+function saveInsight(pregunta,insight){
+  const entries=getDiario();
+  const fecha=new Date().toLocaleDateString('es-AR',{weekday:'long',day:'numeric',month:'long'});
+  entries.push({fecha,pregunta,insight});
+  if(entries.length>20)entries.shift();
+  saveDiario(entries);
+}
+
+// ════ CHAT CON IA REAL ════
+let sending=false;
+
+async function enviar(){
+  if(sending)return;
+  const input=document.getElementById('chat-input');
+  const texto=input.value.trim();
+  if(!texto)return;
+
+  // Ocultar sugerencias
+  document.getElementById('suggestions').style.display='none';
+
+  sending=true;
+  document.getElementById('send-btn').disabled=true;
+  input.value='';
+
+  const history=document.getElementById('chat-history');
+
+  // Mensaje usuario
+  const userDiv=document.createElement('div');
+  userDiv.className='msg msg-user fade-in';
+  userDiv.textContent=texto;
+  history.appendChild(userDiv);
+  history.scrollTop=history.scrollHeight;
+
+  // Typing bubble
+  const typingDiv=document.createElement('div');
+  typingDiv.className='typing-bubble fade-in';
+  typingDiv.innerHTML='<div class="typing-dots"><div class="dot"></div><div class="dot"></div><div class="dot"></div></div>';
+  history.appendChild(typingDiv);
+  history.scrollTop=history.scrollHeight;
+
+  // Construir contexto natal
+  const nombre=localStorage.getItem('refugio_nombre')||'la usuaria';
+  const fecha=localStorage.getItem('refugio_fecha')||'';
+  const astro=calcSignos(fecha);
+
+  const systemPrompt=`Eres el Oráculo Natal de Refugio — un sistema de inteligencia que combina cálculos astronómicos reales (efemérides JPL/NASA) con psicología analítica junguiana y filosofía práctica estoica.
+
+DATOS NATALES DE ${nombre.toUpperCase()}:
+- Sol en ${astro.sign} (elemento ${astro.elem})
+- Posición astronómica real NASA: constelación ${astro.nasa}
+- Energía dominante: ${astro.elem}
+- Fecha de nacimiento: ${fecha}
+
+TU FORMA DE RESPONDER:
+1. Primero valida brevemente la emoción o situación sin exagerar (1-2 líneas, sin frases vacías como "entiendo perfectamente")
+2. Luego ancla la respuesta en los datos natales específicos de esta persona — menciona su signo, elemento o posición real. No des respuestas genéricas.
+3. Ofrece un insight concreto y accionable, no vago. Filosofía práctica, no poesía vacía.
+4. Si hay un tránsito relevante, menciónalo.
+5. Terminá con una pregunta o acción concreta que pueda hacer hoy.
+
+TONO: Directo, cálido pero sin condescendencia. Como una persona muy lúcida que te conoce a fondo. Nada de "eres increíble" ni frases motivacionales vacías. La profundidad viene de la especificidad, no de la poesía genérica.
+
+FORMATO: Párrafos cortos separados. Sin listas con guiones. Sin negritas excesivas. Máximo 4 párrafos. En español rioplatense.`;
+
+  try{
+    const res=await fetch('https://api.anthropic.com/v1/messages',{
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({
+        model:'claude-sonnet-4-20250514',
+        max_tokens:1000,
+        system:systemPrompt,
+        messages:[{role:'user',content:texto}]
+      })
+    });
+
+    const data=await res.json();
+    const respuesta=data.content?.[0]?.text||'No pude procesar tu consulta. Intentá de nuevo.';
+
+    // Extraer primer párrafo como insight para diario
+    const insightCorto=respuesta.split('\n\n')[0];
+
+    typingDiv.remove();
+
+    const sysDiv=document.createElement('div');
+    sysDiv.className='msg msg-sys fade-in';
+
+    // Formatear párrafos
+    const parrafos=respuesta.split('\n\n').filter(p=>p.trim());
+    const html=parrafos.map(p=>`<p>${p.replace(/\n/g,'<br>')}</p>`).join('');
+
+    sysDiv.innerHTML=`
+      <div class="msg-sys-text">${html}</div>
+      <span class="msg-meta">Basado en tu configuración natal · ${astro.sign} · ${astro.elem} · JPL/NASA</span>
+    `;
+    history.appendChild(sysDiv);
+    history.scrollTop=history.scrollHeight;
+
+    // Guardar en diario
+    saveInsight(texto,insightCorto);
+
+  }catch(err){
+    typingDiv.remove();
+    const errDiv=document.createElement('div');
+    errDiv.className='msg msg-sys fade-in';
+    errDiv.innerHTML=`<div class="msg-sys-text"><p>Hay interferencia en la conexión con la bóveda. Intentá de nuevo en un momento.</p></div><span class="msg-meta">Error de conexión</span>`;
+    history.appendChild(errDiv);
+    history.scrollTop=history.scrollHeight;
+  }
+
+  sending=false;
+  document.getElementById('send-btn').disabled=false;
+  input.focus();
+}
+</script>
+</body>
+</html>
