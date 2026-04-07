@@ -28,6 +28,9 @@ def enrutador(path):
         if 'login' in ruta_solicitada: return login()
         if 'registro' in ruta_solicitada: return registro()
         if 'obtener_datos' in ruta_solicitada: return obtener_datos()
+        
+        # NUEVA RUTA EXACTA PARA PAYPAL
+        if 'webhook_paypal_Refugio' in ruta_solicitada: return webhook_paypal_Refugio()
             
         return jsonify({"status": "error", "message": "Ruta no encontrada"}), 404
         
@@ -53,7 +56,6 @@ def registro():
         
         pass_hash = generate_password_hash(password)
         
-        # Filtro de seguridad para coordenadas
         lat_val = data.get('lat')
         lon_val = data.get('lon')
         lat = float(lat_val) if lat_val else 0.0
@@ -102,7 +104,7 @@ def login():
         return jsonify({"status": "error", "message": str(e)}), 500
 
 # ==========================================
-# LÓGICA DE OBTENER DATOS (Pilares dinámicos)
+# LÓGICA DE OBTENER DATOS (Para panel Free)
 # ==========================================
 def obtener_datos():
     supabase = get_supabase_client()
@@ -117,7 +119,6 @@ def obtener_datos():
             u = res.data[0]
             nombre = u.get('nombre', 'Exploradora')
             
-            # Textos dinámicos
             arquetipos_base = [
                 {"elemento": "Elemento Fuego", "titulo": "Tu Impulso", "texto": "Estás diseñada para iniciar y transformar. Tu mente busca la acción instintivamente. Tu principal fuga de energía es el agotamiento por no saber detenerte o por cargar con los miedos de otros."},
                 {"elemento": "Elemento Tierra", "titulo": "Tu Gravedad", "texto": "Estás diseñada para materializar y sostener. Tu mente busca la estructura. Tu principal fuga de energía radica en asumir el peso de las dinámicas de otros, confundiendo tu capacidad con un falso deber."},
@@ -131,17 +132,6 @@ def obtener_datos():
             
             idx_base = len(nombre) % 3
             idx_filtro = (len(nombre) + 1) % 3
-            
-            mensajes = [
-                "Hoy el cielo te pide pausa. No tienes que resolverlo todo en las próximas 24 horas.",
-                "Tu energía está en expansión. Es un gran momento para esa conversación pendiente.",
-                "La Luna sugiere introspección. Tu refugio hoy es tu propio silencio.",
-                "Hay una alineación que favorece tu creatividad. Permítete jugar un poco más.",
-                "Momento de poner límites sanos. Decir 'no' a otros es decirte 'sí' a ti misma.",
-                "La claridad llega tras la calma. El mapa indica que el caos es temporal.",
-                "Hoy tu intuición está afilada. Confía en tu primer pensamiento al despertar."
-            ]
-            mensaje_hoy = mensajes[datetime.datetime.now().weekday()]
 
             return jsonify({
                 "status": "exito", 
@@ -149,7 +139,6 @@ def obtener_datos():
                     "nombre": nombre, 
                     "ciudad": u.get('ciudad', 'Tu ciudad'), 
                     "fecha": u.get('fecha_nacimiento', '--/--/----'),
-                    "mensaje_del_dia": mensaje_hoy,
                     "pilar1": arquetipos_base[idx_base],
                     "pilar2": arquetipos_filtro[idx_filtro]
                 }
@@ -158,3 +147,38 @@ def obtener_datos():
         return jsonify({"status": "error", "message": "No se hallaron datos."}), 404
     except Exception as e:
         return jsonify({"status": "error", "message": str(e)}), 500
+
+# ==========================================
+# WEBHOOK DE PAYPAL (AUTOMATIZACIÓN DE PAGOS)
+# ==========================================
+def webhook_paypal_Refugio():
+    supabase = get_supabase_client()
+    if not supabase: return jsonify({"status": "error"}), 500
+
+    data = request.get_json(silent=True) or {}
+    event_type = data.get('event_type')
+    
+    # El evento exacto que confirmaste
+    if event_type == 'PAYMENT.CAPTURE.COMPLETED':
+        try:
+            resource = data.get('resource', {})
+            email_pagador = None
+            
+            # 1. Buscamos primero en custom_id (Esta es la mejor práctica)
+            if 'custom_id' in resource:
+                email_pagador = resource['custom_id']
+            
+            # 2. Si por alguna razón no viene el custom_id, tomamos el email de la cuenta de PayPal
+            if not email_pagador and 'payer' in resource and 'email_address' in resource['payer']:
+                email_pagador = resource['payer']['email_address']
+                
+            if email_pagador:
+                # Ascenso a Premium en la Base de Datos
+                supabase.table('usuarios_refugio').update({"nivel_suscripcion": "premium"}).eq('email', email_pagador).execute()
+                print(f"Venta Refugio exitosa: {email_pagador} ascendido a PREMIUM.", flush=True)
+                
+        except Exception as e:
+            print(f"Error procesando webhook de Refugio: {str(e)}", flush=True)
+            
+    # Siempre respondemos 200 OK a PayPal para que registre el éxito
+    return jsonify({"status": "recibido"}), 200
