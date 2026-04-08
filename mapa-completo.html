@@ -1,184 +1,1110 @@
-import os
-import datetime
-from werkzeug.security import generate_password_hash, check_password_hash
-from flask import Flask, request, jsonify
-from supabase import create_client
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Tu Mapa Completo — Bóveda Celeste</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=DM+Mono:wght@300;400&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
-app = Flask(__name__)
+  :root {
+    --magenta: #c2185b;
+    --magenta-bright: #f06292;
+    --magenta-glow: rgba(194,24,91,0.25);
+    --deep: #0a0612;
+    --void: #06040f;
+    --surface: rgba(255,255,255,0.035);
+    --surface-hover: rgba(255,255,255,0.06);
+    --border: rgba(194,24,91,0.2);
+    --border-bright: rgba(194,24,91,0.5);
+    --text-primary: #f0e8ff;
+    --text-secondary: rgba(240,232,255,0.55);
+    --text-muted: rgba(240,232,255,0.3);
+    --gold: #d4a853;
+    --gold-dim: rgba(212,168,83,0.15);
+  }
 
-def get_supabase_client():
-    url = os.environ.get("SUPABASE_URL")
-    key = os.environ.get("SUPABASE_KEY")
-    if not url or not key: return None
-    try: return create_client(url, key)
-    except: return None
+  html { scroll-behavior: smooth; }
 
-# ==========================================
-# ENRUTADOR MAESTRO
-# ==========================================
-@app.route('/', defaults={'path': ''}, methods=['POST', 'OPTIONS'])
-@app.route('/<path:path>', methods=['POST', 'OPTIONS'])
-def enrutador(path):
-    if request.method == 'OPTIONS':
-        return jsonify({"status": "ok"}), 200
-    
-    try:
-        ruta_solicitada = request.path
-        
-        if 'login' in ruta_solicitada: return login()
-        if 'registro' in ruta_solicitada: return registro()
-        if 'obtener_datos' in ruta_solicitada: return obtener_datos()
-        
-        # NUEVA RUTA EXACTA PARA PAYPAL
-        if 'webhook_paypal_Refugio' in ruta_solicitada: return webhook_paypal_Refugio()
-            
-        return jsonify({"status": "error", "message": "Ruta no encontrada"}), 404
-        
-    except Exception as e:
-        return jsonify({"status": "error", "message": "Error interno: " + str(e)}), 500
+  body {
+    background: var(--void);
+    color: var(--text-primary);
+    font-family: 'DM Mono', monospace;
+    font-weight: 300;
+    overflow-x: hidden;
+    cursor: crosshair;
+  }
 
-# ==========================================
-# LÓGICA DE REGISTRO
-# ==========================================
-def registro():
-    supabase = get_supabase_client()
-    if not supabase: return jsonify({"status": "error", "message": "Falta BD."}), 500
-    
-    data = request.get_json(silent=True) or {}
-    email, password = data.get('email'), data.get('password')
-    
-    if not email or not password:
-        return jsonify({"status": "error", "message": "Faltan datos clave."}), 400
-    
-    try:
-        res = supabase.table('usuarios_refugio').select('email').eq('email', email).execute()
-        if len(res.data) > 0: return jsonify({"status": "existe", "message": "Correo ya registrado."}), 200
-        
-        pass_hash = generate_password_hash(password)
-        
-        lat_val = data.get('lat')
-        lon_val = data.get('lon')
-        lat = float(lat_val) if lat_val else 0.0
-        lon = float(lon_val) if lon_val else 0.0
-        
-        nuevo_usuario = {
-            "nombre": data.get('nombre'), "email": email, "contrasena": pass_hash,
-            "fecha_nacimiento": data.get('fecha'), "hora_nacimiento": data.get('hora'),
-            "ciudad": data.get('ciudad', '').upper(), "nivel_suscripcion": "free",
-            "datos_natales": {"geo": {"lat": lat, "lon": lon}, "auth": "PENDING"}
+  /* ── CANVAS ESTELAR ── */
+  #cosmos {
+    position: fixed;
+    inset: 0;
+    z-index: 0;
+    pointer-events: none;
+  }
+
+  /* ── NEBULOSA AMBIENT ── */
+  .nebula {
+    position: fixed;
+    border-radius: 50%;
+    filter: blur(80px);
+    pointer-events: none;
+    z-index: 0;
+  }
+  .nebula-1 { width: 600px; height: 600px; background: radial-gradient(circle, rgba(100,20,140,0.4) 0%, transparent 70%); top: -200px; left: -100px; animation: drift 20s ease-in-out infinite alternate; }
+  .nebula-2 { width: 500px; height: 500px; background: radial-gradient(circle, rgba(194,24,91,0.2) 0%, transparent 70%); bottom: 10%; right: -100px; animation: drift 25s ease-in-out infinite alternate-reverse; }
+  .nebula-3 { width: 400px; height: 400px; background: radial-gradient(circle, rgba(60,10,100,0.35) 0%, transparent 70%); top: 40%; left: 30%; animation: drift 18s ease-in-out infinite alternate; }
+
+  @keyframes drift { from { transform: translate(0,0) scale(1); } to { transform: translate(30px,20px) scale(1.05); } }
+
+  /* ── CONTENIDO ── */
+  .content {
+    position: relative;
+    z-index: 10;
+    max-width: 820px;
+    margin: 0 auto;
+    padding: 0 24px;
+  }
+
+  /* ── SECCIÓN HERO ── */
+  .hero {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    padding: 80px 24px;
+    position: relative;
+  }
+
+  .hero-eyebrow {
+    font-size: 10px;
+    letter-spacing: 0.4em;
+    color: var(--magenta-bright);
+    margin-bottom: 32px;
+    opacity: 0;
+    animation: fadeUp 1s ease forwards 0.3s;
+  }
+
+  .hero-name {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: clamp(52px, 10vw, 96px);
+    font-weight: 300;
+    font-style: italic;
+    line-height: 1;
+    color: var(--text-primary);
+    margin-bottom: 8px;
+    opacity: 0;
+    animation: fadeUp 1s ease forwards 0.5s;
+    text-shadow: 0 0 80px rgba(194,24,91,0.4);
+  }
+
+  .hero-subtitle {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: clamp(16px, 3vw, 22px);
+    font-weight: 300;
+    color: var(--text-secondary);
+    margin-bottom: 60px;
+    opacity: 0;
+    animation: fadeUp 1s ease forwards 0.7s;
+    letter-spacing: 0.05em;
+  }
+
+  /* ── PREGUNTA CENTRAL ── */
+  .central-question {
+    position: relative;
+    margin: 0 auto 60px;
+    max-width: 620px;
+    padding: 40px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 2px;
+    opacity: 0;
+    animation: fadeUp 1s ease forwards 0.9s;
+  }
+
+  .central-question::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0;
+    width: 40px; height: 2px;
+    background: var(--magenta);
+  }
+
+  .question-label {
+    font-size: 9px;
+    letter-spacing: 0.4em;
+    color: var(--magenta-bright);
+    margin-bottom: 20px;
+  }
+
+  .question-text {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: clamp(20px, 3.5vw, 28px);
+    font-style: italic;
+    font-weight: 300;
+    line-height: 1.5;
+    color: var(--text-primary);
+    margin-bottom: 24px;
+  }
+
+  .question-input-wrapper {
+    position: relative;
+  }
+
+  .question-input {
+    width: 100%;
+    background: rgba(255,255,255,0.04);
+    border: 1px solid var(--border);
+    border-radius: 0;
+    padding: 14px 16px;
+    color: var(--text-primary);
+    font-family: 'DM Mono', monospace;
+    font-size: 13px;
+    font-weight: 300;
+    outline: none;
+    transition: border-color 0.3s;
+    resize: none;
+    height: 80px;
+  }
+
+  .question-input::placeholder { color: var(--text-muted); }
+  .question-input:focus { border-color: var(--border-bright); }
+
+  /* ── SCROLL INDICATOR ── */
+  .scroll-hint {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+    opacity: 0;
+    animation: fadeUp 1s ease forwards 1.3s;
+  }
+
+  .scroll-hint span { font-size: 9px; letter-spacing: 0.3em; color: var(--text-muted); }
+  .scroll-line {
+    width: 1px;
+    height: 60px;
+    background: linear-gradient(to bottom, var(--magenta), transparent);
+    animation: pulse-line 2s ease-in-out infinite;
+  }
+
+  @keyframes pulse-line { 0%,100%{opacity:0.4} 50%{opacity:1} }
+
+  /* ── SECCIÓN: EL DOLOR ── */
+  .pain-section {
+    padding: 120px 0;
+    position: relative;
+  }
+
+  .section-marker {
+    font-size: 9px;
+    letter-spacing: 0.4em;
+    color: var(--magenta-bright);
+    margin-bottom: 16px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+
+  .section-marker::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: var(--border);
+  }
+
+  .pain-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1px;
+    background: var(--border);
+    margin-top: 48px;
+  }
+
+  .pain-item {
+    background: var(--void);
+    padding: 36px 32px;
+    position: relative;
+    overflow: hidden;
+    transition: background 0.4s;
+  }
+
+  .pain-item:hover { background: var(--surface); }
+
+  .pain-item::after {
+    content: '';
+    position: absolute;
+    bottom: 0; left: 0;
+    width: 0; height: 2px;
+    background: var(--magenta);
+    transition: width 0.4s;
+  }
+
+  .pain-item:hover::after { width: 100%; }
+
+  .pain-icon {
+    font-size: 24px;
+    margin-bottom: 16px;
+    display: block;
+    filter: grayscale(0.3);
+  }
+
+  .pain-title {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 20px;
+    font-weight: 400;
+    color: var(--text-primary);
+    margin-bottom: 10px;
+  }
+
+  .pain-desc {
+    font-size: 12px;
+    line-height: 1.8;
+    color: var(--text-secondary);
+  }
+
+  /* ── SECCIÓN: LO QUE RECIBES ── */
+  .receive-section {
+    padding: 120px 0;
+  }
+
+  .receive-headline {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: clamp(32px, 6vw, 56px);
+    font-weight: 300;
+    line-height: 1.2;
+    margin-bottom: 16px;
+  }
+
+  .receive-headline em {
+    font-style: italic;
+    color: var(--magenta-bright);
+  }
+
+  .receive-subline {
+    font-size: 13px;
+    color: var(--text-secondary);
+    margin-bottom: 64px;
+    max-width: 480px;
+    line-height: 1.7;
+  }
+
+  /* ── FEATURE ITEMS ── */
+  .feature {
+    display: grid;
+    grid-template-columns: 48px 1fr;
+    gap: 0 32px;
+    margin-bottom: 56px;
+    position: relative;
+    padding-left: 16px;
+    border-left: 1px solid var(--border);
+    transition: border-color 0.3s;
+  }
+
+  .feature:hover { border-color: var(--magenta); }
+
+  .feature-num {
+    font-size: 11px;
+    letter-spacing: 0.1em;
+    color: var(--magenta-bright);
+    padding-top: 4px;
+    font-weight: 400;
+  }
+
+  .feature-content {}
+
+  .feature-tag {
+    font-size: 9px;
+    letter-spacing: 0.4em;
+    color: var(--text-muted);
+    margin-bottom: 8px;
+  }
+
+  .feature-title {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: clamp(22px, 3.5vw, 30px);
+    font-weight: 400;
+    color: var(--text-primary);
+    margin-bottom: 12px;
+    line-height: 1.2;
+  }
+
+  .feature-desc {
+    font-size: 12px;
+    line-height: 1.9;
+    color: var(--text-secondary);
+    max-width: 520px;
+  }
+
+  .feature-highlight {
+    display: inline-block;
+    margin-top: 14px;
+    padding: 6px 14px;
+    background: var(--gold-dim);
+    border: 1px solid rgba(212,168,83,0.3);
+    font-size: 10px;
+    letter-spacing: 0.2em;
+    color: var(--gold);
+    border-radius: 1px;
+  }
+
+  /* ── DEMO CHAT ── */
+  .demo-chat {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 2px;
+    padding: 32px;
+    margin: 20px 0 40px 80px;
+    max-width: 540px;
+  }
+
+  .demo-chat-label {
+    font-size: 9px;
+    letter-spacing: 0.3em;
+    color: var(--text-muted);
+    margin-bottom: 20px;
+  }
+
+  .chat-bubble {
+    margin-bottom: 16px;
+    font-size: 12px;
+    line-height: 1.7;
+  }
+
+  .chat-bubble.user {
+    color: var(--text-secondary);
+    padding-left: 16px;
+    border-left: 2px solid var(--border-bright);
+  }
+
+  .chat-bubble.system {
+    color: var(--text-primary);
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 15px;
+    font-style: italic;
+  }
+
+  .typing-dots {
+    display: flex;
+    gap: 4px;
+    padding: 8px 0;
+  }
+
+  .dot {
+    width: 4px;
+    height: 4px;
+    border-radius: 50%;
+    background: var(--magenta-bright);
+    animation: blink 1.4s ease-in-out infinite;
+  }
+
+  .dot:nth-child(2) { animation-delay: 0.2s; }
+  .dot:nth-child(3) { animation-delay: 0.4s; }
+
+  @keyframes blink { 0%,80%,100%{opacity:0.2} 40%{opacity:1} }
+
+  /* ── PREVIEW TRÁNSITOS ── */
+  .transits-preview {
+    margin: 20px 0 0 80px;
+    max-width: 540px;
+  }
+
+  .transit-row {
+    display: flex;
+    align-items: flex-start;
+    gap: 16px;
+    padding: 16px 0;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .transit-date {
+    font-size: 10px;
+    letter-spacing: 0.15em;
+    color: var(--text-muted);
+    min-width: 60px;
+    padding-top: 2px;
+  }
+
+  .transit-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    margin-top: 4px;
+    flex-shrink: 0;
+  }
+
+  .dot-tension { background: #e57373; box-shadow: 0 0 6px rgba(229,115,115,0.5); }
+  .dot-flujo { background: #81c784; box-shadow: 0 0 6px rgba(129,199,132,0.5); }
+  .dot-expansion { background: #ba68c8; box-shadow: 0 0 6px rgba(186,104,200,0.5); }
+
+  .transit-text {
+    font-size: 12px;
+    line-height: 1.6;
+    color: var(--text-secondary);
+  }
+
+  .transit-text strong {
+    color: var(--text-primary);
+    font-weight: 400;
+  }
+
+  /* ── TESTIMONIOS ── */
+  .testimonios {
+    padding: 80px 0;
+  }
+
+  .testimonio-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 24px;
+    margin-top: 48px;
+  }
+
+  .testimonio {
+    padding: 28px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 2px;
+    position: relative;
+  }
+
+  .testimonio::before {
+    content: '"';
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 80px;
+    color: var(--magenta);
+    opacity: 0.2;
+    position: absolute;
+    top: -10px;
+    left: 20px;
+    line-height: 1;
+  }
+
+  .testimonio-text {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 17px;
+    font-style: italic;
+    line-height: 1.6;
+    color: var(--text-primary);
+    margin-bottom: 20px;
+    position: relative;
+  }
+
+  .testimonio-meta {
+    font-size: 10px;
+    letter-spacing: 0.2em;
+    color: var(--text-muted);
+  }
+
+  .stars {
+    color: var(--gold);
+    font-size: 11px;
+    letter-spacing: 2px;
+    margin-bottom: 8px;
+  }
+
+  /* ── SECCIÓN PRECIO ── */
+  .price-section {
+    padding: 120px 0 80px;
+    text-align: center;
+  }
+
+  .price-card {
+    position: relative;
+    max-width: 520px;
+    margin: 0 auto;
+    padding: 56px 48px;
+    background: var(--surface);
+    border: 1px solid var(--border-bright);
+    border-radius: 2px;
+    overflow: hidden;
+  }
+
+  .price-card::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 2px;
+    background: linear-gradient(to right, transparent, var(--magenta), transparent);
+  }
+
+  .price-glow {
+    position: absolute;
+    top: -100px; left: 50%; transform: translateX(-50%);
+    width: 300px; height: 300px;
+    background: radial-gradient(circle, rgba(194,24,91,0.15) 0%, transparent 70%);
+    pointer-events: none;
+  }
+
+  .price-label {
+    font-size: 9px;
+    letter-spacing: 0.5em;
+    color: var(--magenta-bright);
+    margin-bottom: 24px;
+  }
+
+  .price-amount {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 72px;
+    font-weight: 300;
+    color: var(--text-primary);
+    line-height: 1;
+    margin-bottom: 4px;
+  }
+
+  .price-currency {
+    font-size: 24px;
+    vertical-align: super;
+    color: var(--text-secondary);
+  }
+
+  .price-period {
+    font-size: 12px;
+    color: var(--text-muted);
+    margin-bottom: 40px;
+  }
+
+  .price-includes {
+    text-align: left;
+    margin-bottom: 40px;
+  }
+
+  .price-item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 10px 0;
+    border-bottom: 1px solid rgba(255,255,255,0.05);
+    font-size: 12px;
+    color: var(--text-secondary);
+  }
+
+  .price-item-icon {
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    background: var(--magenta-glow);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    font-size: 10px;
+  }
+
+  /* ── CTA BUTTON ── */
+  .cta-btn {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+    width: 100%;
+    padding: 20px 40px;
+    background: var(--magenta);
+    color: #fff;
+    font-family: 'DM Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 0.35em;
+    font-weight: 400;
+    text-decoration: none;
+    border: none;
+    cursor: pointer;
+    border-radius: 1px;
+    overflow: hidden;
+    transition: transform 0.2s, box-shadow 0.3s;
+  }
+
+  .cta-btn::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(120deg, transparent 30%, rgba(255,255,255,0.12) 50%, transparent 70%);
+    transform: translateX(-100%);
+    transition: transform 0.5s;
+  }
+
+  .cta-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 20px 60px rgba(194,24,91,0.4);
+  }
+
+  .cta-btn:hover::after { transform: translateX(100%); }
+  .cta-btn:active { transform: translateY(0); }
+
+  .cta-guarantee {
+    margin-top: 20px;
+    font-size: 10px;
+    color: var(--text-muted);
+    letter-spacing: 0.1em;
+    line-height: 1.7;
+  }
+
+  /* ── GARANTÍA ── */
+  .guarantee-bar {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    padding: 20px 24px;
+    background: var(--gold-dim);
+    border: 1px solid rgba(212,168,83,0.25);
+    border-radius: 1px;
+    margin: 32px 0 0;
+  }
+
+  .guarantee-icon { font-size: 24px; }
+  .guarantee-text { font-size: 11px; line-height: 1.6; color: var(--gold); }
+
+  /* ── FAQ ── */
+  .faq-section { padding: 80px 0 120px; }
+
+  .faq-item {
+    border-bottom: 1px solid var(--border);
+    padding: 24px 0;
+    cursor: pointer;
+  }
+
+  .faq-question {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 13px;
+    color: var(--text-primary);
+    letter-spacing: 0.02em;
+  }
+
+  .faq-toggle {
+    width: 20px;
+    height: 20px;
+    border: 1px solid var(--border-bright);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 14px;
+    color: var(--magenta-bright);
+    flex-shrink: 0;
+    transition: transform 0.3s;
+  }
+
+  .faq-answer {
+    font-size: 12px;
+    line-height: 1.9;
+    color: var(--text-secondary);
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.4s ease, padding 0.3s;
+  }
+
+  .faq-item.open .faq-answer { max-height: 200px; padding-top: 16px; }
+  .faq-item.open .faq-toggle { transform: rotate(45deg); }
+
+  /* ── FOOTER ── */
+  .footer {
+    padding: 40px 0;
+    border-top: 1px solid var(--border);
+    text-align: center;
+    font-size: 10px;
+    letter-spacing: 0.2em;
+    color: var(--text-muted);
+  }
+
+  /* ── ANIMACIONES ── */
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(24px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  .reveal {
+    opacity: 0;
+    transform: translateY(32px);
+    transition: opacity 0.8s ease, transform 0.8s ease;
+  }
+
+  .reveal.visible {
+    opacity: 1;
+    transform: none;
+  }
+
+  /* ── LÍNEA DIVISORA CON ESTRELLA ── */
+  .star-divider {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    margin: 80px 0;
+    color: var(--border-bright);
+    font-size: 11px;
+  }
+
+  .star-divider::before,
+  .star-divider::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: var(--border);
+  }
+
+  /* ── RESPONSIVE ── */
+  @media (max-width: 640px) {
+    .pain-grid { grid-template-columns: 1fr; }
+    .testimonio-grid { grid-template-columns: 1fr; }
+    .feature { grid-template-columns: 1fr; }
+    .feature-num { display: none; }
+    .demo-chat, .transits-preview { margin-left: 0; }
+    .price-card { padding: 36px 24px; }
+  }
+</style>
+</head>
+<body>
+
+<canvas id="cosmos"></canvas>
+<div class="nebula nebula-1"></div>
+<div class="nebula nebula-2"></div>
+<div class="nebula nebula-3"></div>
+
+<section class="hero">
+  <div class="content" style="width:100%">
+    <p class="hero-eyebrow">BÓVEDA CELESTE · MAPA DEFINITIVO</p>
+    <h1 class="hero-name">Tu Mapa,<br>Completo.</h1>
+    <p class="hero-subtitle">No un PDF que leerás una vez.<br>Un sistema vivo que te responde.</p>
+
+    <div class="central-question">
+      <p class="question-label">ANTES DE VER TU PRECIO</p>
+      <p class="question-text">¿Qué decisión estás evitando tomar ahora mismo?</p>
+      <div class="question-input-wrapper">
+        <textarea class="question-input" placeholder="Escríbelo aquí. Tu mapa te responderá desde tu configuración natal..."></textarea>
+      </div>
+    </div>
+
+    <div class="scroll-hint">
+      <span>DESCUBRÍ LO QUE INCLUYE</span>
+      <div class="scroll-line"></div>
+    </div>
+  </div>
+</section>
+
+<section class="pain-section">
+  <div class="content">
+    <p class="section-marker reveal">EL PROBLEMA CON TODO LO QUE CONOCÉS</p>
+    <h2 class="reveal" style="font-family:'Cormorant Garamond',serif;font-size:clamp(28px,5vw,48px);font-weight:300;line-height:1.2;margin-bottom:8px;">
+      Los demás te dan respuestas genéricas.<br><em style="font-style:italic;color:var(--magenta-bright)">Nosotras te damos tu patrón exacto.</em>
+    </h2>
+
+    <div class="pain-grid reveal" style="margin-top:48px">
+      <div class="pain-item">
+        <span class="pain-icon">📄</span>
+        <p class="pain-title">El PDF que nadie termina</p>
+        <p class="pain-desc">Te dan 40 páginas de interpretación genérica. La lees una vez, la guardás en alguna carpeta y nunca más la encontrás.</p>
+      </div>
+      <div class="pain-item">
+        <span class="pain-icon">♊</span>
+        <p class="pain-title">El horóscopo que aplica a millones</p>
+        <p class="pain-desc">"Géminis en amor este mes..." Lo leen 200 millones de personas. No te describe a vos. Te describe a un arquetipo.</p>
+      </div>
+      <div class="pain-item">
+        <span class="pain-icon">💬</span>
+        <p class="pain-title">La consulta que olvidás</p>
+        <p class="pain-desc">Pagás una sesión, tomás notas apresuradas, y dos semanas después ya no recordás qué te dijeron sobre tu nodo norte.</p>
+      </div>
+      <div class="pain-item">
+        <span class="pain-icon">📅</span>
+        <p class="pain-title">Sin aviso cuando importa</p>
+        <p class="pain-desc">Nadie te dice que el martes tenés una tensión Saturno-Venus que va a hacer que esa conversación difícil salga peor.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="receive-section">
+  <div class="content">
+    <p class="section-marker reveal">LO QUE CAMBIA CON TU MAPA COMPLETO</p>
+    <h2 class="receive-headline reveal">
+      Cuatro cosas que<br><em>ningún otro sistema</em><br>te ofrece junto.
+    </h2>
+    <p class="receive-subline reveal">No es magia. Es astronomía real cruzada con psicología analítica, personalizada para vos, disponible cuando la necesitás.</p>
+
+    <div class="feature reveal">
+      <span class="feature-num">01</span>
+      <div class="feature-content">
+        <p class="feature-tag">EXCLUSIVO · CONVERSACIÓN NATAL</p>
+        <h3 class="feature-title">Tu mapa te responde.<br>En tiempo real.</h3>
+        <p class="feature-desc">Escribís tu pregunta — cualquier pregunta sobre relaciones, trabajo, dinero, decisiones — y el sistema responde desde tu configuración natal específica. No desde un arquetipo. Desde vos.</p>
+        <span class="feature-highlight">★ DIFERENCIADOR ÚNICO</span>
+
+        <div class="demo-chat">
+          <p class="demo-chat-label">DEMO · ASÍ SE VE EN LA PRÁCTICA</p>
+          <div class="chat-bubble user">¿Por qué sigo eligiendo relaciones donde doy más de lo que recibo?</div>
+          <div class="typing-dots"><div class="dot"></div><div class="dot"></div><div class="dot"></div></div>
+          <div class="chat-bubble system">Tu Venus en Libra en casa 7 crea una necesidad profunda de armonía que tu psique confunde con equilibrio real. El eje nodal Norte en Acuario indica que tu propósito incluye aprender a recibir sin culpa — algo que contradice tu programación natal de Neptuno en conjunción con tu ascendente...</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="feature reveal">
+      <span class="feature-num">02</span>
+      <div class="feature-content">
+        <p class="feature-tag">TRÁNSITOS · 90 DÍAS ADELANTE</p>
+        <h3 class="feature-title">Sabés lo que viene<br>antes de que llegue.</h3>
+        <p class="feature-desc">No el horóscopo semanal. Tus tránsitos personales para los próximos 90 días, con alertas específicas sobre cuándo comunicar, cuándo firmar, cuándo descansar.</p>
+
+        <div class="transits-preview">
+          <div class="transit-row">
+            <span class="transit-date">MAR 08</span>
+            <div class="transit-dot dot-tension"></div>
+            <p class="transit-text"><strong>Tensión Mercurio-Saturno</strong> · Evitá conversaciones importantes hoy. Tu mente va a sobre-analizar y comunicar peor de lo que pensás.</p>
+          </div>
+          <div class="transit-row">
+            <span class="transit-date">MAR 12</span>
+            <div class="transit-dot dot-flujo"></div>
+            <p class="transit-text"><strong>Flujo Venus-Júpiter</strong> · Momento ideal para pedir lo que necesitás en relaciones. Tu magnetismo está en su punto más alto.</p>
+          </div>
+          <div class="transit-row">
+            <span class="transit-date">MAR 19</span>
+            <div class="transit-dot dot-expansion"></div>
+            <p class="transit-text"><strong>Expansión Sol-Nodo Norte</strong> · Una decisión que tomes esta semana estará alineada con tu propósito. Actuá.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="feature reveal">
+      <span class="feature-num">03</span>
+      <div class="feature-content">
+        <p class="feature-tag">ANÁLISIS · NODO KÁRMICO COMPLETO</p>
+        <h3 class="feature-title">El patrón que repetís<br>y cómo salir de él.</h3>
+        <p class="feature-desc">No el análisis genérico de tu signo. La posición exacta de tu eje nodal revela el patrón específico que más energía te roba y la dirección exacta hacia la que tenés que moverte. Con ejemplos concretos de cómo se manifiesta en tu vida.</p>
+      </div>
+    </div>
+
+    <div class="feature reveal">
+      <span class="feature-num">04</span>
+      <div class="feature-content">
+        <p class="feature-tag">ALERTAS · WHATSAPP O EMAIL</p>
+        <h3 class="feature-title">Tu cielo en tu bolsillo.<br>Sin que lo tengas que buscar.</h3>
+        <p class="feature-desc">Cada vez que hay un tránsito relevante para tu carta, te llega una alerta antes de que suceda. No notificaciones genéricas. Solo las que impactan tu configuración.</p>
+        <span class="feature-highlight">PRÓXIMAMENTE · EN LISTA DE ESPERA</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="testimonios">
+  <div class="content">
+    <p class="section-marker reveal">LO QUE DICEN QUIENES YA LO TIENEN</p>
+
+    <div class="testimonio-grid reveal">
+      <div class="testimonio">
+        <div class="stars">★★★★★</div>
+        <p class="testimonio-text">La diferencia con todo lo que había pagado antes es que esto me responde. No tengo que ir a buscar — le pregunto y me dice algo que siento que nadie más podría haberme dicho.</p>
+        <p class="testimonio-meta">VALENTINA · BUENOS AIRES</p>
+      </div>
+      <div class="testimonio">
+        <div class="stars">★★★★★</div>
+        <p class="testimonio-text">El análisis del Nodo Norte me hizo entender por qué siempre termino en las mismas situaciones con hombres. No lo entendí leyendo sobre Libra. Lo entendí cuando vi mi mapa exacto.</p>
+        <p class="testimonio-meta">CAMILA · CDMX</p>
+      </div>
+      <div class="testimonio">
+        <div class="stars">★★★★★</div>
+        <p class="testimonio-text">Me avisó que el miércoles iba a haber una tensión en mi eje de comunicación. Tuve la pelea más difícil con mi pareja ese día. Ahora lo reviso antes de cualquier conversación importante.</p>
+        <p class="testimonio-meta">SOFÍA · LIMA</p>
+      </div>
+      <div class="testimonio">
+        <div class="stars">★★★★★</div>
+        <p class="testimonio-text">Compré por curiosidad y terminé cancelando mi suscripción de horóscopo semanal. Esto es tan específico para mí que lo otro me parece inútil ahora.</p>
+        <p class="testimonio-meta">ANDREA · BOGOTÁ</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="price-section">
+  <div class="content">
+    <p class="section-marker reveal" style="justify-content:center;text-align:center">TU INVERSIÓN</p>
+    <h2 class="reveal" style="font-family:'Cormorant Garamond',serif;font-size:clamp(24px,4vw,40px);font-weight:300;margin-bottom:48px;line-height:1.3">
+      Un pago único.<br><em style="font-style:italic;color:var(--magenta-bright)">Acceso de por vida a tu mapa.</em>
+    </h2>
+
+    <div class="price-card reveal">
+      <div class="price-glow"></div>
+      <p class="price-label">MAPA COMPLETO · ACCESO TOTAL</p>
+      <div class="price-amount"><span class="price-currency">$</span>47</div>
+      <p class="price-period">pago único · sin suscripción · sin sorpresas</p>
+
+      <div class="price-includes">
+        <div class="price-item">
+          <div class="price-item-icon">✦</div>
+          <span>Conversación ilimitada con tu mapa natal</span>
+        </div>
+        <div class="price-item">
+          <div class="price-item-icon">✦</div>
+          <span>Análisis completo de tus 4 pilares (Nodo Kármico incluido)</span>
+        </div>
+        <div class="price-item">
+          <div class="price-item-icon">✦</div>
+          <span>Tránsitos personales 90 días + actualizaciones</span>
+        </div>
+        <div class="price-item">
+          <div class="price-item-icon">✦</div>
+          <span>Respuesta a tu pregunta del inicio de esta página</span>
+        </div>
+        <div class="price-item">
+          <div class="price-item-icon">✦</div>
+          <span>Acceso de por vida · sin renovaciones</span>
+        </div>
+      </div>
+
+ 
+     <button class="cta-btn" onclick="window.location.href='boveda-premium.html'">
+          DECODIFICAR MI MAPA COMPLETO →
+        </button>
+
+      <div class="guarantee-bar" style="margin-top:24px">
+        <span class="guarantee-icon">🔒</span>
+        <p class="guarantee-text">Garantía de 7 días. Si no sentís que el análisis te describe con precisión, te devolvemos el dinero sin preguntas.</p>
+      </div>
+
+      <p class="cta-guarantee">Pago seguro · SSL · PayPal<br>Acceso inmediato tras la compra</p>
+     
+    </div>
+  </div>
+</section>
+
+<section class="faq-section">
+  <div class="content">
+    <p class="section-marker reveal">PREGUNTAS FRECUENTES</p>
+
+    <div class="reveal">
+      <div class="faq-item" onclick="this.classList.toggle('open')">
+        <div class="faq-question">
+          <span>¿En qué se diferencia esto de una consulta astrológica normal?</span>
+          <div class="faq-toggle">+</div>
+        </div>
+        <div class="faq-answer">Una consulta normal es una sesión de 60 minutos con información que olvidás. Tu mapa es un sistema permanente al que podés volver cada vez que tenés una decisión, una crisis, o una pregunta. Y responde desde TU configuración, no desde la interpretación de alguien que te conoció hace 10 minutos.</div>
+      </div>
+
+      <div class="faq-item" onclick="this.classList.toggle('open')">
+        <div class="faq-question">
+          <span>¿Necesito saber astrología para entenderlo?</span>
+          <div class="faq-toggle">+</div>
+        </div>
+        <div class="faq-answer">No. El sistema traduce los aspectos técnicos a lenguaje cotidiano. No necesitás saber qué es una cuadratura o qué significa Quirón — el análisis te lo explica en el contexto de tu vida.</div>
+      </div>
+
+      <div class="faq-item" onclick="this.classList.toggle('open')">
+        <div class="faq-question">
+          <span>¿Cómo funciona la conversación con mi mapa?</span>
+          <div class="faq-toggle">+</div>
+        </div>
+        <div class="faq-answer">Es un chat dentro de tu panel. Le hacés cualquier pregunta — sobre relaciones, trabajo, dinero, decisiones — y el sistema responde cruzando tu carta natal con las influencias del momento. Cada respuesta es específica para vos.</div>
+      </div>
+
+      <div class="faq-item" onclick="this.classList.toggle('open')">
+        <div class="faq-question">
+          <span>¿Cuándo recibo acceso?</span>
+          <div class="faq-toggle">+</div>
+        </div>
+        <div class="faq-answer">Inmediatamente después del pago. Recibirás un email con tu acceso y tu mapa estará listo en menos de 2 minutos con todos los cálculos astronómicos procesados.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<footer class="footer">
+  <div class="content">
+    <p>BÓVEDA CELESTE · TODOS LOS DERECHOS RESERVADOS · 2025</p>
+    <p style="margin-top:8px">Cálculos astronómicos basados en efemérides de la NASA · Swiss Ephemeris</p>
+  </div>
+</footer>
+
+<script>
+// ── CANVAS ESTELAR ──
+const canvas = document.getElementById('cosmos');
+const ctx = canvas.getContext('2d');
+let stars = [];
+
+function resize() {
+  canvas.width = window.innerWidth;
+  canvas.height = window.innerHeight;
+}
+
+function initStars() {
+  stars = [];
+  const count = Math.floor((canvas.width * canvas.height) / 4000);
+  for (let i = 0; i < count; i++) {
+    stars.push({
+      x: Math.random() * canvas.width,
+      y: Math.random() * canvas.height,
+      r: Math.random() * 1.2 + 0.2,
+      alpha: Math.random() * 0.6 + 0.1,
+      speed: Math.random() * 0.004 + 0.001,
+      offset: Math.random() * Math.PI * 2
+    });
+  }
+}
+
+function drawStars(t) {
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
+  stars.forEach(s => {
+    const a = s.alpha * (0.6 + 0.4 * Math.sin(t * s.speed + s.offset));
+    ctx.beginPath();
+    ctx.arc(s.x, s.y, s.r, 0, Math.PI * 2);
+    ctx.fillStyle = `rgba(240,232,255,${a})`;
+    ctx.fill();
+  });
+  requestAnimationFrame(drawStars);
+}
+
+resize();
+initStars();
+requestAnimationFrame(drawStars);
+window.addEventListener('resize', () => { resize(); initStars(); });
+
+// ── REVEAL ON SCROLL ──
+const reveals = document.querySelectorAll('.reveal');
+const observer = new IntersectionObserver((entries) => {
+  entries.forEach((entry, i) => {
+    if (entry.isIntersecting) {
+      setTimeout(() => entry.target.classList.add('visible'), i * 80);
+      observer.unobserve(entry.target);
+    }
+  });
+}, { threshold: 0.1, rootMargin: '0px 0px -60px 0px' });
+
+reveals.forEach(el => observer.observe(el));
+
+// ── DEMO CHAT ANIMADO ──
+const systemBubble = document.querySelector('.chat-bubble.system');
+const dots = document.querySelector('.typing-dots');
+const fullText = systemBubble.textContent;
+systemBubble.textContent = '';
+systemBubble.style.display = 'none';
+
+setTimeout(() => {
+  let i = 0;
+  dots.style.display = 'flex';
+  setTimeout(() => {
+    dots.style.display = 'none';
+    systemBubble.style.display = 'block';
+    const interval = setInterval(() => {
+      systemBubble.textContent += fullText[i];
+      i++;
+      if (i >= fullText.length) clearInterval(interval);
+    }, 22);
+  }, 2000);
+}, 1500);
+ // --- LEER EL NOMBRE DE LA USUARIA DESDE EL PANEL FREE ---
+document.addEventListener('DOMContentLoaded', () => {
+    const nombreGuardado = localStorage.getItem('refugio_nombre');
+    if (nombreGuardado) {
+        const nombreFormateado = nombreGuardado.charAt(0).toUpperCase() + nombreGuardado.slice(1).toLowerCase();
+        // Cambiamos el título principal para que sea hiper-personalizado
+        const heroName = document.querySelector('.hero-name');
+        if (heroName) {
+            heroName.innerHTML = `Tu Mapa,<br>${nombreFormateado}.`;
         }
-        supabase.table('usuarios_refugio').insert(nuevo_usuario).execute()
-        return jsonify({"status": "exito"}), 201
-    except Exception as e:
-        print(f"Error en registro: {str(e)}", flush=True)
-        return jsonify({"status": "error", "message": "Error interno al guardar."}), 500
-
-# ==========================================
-# LÓGICA DE LOGIN
-# ==========================================
-def login():
-    supabase = get_supabase_client()
-    if not supabase: return jsonify({"status": "error", "message": "Falta BD."}), 500
-    
-    data = request.get_json(silent=True) or {}
-    email = data.get('email')
-    password = data.get('password')
-    
-    if not email or not password:
-        return jsonify({"status": "error", "message": "Credenciales incompletas."}), 400
-    
-    try:
-        res = supabase.table('usuarios_refugio').select('*').eq('email', email).execute()
-        if len(res.data) == 0:
-            return jsonify({"status": "error", "message": "Usuario no encontrado."}), 404
-            
-        usuario = res.data[0]
-        if check_password_hash(usuario.get('contrasena'), password):
-            return jsonify({
-                "status": "exito", 
-                "datos": {"nombre": usuario.get('nombre'), "email": usuario.get('email')}
-            }), 200
-            
-        return jsonify({"status": "error", "message": "Contraseña incorrecta."}), 401
-    except Exception as e:
-        return jsonify({"status": "error", "message": str(e)}), 500
-
-# ==========================================
-# LÓGICA DE OBTENER DATOS (Para panel Free)
-# ==========================================
-def obtener_datos():
-    supabase = get_supabase_client()
-    if not supabase: return jsonify({"status": "error", "message": "Falta BD."}), 500
-    
-    data = request.get_json(silent=True) or {}
-    email = data.get('email')
-    
-    try:
-        res = supabase.table('usuarios_refugio').select('*').eq('email', email).execute()
-        if len(res.data) > 0:
-            u = res.data[0]
-            nombre = u.get('nombre', 'Exploradora')
-            
-            arquetipos_base = [
-                {"elemento": "Elemento Fuego", "titulo": "Tu Impulso", "texto": "Estás diseñada para iniciar y transformar. Tu mente busca la acción instintivamente. Tu principal fuga de energía es el agotamiento por no saber detenerte o por cargar con los miedos de otros."},
-                {"elemento": "Elemento Tierra", "titulo": "Tu Gravedad", "texto": "Estás diseñada para materializar y sostener. Tu mente busca la estructura. Tu principal fuga de energía radica en asumir el peso de las dinámicas de otros, confundiendo tu capacidad con un falso deber."},
-                {"elemento": "Elemento Agua", "titulo": "Tu Resonancia", "texto": "Estás diseñada para sentir y nutrir. Tu mente procesa el mundo a través de la empatía profunda. Tu fuga de energía es absorber emociones ajenas como si fueran tuyas, perdiendo tu centro."}
-            ]
-            arquetipos_filtro = [
-                {"elemento": "Elemento Aire", "texto": "Por dentro tu mente sobre-analiza cada escenario buscando entenderlo todo. Te drenas cuando no hay claridad mental o comunicación."},
-                {"elemento": "Elemento Fuego", "texto": "Por dentro procesas el caos a través de la impaciencia. Necesitas que las cosas avancen y te frustras profundamente ante el estancamiento ajeno."},
-                {"elemento": "Elemento Tierra", "texto": "Por dentro buscas garantías. Necesitas saber que el suelo es firme antes de dar un paso, lo que a veces te encierra en la parálisis por análisis."}
-            ]
-            
-            idx_base = len(nombre) % 3
-            idx_filtro = (len(nombre) + 1) % 3
-
-            return jsonify({
-                "status": "exito", 
-                "datos": {
-                    "nombre": nombre, 
-                    "ciudad": u.get('ciudad', 'Tu ciudad'), 
-                    "fecha": u.get('fecha_nacimiento', '--/--/----'),
-                    "pilar1": arquetipos_base[idx_base],
-                    "pilar2": arquetipos_filtro[idx_filtro]
-                }
-            }), 200
-            
-        return jsonify({"status": "error", "message": "No se hallaron datos."}), 404
-    except Exception as e:
-        return jsonify({"status": "error", "message": str(e)}), 500
-
-# ==========================================
-# WEBHOOK DE PAYPAL (AUTOMATIZACIÓN DE PAGOS)
-# ==========================================
-def webhook_paypal_Refugio():
-    supabase = get_supabase_client()
-    if not supabase: return jsonify({"status": "error"}), 500
-
-    data = request.get_json(silent=True) or {}
-    event_type = data.get('event_type')
-    
-    # El evento exacto que confirmaste
-    if event_type == 'PAYMENT.CAPTURE.COMPLETED':
-        try:
-            resource = data.get('resource', {})
-            email_pagador = None
-            
-            # 1. Buscamos primero en custom_id (Esta es la mejor práctica)
-            if 'custom_id' in resource:
-                email_pagador = resource['custom_id']
-            
-            # 2. Si por alguna razón no viene el custom_id, tomamos el email de la cuenta de PayPal
-            if not email_pagador and 'payer' in resource and 'email_address' in resource['payer']:
-                email_pagador = resource['payer']['email_address']
-                
-            if email_pagador:
-                # Ascenso a Premium en la Base de Datos
-                supabase.table('usuarios_refugio').update({"nivel_suscripcion": "premium"}).eq('email', email_pagador).execute()
-                print(f"Venta Refugio exitosa: {email_pagador} ascendido a PREMIUM.", flush=True)
-                
-        except Exception as e:
-            print(f"Error procesando webhook de Refugio: {str(e)}", flush=True)
-            
-    # Siempre respondemos 200 OK a PayPal para que registre el éxito
-    return jsonify({"status": "recibido"}), 200
+    }
+});
+</script>
+</body>
+</html>
