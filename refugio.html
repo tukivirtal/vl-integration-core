@@ -71,6 +71,7 @@ body {
   border-top: 1px solid var(--magenta-bright);
   border-radius: 50%;
   animation: spin 1.2s linear infinite;
+  transition: border-top-color 0.3s;
 }
 
 @keyframes spin { to { transform: rotate(360deg); } }
@@ -80,6 +81,9 @@ body {
   letter-spacing: 0.35em;
   color: var(--magenta-bright);
   text-transform: uppercase;
+  text-align: center;
+  max-width: 80%;
+  line-height: 1.5;
 }
 
 /* ── WRAPPER ── */
@@ -615,16 +619,13 @@ footer {
 <div class="nebula nebula-2"></div>
 <div class="nebula nebula-3"></div>
 
-<!-- LOADER -->
 <div id="vault-loader">
   <div class="loader-ring"></div>
-  <div id="loader-text">Inicializando bóveda segura...</div>
+  <div id="loader-text">INICIALIZANDO BÓVEDA SEGURA...</div>
 </div>
 
-<!-- WRAPPER -->
 <div id="main-wrapper">
 
-  <!-- HEADER -->
   <header>
     <div class="header-inner">
       <a href="index.html" class="logo">
@@ -646,7 +647,6 @@ footer {
   <main>
     <div class="container">
 
-      <!-- BIENVENIDA -->
       <div class="welcome-block">
         <p class="welcome-eyebrow">BÓVEDA CELESTE · MAPA BASE</p>
         <h1 class="welcome-title">
@@ -655,7 +655,6 @@ footer {
         </h1>
       </div>
 
-      <!-- DASHBOARD PANEL -->
       <div class="dashboard-panel reveal">
         <div class="dash-top">
           <div class="live-dot"></div>
@@ -663,7 +662,6 @@ footer {
         </div>
 
         <div class="dash-grid">
-          <!-- LEFT -->
           <div>
             <div class="message-block">
               <p class="message-quote" id="dash-mensaje">"Sintonizando con tu energía y calculando efemérides exactas..."</p>
@@ -708,7 +706,6 @@ footer {
             </div>
           </div>
 
-          <!-- RIGHT -->
           <div class="right-col">
             <div class="chart-wrap">
               <canvas id="syncArc" width="130" height="130"></canvas>
@@ -748,7 +745,6 @@ footer {
         </div>
       </div>
 
-      <!-- PILAR 01 -->
       <article class="pilar reveal">
         <div class="pilar-header">
           <span class="pilar-icon">☀️</span>
@@ -763,7 +759,6 @@ footer {
         </div>
       </article>
 
-      <!-- PILAR 02 -->
       <article class="pilar reveal">
         <div class="pilar-header">
           <span class="pilar-icon">🌙</span>
@@ -778,7 +773,6 @@ footer {
         </div>
       </article>
 
-      <!-- PILAR 03-04 BLOQUEADO -->
       <article class="pilar pilar-locked reveal">
         <div class="pilar-header">
           <span class="pilar-icon">☋</span>
@@ -800,19 +794,17 @@ footer {
         </div>
       </article>
 
-      <!-- UPSELL -->
       <section class="upsell-section reveal">
         <div class="upsell-glow"></div>
 
         <p class="upsell-quote" id="frase-filosofica">
-          "El cielo te diseñó con la fortaleza para sostener a tu entorno. Pero hoy el mapa pregunta: ¿quién te sostiene a ti?"
+          "El cielo te diseñó con la fortaleza para sostener a tu entorno.<br>Pero hoy el mapa pregunta: ¿quién te sostiene a ti?"
         </p>
 
         <p class="upsell-desc">
           A diferencia de textos genéricos en internet, tu Mapa Completo cruza bases de datos astronómicas con psicología analítica. Conversación ilimitada con tu carta natal, tus 4 pilares completos, y tránsitos personales para los próximos 90 días.
         </p>
 
-        <!-- TESTIMONIOS AQUÍ — justo antes del CTA, máxima conversión -->
         <div class="mini-testimonios">
           <div class="mini-test">
             <div class="mini-test-stars">★★★★★</div>
@@ -845,9 +837,7 @@ footer {
     </div>
   </footer>
 
-</div><!-- /main-wrapper -->
-
-<script>
+</div><script>
 // ── CANVAS ESTELAR ──
 const canvas = document.getElementById('cosmos');
 const ctx = canvas.getContext('2d');
@@ -965,7 +955,7 @@ function generarDatosUnicos(nombre) {
   };
 }
 
-// ── INIT ──
+// ── INIT Y TIMEOUT DE SEGURIDAD ──
 document.addEventListener('DOMContentLoaded', async () => {
   const emailGuardado = localStorage.getItem('refugio_email');
   if (!emailGuardado) { window.location.href = "index.html"; return; }
@@ -973,14 +963,21 @@ document.addEventListener('DOMContentLoaded', async () => {
   const mainWrapper = document.getElementById('main-wrapper');
   const loader = document.getElementById('vault-loader');
   const loaderText = document.getElementById('loader-text');
+  const loaderRing = document.querySelector('.loader-ring');
 
   try {
+    // Escudo de tiempo: Aborta la conexión si el servidor/base de datos no responde en 8.5 segundos
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => controller.abort(), 8500);
+
     const response = await fetch('/api/obtener_datos', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ email: emailGuardado })
+      body: JSON.stringify({ email: emailGuardado }),
+      signal: controller.signal
     });
 
+    clearTimeout(timeoutId); // Limpiamos el timeout si respondió a tiempo
     const resultado = await response.json();
 
     if (resultado.status === "exito") {
@@ -1059,17 +1056,25 @@ document.addEventListener('DOMContentLoaded', async () => {
         document.getElementById('pilar2-texto').textContent = d.pilar2.texto;
       }
 
-      // FRASE UPSELL
+      // FRASE UPSELL (COLOR CORREGIDO)
       const fraseEl = document.getElementById('frase-filosofica');
       if (fraseEl) {
-        fraseEl.innerHTML = `"${nombreFormateado}, el mapa te diseñó con la fortaleza para sostener a tu entorno.<br>Pero hoy el cielo pregunta: <span style="color: var(--magenta-bright); font-weight: 500;">¿quién te sostiene a ti?</span>"
+        fraseEl.innerHTML = `"${nombreFormateado}, el mapa te diseñó con la fortaleza para sostener a tu entorno.<br>Pero hoy el cielo pregunta: <span style="color: var(--magenta-bright); font-weight: 500;">¿quién te sostiene a ti?</span>"`;
       }
 
     } else {
-      loaderText.textContent = "Error al conectar con la bóveda.";
+      loaderText.textContent = "Error del servidor estelar: " + (resultado.message || "Desconocido");
+      loaderRing.style.borderTopColor = 'var(--red-soft)';
     }
   } catch (error) {
-    loaderText.textContent = "Error de sincronización de red.";
+    // Si la DB estaba dormida o Vercel falló, lo mostramos claro y salimos del bucle infinito.
+    if (error.name === 'AbortError') {
+        loaderText.textContent = "ALERTA: La base de datos (Supabase) está pausada por inactividad o tardando mucho. Por favor reactívala en tu panel.";
+    } else {
+        loaderText.textContent = "Falla de red o caída interna de Python.";
+    }
+    loaderRing.style.borderTopColor = 'var(--red-soft)';
+    console.error("Error crítico en dashboard:", error);
   }
 });
 
