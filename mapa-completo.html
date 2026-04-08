@@ -594,53 +594,8 @@
     font-size: 10px;
   }
 
-  /* ── CTA BUTTON ── */
-  .cta-btn {
-    position: relative;
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    gap: 12px;
-    width: 100%;
-    padding: 20px 40px;
-    background: var(--magenta);
-    color: #fff;
-    font-family: 'DM Mono', monospace;
-    font-size: 11px;
-    letter-spacing: 0.35em;
-    font-weight: 400;
-    text-decoration: none;
-    border: none;
-    cursor: pointer;
-    border-radius: 1px;
-    overflow: hidden;
-    transition: transform 0.2s, box-shadow 0.3s;
-  }
-
-  .cta-btn::after {
-    content: '';
-    position: absolute;
-    inset: 0;
-    background: linear-gradient(120deg, transparent 30%, rgba(255,255,255,0.12) 50%, transparent 70%);
-    transform: translateX(-100%);
-    transition: transform 0.5s;
-  }
-
-  .cta-btn:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 20px 60px rgba(194,24,91,0.4);
-  }
-
-  .cta-btn:hover::after { transform: translateX(100%); }
-  .cta-btn:active { transform: translateY(0); }
-
-  .cta-guarantee {
-    margin-top: 20px;
-    font-size: 10px;
-    color: var(--text-muted);
-    letter-spacing: 0.1em;
-    line-height: 1.7;
-  }
+  /* ── CONTENEDOR BOTÓN PAYPAL ── */
+  .paypal-button-container { width: 100%; min-height: 45px; z-index: 10; margin-top: 20px;}
 
   /* ── GARANTÍA ── */
   .guarantee-bar {
@@ -656,6 +611,14 @@
 
   .guarantee-icon { font-size: 24px; }
   .guarantee-text { font-size: 11px; line-height: 1.6; color: var(--gold); }
+  
+  .cta-guarantee {
+    margin-top: 20px;
+    font-size: 10px;
+    color: var(--text-muted);
+    letter-spacing: 0.1em;
+    line-height: 1.7;
+  }
 
   /* ── FAQ ── */
   .faq-section { padding: 80px 0 120px; }
@@ -725,24 +688,6 @@
   .reveal.visible {
     opacity: 1;
     transform: none;
-  }
-
-  /* ── LÍNEA DIVISORA CON ESTRELLA ── */
-  .star-divider {
-    display: flex;
-    align-items: center;
-    gap: 16px;
-    margin: 80px 0;
-    color: var(--border-bright);
-    font-size: 11px;
-  }
-
-  .star-divider::before,
-  .star-divider::after {
-    content: '';
-    flex: 1;
-    height: 1px;
-    background: var(--border);
   }
 
   /* ── RESPONSIVE ── */
@@ -954,10 +899,7 @@
         </div>
       </div>
 
- 
-     <button class="cta-btn" onclick="window.location.href='boveda-premium.html'">
-          DECODIFICAR MI MAPA COMPLETO →
-        </button>
+      <div id="paypal-button-container" class="paypal-button-container"></div>
 
       <div class="guarantee-bar" style="margin-top:24px">
         <span class="guarantee-icon">🔒</span>
@@ -1012,12 +954,62 @@
 
 <footer class="footer">
   <div class="content">
-    <p>BÓVEDA CELESTE · TODOS LOS DERECHOS RESERVADOS · 2025</p>
+    <p>BÓVEDA CELESTE · TODOS LOS DERECHOS RESERVADOS · 2026</p>
     <p style="margin-top:8px">Cálculos astronómicos basados en efemérides de la NASA · Swiss Ephemeris</p>
   </div>
 </footer>
 
 <script>
+// ── SCRIPT DE PAYPAL OFUSCADO E INTEGRACIÓN ──
+(function() {
+    // La llave en Base64 para ocultarla de rastreadores
+    const _c = "QVZ0aE9vMG4wbWpGLXliSUsyeFJteEtBTU5MUHVtRFJZWHhlUVBnZDBTMTNLNWVYTkNnYzQ1OHpqdmhkQXJ6RkZnam1HTWNENVF4d1Y2WEM=";
+    const s = document.createElement('script');
+    s.src = `https://www.paypal.com/sdk/js?client-id=${atob(_c)}&currency=USD&components=buttons`;
+    s.async = true;
+    s.onload = renderizarBotonPayPal; 
+    document.head.appendChild(s);
+})();
+
+function renderizarBotonPayPal() {
+    const emailUsuaria = localStorage.getItem('refugio_email') || 'anonimo@sinregistro.com';
+
+    paypal.Buttons({
+        style: { shape: 'pill', color: 'gold', layout: 'vertical', label: 'checkout', height: 45 },
+        createOrder: function(data, actions) {
+            return actions.order.create({
+                purchase_units: [{
+                    description: "MAPA COMPLETO · BÓVEDA CELESTE (Acceso de por Vida)",
+                    amount: { currency_code: 'USD', value: '47.00' },
+                    custom_id: emailUsuaria // ¡VITAL para que Supabase le asigne Premium!
+                }],
+                application_context: { shipping_preference: 'NO_SHIPPING' }
+            });
+        },
+        onApprove: function(data, actions) {
+            return actions.order.capture().then(function(details) {
+                const btnContainer = document.getElementById('paypal-button-container');
+                btnContainer.innerHTML = `
+                    <div style="color:#d4a853; text-align:center; padding: 20px; border: 1px solid rgba(212,168,83,0.5); background: rgba(212,168,83,0.1); border-radius: 4px;">
+                        <strong style="font-family: 'Cormorant Garamond', serif; font-size:1.5rem; letter-spacing:1px;">PAGO APROBADO</strong><br><br>
+                        <span style="font-size:0.9rem; color:#fff; line-height:1.5; display:block; font-family: 'DM Mono', monospace;">
+                            Bóveda Premium desbloqueada.<br>
+                            Sintonizando oráculo...
+                        </span>
+                    </div>
+                `;
+                setTimeout(() => {
+                    window.location.href = 'boveda-premium.html';
+                }, 2000);
+            });
+        },
+        onError: function(err) {
+            console.error('Error de PayPal:', err);
+            alert('Hubo un error al procesar el pago. Por favor intenta nuevamente.');
+        }
+    }).render('#paypal-button-container');
+}
+
 // ── CANVAS ESTELAR ──
 const canvas = document.getElementById('cosmos');
 const ctx = canvas.getContext('2d');
@@ -1093,12 +1085,12 @@ setTimeout(() => {
     }, 22);
   }, 2000);
 }, 1500);
- // --- LEER EL NOMBRE DE LA USUARIA DESDE EL PANEL FREE ---
+
+// --- LEER EL NOMBRE DE LA USUARIA DESDE EL PANEL FREE ---
 document.addEventListener('DOMContentLoaded', () => {
     const nombreGuardado = localStorage.getItem('refugio_nombre');
     if (nombreGuardado) {
         const nombreFormateado = nombreGuardado.charAt(0).toUpperCase() + nombreGuardado.slice(1).toLowerCase();
-        // Cambiamos el título principal para que sea hiper-personalizado
         const heroName = document.querySelector('.hero-name');
         if (heroName) {
             heroName.innerHTML = `Tu Mapa,<br>${nombreFormateado}.`;
