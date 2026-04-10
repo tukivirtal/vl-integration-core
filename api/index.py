@@ -1,5 +1,6 @@
 import os
 import datetime
+from anthropic import Anthropic
 from werkzeug.security import generate_password_hash, check_password_hash
 from flask import Flask, request, jsonify
 from supabase import create_client
@@ -182,3 +183,81 @@ def webhook_paypal_Refugio():
             
     # Siempre respondemos 200 OK a PayPal para que registre el éxito
     return jsonify({"status": "recibido"}), 200
+
+# ==========================================
+# CEREBRO IA: EL ORÁCULO DE REFUGIO
+# ==========================================
+def chat_oraculo():
+    supabase = get_supabase_client()
+    api_key_anthropic = os.environ.get("ANTHROPIC_API_KEY")
+    
+    # 1. Validación de Seguridad
+    if not supabase or not api_key_anthropic: 
+        return jsonify({"status": "error", "message": "Faltan credenciales del sistema central."}), 500
+        
+    data = request.get_json(silent=True) or {}
+    email = data.get('email')
+    mensaje_usuaria = data.get('mensaje')
+    
+    if not email or not mensaje_usuaria:
+        return jsonify({"status": "error", "message": "Faltan datos de consulta para el Oráculo."}), 400
+        
+    try:
+        # 2. Extracción de Datos de la Usuaria
+        res = supabase.table('usuarios_refugio').select('*').eq('email', email).execute()
+        if len(res.data) == 0:
+            return jsonify({"status": "error", "message": "Usuario no encontrado en la bóveda."}), 404
+            
+        usuario = res.data[0]
+        nombre = usuario.get('nombre', 'Exploradora')
+        fecha_nac = usuario.get('fecha_nacimiento', 'Desconocida')
+        ciudad_nac = usuario.get('ciudad', 'Desconocida')
+        
+        # 3. EL SYSTEM PROMPT (El alma del Oráculo)
+        system_prompt = f"""
+        Eres el "Oráculo de Refugio", una inteligencia analítica basada en cálculos astronómicos (efemérides JPL/NASA), psicología profunda (junguiana) y filosofía práctica estoica.
+
+        [DATOS NATALES DE LA USUARIA ACTUAL]
+        Nombre: {nombre}
+        Fecha de Nacimiento: {fecha_nac}
+        Ciudad de Nacimiento: {ciudad_nac}
+        (Utiliza estos datos sutilmente para anclar tu respuesta a su realidad natal. Deduce su signo zodiacal tradicional y su elemento dominante a partir de su fecha).
+
+        [REGLAS DE COMPORTAMIENTO Y TONO]
+        1. Tu tono es profundo, sobrio, analítico y empático, pero NO compasivo. Suenas como un analista sabio y objetivo.
+        2. NO uses frases cliché de autoayuda (ej. "todo pasa por algo", "tú puedes", "sé fuerte", "el universo te protege").
+        3. NO uses emojis. Cero. Tu comunicación es puramente textual y literaria.
+        4. Eres directo. Si hay una fricción psicológica evidente en su mapa, exponla con respeto pero sin anestesia.
+
+        [LIMITACIONES LEGALES - ESTRICTAS]
+        1. NUNCA le digas a la usuaria qué decisión específica tomar (ej. "debes renunciar", "debes separarte"). Tú solo iluminas el mapa y los patrones de su psique; ella toma la decisión.
+        2. No ofrezcas consejos médicos, financieros o legales bajo ninguna circunstancia.
+
+        [ESTRUCTURA OBLIGATORIA DE LA RESPUESTA]
+        Tu respuesta debe tener MÁXIMO TRES PÁRRAFOS CORTOS (no más de 3-4 oraciones cada uno):
+        - Párrafo 1 (Validación): Valida la emoción o duda que presenta la usuaria explicando de dónde proviene usando su configuración natal (ej. su elemento dominante o un arquetipo).
+        - Párrafo 2 (El Patrón): Explica la sombra o el patrón repetitivo inconsciente que se está activando (visión junguiana) que le causa fricción en este tema.
+        - Párrafo 3 (La Acción): Cierra con una instrucción estoica o una pregunta de auto-reflexión poderosa para que ella asuma la responsabilidad de su siguiente paso.
+        """
+        
+        # 4. Conexión a Claude 3.5 Sonnet
+        client = Anthropic(api_key=api_key_anthropic)
+        
+        respuesta_ia = client.messages.create(
+            model="claude-3-5-sonnet-20241022", # Usamos el modelo más capaz y económico para este caso
+            max_tokens=400, # Límite estricto para mantener las respuestas concisas (aprox 300 palabras)
+            temperature=0.7, # Creatividad controlada (0 = robótico, 1 = muy creativo. 0.7 es ideal aquí)
+            system=system_prompt,
+            messages=[
+                {"role": "user", "content": mensaje_usuaria}
+            ]
+        )
+        
+        # 5. Extracción y envío de la respuesta
+        texto_final = respuesta_ia.content[0].text
+        
+        return jsonify({"status": "exito", "respuesta": texto_final}), 200
+        
+    except Exception as e:
+        print(f"Error en Oráculo IA: {str(e)}", flush=True)
+        return jsonify({"status": "error", "message": "Interferencia en la bóveda celeste al conectar con el Oráculo. Intenta de nuevo en unos minutos."}), 500
