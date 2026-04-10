@@ -836,6 +836,61 @@ FORMATO: Párrafos cortos separados. Sin listas con guiones. Sin negritas excesi
   document.getElementById('send-btn').disabled=false;
   input.focus();
 }
+  async function enviarMensajeOraculo() {
+    // Asegúrate de que los IDs coincidan con los de tu HTML
+    const inputTexto = document.getElementById('chat-input'); 
+    const mensaje = inputTexto.value.trim();
+    const cajaMensajes = document.getElementById('chat-mensajes'); 
+    const emailGuardado = localStorage.getItem('refugio_email'); // Tu pase de seguridad
+
+    if (!mensaje || !emailGuardado) return;
+
+    // 1. Mostrar el mensaje de la usuaria inmediatamente en pantalla
+    cajaMensajes.innerHTML += `<div class="mensaje-usuaria" style="margin-bottom: 15px; color: var(--text-secondary);"><strong>Tú:</strong> ${mensaje}</div>`;
+    inputTexto.value = ''; // Limpiamos la caja de texto
+
+    // 2. Mostrar un indicador de "pensando..."
+    const idCarga = 'carga-' + Date.now();
+    cajaMensajes.innerHTML += `<div id="${idCarga}" class="mensaje-ia" style="margin-bottom: 15px; color: var(--magenta-bright); font-style: italic;">El Oráculo está decodificando tu mapa...</div>`;
+    
+    // Auto-scroll hacia abajo
+    cajaMensajes.scrollTop = cajaMensajes.scrollHeight;
+
+    try {
+        // 3. Lanzar la pregunta a tu servidor Python
+        const respuesta = await fetch('/api/chat', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ 
+                email: emailGuardado, 
+                mensaje: mensaje 
+            })
+        });
+
+        const datos = await respuesta.json();
+        
+        // 4. Borrar el "pensando..."
+        document.getElementById(idCarga).remove();
+
+        // 5. Mostrar la respuesta magistral de Claude
+        if (datos.status === 'exito') {
+            // Reemplazamos los saltos de línea de la IA con <br> de HTML para mantener los párrafos
+            const textoFormateado = datos.respuesta.replace(/\n/g, '<br>');
+            cajaMensajes.innerHTML += `
+                <div class="mensaje-ia" style="margin-bottom: 25px; padding: 15px; background: rgba(194,24,91,0.05); border-left: 2px solid var(--magenta); color: var(--text-primary); line-height: 1.8;">
+                    <strong>Oráculo:</strong><br><br>${textoFormateado}
+                </div>`;
+        } else {
+            cajaMensajes.innerHTML += `<div class="mensaje-ia error" style="color: var(--red-soft);">Error: ${datos.message}</div>`;
+        }
+        
+        cajaMensajes.scrollTop = cajaMensajes.scrollHeight;
+
+    } catch (error) {
+        document.getElementById(idCarga).remove();
+        cajaMensajes.innerHTML += `<div class="mensaje-ia error" style="color: var(--red-soft);">Hubo una interferencia al conectar con la bóveda. Intenta de nuevo.</div>`;
+    }
+}
 </script>
 </body>
 </html>
