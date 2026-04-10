@@ -450,11 +450,11 @@ body{background:var(--void);color:var(--tp);font-family:'DM Mono',monospace;font
           <button class="sug-btn" onclick="useSuggestion(this)">¿Por qué repito los mismos patrones?</button>
         </div>
 
-        <div class="chat-input-row">
-          <textarea id="chat-input" class="chat-input" placeholder="Escribe lo que estás viviendo..." rows="1"
-            onkeydown="if(event.key==='Enter'&&!event.shiftKey){event.preventDefault();enviar()}"></textarea>
-          <button class="send-btn" id="send-btn" onclick="enviar()">CONSULTAR</button>
-        </div>
+      <div class="chat-input-row">
+        <textarea id="chat-input" class="chat-input" placeholder="Escribe lo que estás viviendo..." rows="1"
+          onkeydown="if(event.key==='Enter'&&!event.shiftKey){event.preventDefault();enviarMensajeOraculo()}"></textarea>
+        <button class="send-btn" id="send-btn" onclick="enviarMensajeOraculo()">CONSULTAR</button>
+      </div>
       </div>
     </section>
 
