@@ -185,6 +185,33 @@ def webhook_paypal_Refugio():
     return jsonify({"status": "recibido"}), 200
 
 # ==========================================
+# ENRUTADOR MAESTRO
+# ==========================================
+@app.route('/', defaults={'path': ''}, methods=['POST', 'OPTIONS'])
+@app.route('/<path:path>', methods=['POST', 'OPTIONS'])
+def enrutador(path):
+    if request.method == 'OPTIONS':
+        return jsonify({"status": "ok"}), 200
+    
+    try:
+        ruta_solicitada = request.path
+        
+        if 'login' in ruta_solicitada: return login()
+        if 'registro' in ruta_solicitada: return registro()
+        if 'obtener_datos' in ruta_solicitada: return obtener_datos()
+        
+        # RUTA PARA PAYPAL
+        if 'webhook_paypal_Refugio' in ruta_solicitada: return webhook_paypal_Refugio()
+        
+        # RUTA PARA EL ORÁCULO (LA LÍNEA QUE FALTABA)
+        if 'chat' in ruta_solicitada: return chat_oraculo()
+            
+        return jsonify({"status": "error", "message": "Ruta no encontrada"}), 404
+        
+    except Exception as e:
+        return jsonify({"status": "error", "message": "Error interno: " + str(e)}), 500
+
+# ==========================================
 # CEREBRO IA: EL ORÁCULO DE REFUGIO
 # ==========================================
 def chat_oraculo():
