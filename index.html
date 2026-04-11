@@ -434,10 +434,21 @@
         resize(); initStars(); requestAnimationFrame(drawStars);
 
         // --- COMPROBAR SESIÓN ---
-        document.addEventListener('DOMContentLoaded', () => {
-            if (localStorage.getItem('refugio_email')) {
-                window.location.href = "refugio.html";
-            }
+           // ════ PORTERO AUTOMÁTICO INTELIGENTE ════
+            document.addEventListener('DOMContentLoaded', () => {
+                const emailGuardado = localStorage.getItem('refugio_email');
+                const nivelGuardado = localStorage.getItem('refugio_nivel');
+            
+                // Si la usuaria ya tiene sesión iniciada (su email está en la memoria)
+                if (emailGuardado) {
+                    // Redirección inteligente según su nivel
+                    if (nivelGuardado === 'premium') {
+                        window.location.href = "boveda-premium.html";
+                    } else {
+                        window.location.href = "refugio.html";
+                    }
+                }
+
         });
 
         // --- NAVEGACIÓN Y TABS ---
