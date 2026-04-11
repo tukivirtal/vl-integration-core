@@ -394,9 +394,14 @@ body{background:var(--void);color:var(--tp);font-family:'DM Mono',monospace;font
       <button class="nav-btn" onclick="goTab('diario',this)">
         <span class="nav-icon">◇</span> Diario de Insights
       </button>
+      
       <div class="nav-sep"></div>
+      
       <button class="nav-btn" onclick="window.location.href='refugio.html'">
         <span class="nav-icon">←</span> Panel Diario
+      </button>
+      <button class="nav-btn" onclick="cerrarSesion()" style="color: var(--red);">
+        <span class="nav-icon">⏏</span> Cerrar sesión
       </button>
     </nav>
 
@@ -447,11 +452,11 @@ body{background:var(--void);color:var(--tp);font-family:'DM Mono',monospace;font
           <button class="sug-btn" onclick="useSuggestion(this)">¿Por qué repito los mismos patrones?</button>
         </div>
 
-      <div class="chat-input-row">
-        <textarea id="chat-input" class="chat-input" placeholder="Escribe lo que estás viviendo..." rows="1"
-          onkeydown="if(event.key==='Enter'&&!event.shiftKey){event.preventDefault();enviarMensajeOraculo()}"></textarea>
-        <button class="send-btn" id="send-btn" onclick="enviarMensajeOraculo()">CONSULTAR</button>
-      </div>
+        <div class="chat-input-row">
+          <textarea id="chat-input" class="chat-input" placeholder="Escribe lo que estás viviendo..." rows="1"
+            onkeydown="if(event.key==='Enter'&&!event.shiftKey){event.preventDefault();enviarMensajeOraculo()}"></textarea>
+          <button class="send-btn" id="send-btn" onclick="enviarMensajeOraculo()">CONSULTAR</button>
+        </div>
       </div>
     </section>
 
@@ -474,7 +479,7 @@ body{background:var(--void);color:var(--tp);font-family:'DM Mono',monospace;font
           <span class="pilar-icon">☀️</span>
           <h3 class="pilar-title">Tu Gravedad y Centro Operativo</h3>
           <p class="pilar-body">Tu centro operativo responde al <strong id="p1-elem">elemento Fuego</strong>. Estás diseñada orgánicamente para iniciar, transformar y liderar procesos. La quietud prolongada no te relaja — te oxida.</p>
-          <p class="pilar-body">Tu mayor fuga energética ocurre cuando intentás amoldarte a estructuras lentas de otras personas. Asumís la carga de arrastrar a quienes no quieren moverse, lo que consume tu fuego interno sin que lo notes hasta que ya estás agotada.</p>
+          <p class="pilar-body">Tu mayor fuga energética ocurre cuando intentás amoldarte a structures lentas de otras personas. Asumís la carga de arrastrar a quienes no quieren moverse, lo que consume tu fuego interno sin que lo notes hasta que ya estás agotada.</p>
           <div class="dato-tecnico">◈ SOL EN <span id="p1-sol">ARIES</span> · ELEMENTO <span id="p1-elem2">FUEGO</span> · CASA <span id="p1-casa">I</span></div>
         </div>
 
@@ -591,9 +596,7 @@ body{background:var(--void);color:var(--tp);font-family:'DM Mono',monospace;font
         <h2 class="panel-title">Diario de Insights</h2>
         <p class="panel-sub">El oráculo recuerda. Cada conversación queda registrada aquí para que puedas ver tu evolución.</p>
       </div>
-      <button class="nav-btn" onclick="cerrarSesion()" style="color: var(--red);">
-        <span class="nav-icon">⏏</span> Cerrar sesión
-      </button>
+      
       <p class="diario-intro">
         Cada vez que el oráculo te responde, el insight queda guardado en este diario. Sirve para que puedas ver patrones en tus propias preguntas y el trabajo que tu mapa va haciendo con el tiempo.
       </p>
@@ -760,22 +763,15 @@ function saveInsight(pregunta,insight){
   saveDiario(entries);
 }
 
-function saveInsight(pregunta,insight){
-  const entries=getDiario();
-  const fecha=new Date().toLocaleDateString('es-AR',{weekday:'long',day:'numeric',month:'long'});
-  entries.push({fecha,pregunta,insight});
-  if(entries.length>20)entries.shift();
-  saveDiario(entries);
-}
-
-// ════ CHAT CON IA REAL ════
-  // ════ CERRAR SESIÓN ════
+// ════ CERRAR SESIÓN ════
 function cerrarSesion() {
     // Borramos toda la memoria (nombre, email, fecha, nivel, etc.)
     localStorage.clear();
     // Redirigimos a la página principal de acceso (asegúrate de que se llame index.html)
     window.location.href = 'index.html'; 
 }
+
+// ════ CHAT CON IA REAL ════
 let sending = false;
 
 async function enviarMensajeOraculo() {
@@ -821,7 +817,11 @@ async function enviarMensajeOraculo() {
 
         const datos = await respuesta.json();
         
-      if (datos.status === 'exito') {
+        // 4. Borramos la animación de carga
+        const cargaEl = document.getElementById('carga-oraculo');
+        if(cargaEl) cargaEl.remove();
+        
+        if (datos.status === 'exito') {
             // 1. Limpiamos las negritas (Convertimos **texto** a <strong>texto</strong>)
             const textoLimpio = datos.respuesta.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
             
@@ -844,11 +844,8 @@ async function enviarMensajeOraculo() {
             }
         } else {
             throw new Error(datos.message || "Error desconocido en el servidor");
-        }  // 4. Borramos la animación de carga
-        const cargaEl = document.getElementById('carga-oraculo');
-        if(cargaEl) cargaEl.remove();
-
-      
+        }
+        
     } catch (error) {
         const cargaEl = document.getElementById('carga-oraculo');
         if(cargaEl) cargaEl.remove();
