@@ -100,7 +100,12 @@ def login():
         if check_password_hash(usuario.get('contrasena'), password):
             return jsonify({
                 "status": "exito", 
-                "datos": {"nombre": usuario.get('nombre'), "email": usuario.get('email')}
+                "datos": {
+                    "nombre": usuario.get('nombre'), 
+                    "email": usuario.get('email'),
+                    "nivel": usuario.get('nivel_suscripcion'),  # <--- EL DATO CLAVE AÑADIDO
+                    "fecha": usuario.get('fecha_nacimiento')    # <--- AÑADIMOS LA FECHA PARA QUE LA VEA EL FRONTEND
+                }
             }), 200
             
         return jsonify({"status": "error", "message": "Contraseña incorrecta."}), 401
