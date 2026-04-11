@@ -375,7 +375,6 @@ body{background:var(--void);color:var(--tp);font-family:'DM Mono',monospace;font
 
 <div class="app">
 
-  <!-- ═══ SIDEBAR ═══ -->
   <aside class="sidebar">
     <div class="brand">
       <div class="brand-logo">Refugio</div>
@@ -416,10 +415,8 @@ body{background:var(--void);color:var(--tp);font-family:'DM Mono',monospace;font
     </div>
   </aside>
 
-  <!-- ═══ MAIN ═══ -->
   <main class="main">
 
-    <!-- ── PANEL 1: ORÁCULO ── -->
     <section id="tab-oraculo" class="panel active">
       <div class="panel-hd">
         <div class="panel-eyebrow">CONVERSACIÓN NATAL</div>
@@ -458,7 +455,6 @@ body{background:var(--void);color:var(--tp);font-family:'DM Mono',monospace;font
       </div>
     </section>
 
-    <!-- ── PANEL 2: PILARES ── -->
     <section id="tab-pilares" class="panel">
       <div class="panel-hd">
         <div class="panel-eyebrow">ARQUITECTURA PSÍQUICA COMPLETA</div>
@@ -514,7 +510,6 @@ body{background:var(--void);color:var(--tp);font-family:'DM Mono',monospace;font
       </div>
     </section>
 
-    <!-- ── PANEL 3: TRÁNSITOS ── -->
     <section id="tab-transitos" class="panel">
       <div class="panel-hd">
         <div class="panel-eyebrow">PROYECCIÓN ASTRONÓMICA PERSONALIZADA</div>
@@ -590,7 +585,6 @@ body{background:var(--void);color:var(--tp);font-family:'DM Mono',monospace;font
       </div>
     </section>
 
-    <!-- ── PANEL 4: DIARIO ── -->
     <section id="tab-diario" class="panel">
       <div class="panel-hd">
         <div class="panel-eyebrow">REGISTRO PERSONAL</div>
@@ -731,165 +725,91 @@ function saveInsight(pregunta,insight){
 }
 
 // ════ CHAT CON IA REAL ════
-let sending=false;
+let sending = false;
 
-async function enviar(){
-  if(sending)return;
-  const input=document.getElementById('chat-input');
-  const texto=input.value.trim();
-  if(!texto)return;
-
-  // Ocultar sugerencias
-  document.getElementById('suggestions').style.display='none';
-
-  sending=true;
-  document.getElementById('send-btn').disabled=true;
-  input.value='';
-
-  const history=document.getElementById('chat-history');
-
-  // Mensaje usuario
-  const userDiv=document.createElement('div');
-  userDiv.className='msg msg-user fade-in';
-  userDiv.textContent=texto;
-  history.appendChild(userDiv);
-  history.scrollTop=history.scrollHeight;
-
-  // Typing bubble
-  const typingDiv=document.createElement('div');
-  typingDiv.className='typing-bubble fade-in';
-  typingDiv.innerHTML='<div class="typing-dots"><div class="dot"></div><div class="dot"></div><div class="dot"></div></div>';
-  history.appendChild(typingDiv);
-  history.scrollTop=history.scrollHeight;
-
-  // Construir contexto natal
-  const nombre=localStorage.getItem('refugio_nombre')||'la usuaria';
-  const fecha=localStorage.getItem('refugio_fecha')||'';
-  const astro=calcSignos(fecha);
-
-  const systemPrompt=`Eres el Oráculo Natal de Refugio — un sistema de inteligencia que combina cálculos astronómicos reales (efemérides JPL/NASA) con psicología analítica junguiana y filosofía práctica estoica.
-
-DATOS NATALES DE ${nombre.toUpperCase()}:
-- Sol en ${astro.sign} (elemento ${astro.elem})
-- Posición astronómica real NASA: constelación ${astro.nasa}
-- Energía dominante: ${astro.elem}
-- Fecha de nacimiento: ${fecha}
-
-TU FORMA DE RESPONDER:
-1. Primero valida brevemente la emoción o situación sin exagerar (1-2 líneas, sin frases vacías como "entiendo perfectamente")
-2. Luego ancla la respuesta en los datos natales específicos de esta persona — menciona su signo, elemento o posición real. No des respuestas genéricas.
-3. Ofrece un insight concreto y accionable, no vago. Filosofía práctica, no poesía vacía.
-4. Si hay un tránsito relevante, menciónalo.
-5. Terminá con una pregunta o acción concreta que pueda hacer hoy.
-
-TONO: Directo, cálido pero sin condescendencia. Como una persona muy lúcida que te conoce a fondo. Nada de "eres increíble" ni frases motivacionales vacías. La profundidad viene de la especificidad, no de la poesía genérica.
-
-FORMATO: Párrafos cortos separados. Sin listas con guiones. Sin negritas excesivas. Máximo 4 párrafos. En español rioplatense.`;
-
-  try{
-    const res=await fetch('https://api.anthropic.com/v1/messages',{
-      method:'POST',
-      headers:{'Content-Type':'application/json'},
-      body:JSON.stringify({
-        model:'claude-sonnet-4-20250514',
-        max_tokens:1000,
-        system:systemPrompt,
-        messages:[{role:'user',content:texto}]
-      })
-    });
-
-    const data=await res.json();
-    const respuesta=data.content?.[0]?.text||'No pude procesar tu consulta. Intentá de nuevo.';
-
-    // Extraer primer párrafo como insight para diario
-    const insightCorto=respuesta.split('\n\n')[0];
-
-    typingDiv.remove();
-
-    const sysDiv=document.createElement('div');
-    sysDiv.className='msg msg-sys fade-in';
-
-    // Formatear párrafos
-    const parrafos=respuesta.split('\n\n').filter(p=>p.trim());
-    const html=parrafos.map(p=>`<p>${p.replace(/\n/g,'<br>')}</p>`).join('');
-
-    sysDiv.innerHTML=`
-      <div class="msg-sys-text">${html}</div>
-      <span class="msg-meta">Basado en tu configuración natal · ${astro.sign} · ${astro.elem} · JPL/NASA</span>
-    `;
-    history.appendChild(sysDiv);
-    history.scrollTop=history.scrollHeight;
-
-    // Guardar en diario
-    saveInsight(texto,insightCorto);
-
-  }catch(err){
-    typingDiv.remove();
-    const errDiv=document.createElement('div');
-    errDiv.className='msg msg-sys fade-in';
-    errDiv.innerHTML=`<div class="msg-sys-text"><p>Hay interferencia en la conexión con la bóveda. Intentá de nuevo en un momento.</p></div><span class="msg-meta">Error de conexión</span>`;
-    history.appendChild(errDiv);
-    history.scrollTop=history.scrollHeight;
-  }
-
-  sending=false;
-  document.getElementById('send-btn').disabled=false;
-  input.focus();
-}
-  async function enviarMensajeOraculo() {
-    // Asegúrate de que los IDs coincidan con los de tu HTML
-    const inputTexto = document.getElementById('chat-input'); 
+async function enviarMensajeOraculo() {
+    if(sending) return;
+    const inputTexto = document.getElementById('chat-input');
     const mensaje = inputTexto.value.trim();
-    const cajaMensajes = document.getElementById('chat-mensajes'); 
-    const emailGuardado = localStorage.getItem('refugio_email'); // Tu pase de seguridad
+    const history = document.getElementById('chat-history');
+    const emailGuardado = localStorage.getItem('refugio_email');
 
     if (!mensaje || !emailGuardado) return;
 
-    // 1. Mostrar el mensaje de la usuaria inmediatamente en pantalla
-    cajaMensajes.innerHTML += `<div class="mensaje-usuaria" style="margin-bottom: 15px; color: var(--text-secondary);"><strong>Tú:</strong> ${mensaje}</div>`;
-    inputTexto.value = ''; // Limpiamos la caja de texto
+    sending = true;
+    document.getElementById('send-btn').disabled = true;
 
-    // 2. Mostrar un indicador de "pensando..."
-    const idCarga = 'carga-' + Date.now();
-    cajaMensajes.innerHTML += `<div id="${idCarga}" class="mensaje-ia" style="margin-bottom: 15px; color: var(--magenta-bright); font-style: italic;">El Oráculo está decodificando tu mapa...</div>`;
+    // Ocultar sugerencias si están visibles
+    const suggestions = document.getElementById('suggestions');
+    if (suggestions) suggestions.style.display = 'none';
+
+    // 1. Mostrar mensaje de la usuaria (Estilo diferenciado)
+    const userDiv = document.createElement('div');
+    userDiv.className = 'msg msg-user fade-in';
+    userDiv.textContent = mensaje;
+    history.appendChild(userDiv);
     
-    // Auto-scroll hacia abajo
-    cajaMensajes.scrollTop = cajaMensajes.scrollHeight;
+    inputTexto.value = '';
+    history.scrollTop = history.scrollHeight;
+
+    // 2. Animación de "pensando..." (Estilo Oráculo)
+    const typingDiv = document.createElement('div');
+    typingDiv.id = 'carga-oraculo';
+    typingDiv.className = 'typing-bubble fade-in';
+    typingDiv.innerHTML = '<div class="typing-dots"><div class="dot"></div><div class="dot"></div><div class="dot"></div></div>';
+    history.appendChild(typingDiv);
+    history.scrollTop = history.scrollHeight;
 
     try {
-        // 3. Lanzar la pregunta a tu servidor Python
+        // 3. Conexión segura a tu servidor Python
         const respuesta = await fetch('/api/chat', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ 
-                email: emailGuardado, 
-                mensaje: mensaje 
-            })
+            body: JSON.stringify({ email: emailGuardado, mensaje: mensaje })
         });
 
         const datos = await respuesta.json();
         
-        // 4. Borrar el "pensando..."
-        document.getElementById(idCarga).remove();
+        // 4. Borramos la animación de carga
+        const cargaEl = document.getElementById('carga-oraculo');
+        if(cargaEl) cargaEl.remove();
 
-        // 5. Mostrar la respuesta magistral de Claude
         if (datos.status === 'exito') {
-            // Reemplazamos los saltos de línea de la IA con <br> de HTML para mantener los párrafos
-            const textoFormateado = datos.respuesta.replace(/\n/g, '<br>');
-            cajaMensajes.innerHTML += `
-                <div class="mensaje-ia" style="margin-bottom: 25px; padding: 15px; background: rgba(194,24,91,0.05); border-left: 2px solid var(--magenta); color: var(--text-primary); line-height: 1.8;">
-                    <strong>Oráculo:</strong><br><br>${textoFormateado}
-                </div>`;
+            // Separar la respuesta en párrafos
+            const parrafos = datos.respuesta.split('\n\n').filter(p => p.trim());
+            const html = parrafos.map(p => `<p>${p.replace(/\n/g, '<br>')}</p>`).join('');
+
+            // 5. Mostrar la respuesta con el estilo oscuro/magenta del Oráculo
+            const sysDiv = document.createElement('div');
+            sysDiv.className = 'msg msg-sys fade-in';
+            sysDiv.innerHTML = `
+              <div class="msg-sys-text">${html}</div>
+              <span class="msg-meta">Oráculo · Inteligencia Astrológica Activa</span>
+            `;
+            history.appendChild(sysDiv);
+
+            // 6. Guardar en el Diario de Insights (usamos la primera frase como resumen)
+            if (typeof saveInsight === 'function') {
+                saveInsight(mensaje, parrafos[0]);
+            }
         } else {
-            cajaMensajes.innerHTML += `<div class="mensaje-ia error" style="color: var(--red-soft);">Error: ${datos.message}</div>`;
+            throw new Error(datos.message || "Error desconocido");
         }
-        
-        cajaMensajes.scrollTop = cajaMensajes.scrollHeight;
 
     } catch (error) {
-        document.getElementById(idCarga).remove();
-        cajaMensajes.innerHTML += `<div class="mensaje-ia error" style="color: var(--red-soft);">Hubo una interferencia al conectar con la bóveda. Intenta de nuevo.</div>`;
+        const cargaEl = document.getElementById('carga-oraculo');
+        if(cargaEl) cargaEl.remove();
+        
+        const errDiv = document.createElement('div');
+        errDiv.className = 'msg msg-sys fade-in';
+        errDiv.innerHTML = `<div class="msg-sys-text"><p style="color: var(--red);">Hay interferencia en la conexión con la bóveda. Intentá de nuevo en un momento.</p></div><span class="msg-meta">Error de conexión</span>`;
+        history.appendChild(errDiv);
     }
+
+    sending = false;
+    document.getElementById('send-btn').disabled = false;
+    history.scrollTop = history.scrollHeight;
+    inputTexto.focus();
 }
 </script>
 </body>
