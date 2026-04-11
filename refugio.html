@@ -1083,43 +1083,47 @@ function cerrarSesion() {
   localStorage.removeItem('refugio_nombre');
 }
 // ════ DETECTOR DE USUARIAS VIP (PUERTA A LA BÓVEDA) ════
+// ════ DETECTOR DE USUARIAS VIP (PUERTA A LA BÓVEDA) ════
 document.addEventListener('DOMContentLoaded', () => {
-    const nivelUsuario = localStorage.getItem('refugio_nivel');
+    const nivel = localStorage.getItem('refugio_nivel');
+    const email = localStorage.getItem('refugio_email');
     
-    if (nivelUsuario === 'premium') {
-        // Buscamos el menú (.nav) o la barra lateral (.sidebar) como plan B
-        const menuNav = document.querySelector('.nav') || document.querySelector('.sidebar');
-        
-        if (menuNav) {
-            const separador = document.createElement('div');
-            separador.className = 'nav-sep';
-            separador.style.height = '1px';
-            separador.style.background = 'var(--border-s, rgba(255,255,255,0.07))';
-            separador.style.margin = '12px 12px';
-            menuNav.appendChild(separador);
+    console.log("Verificando acceso VIP para:", email, "Nivel:", nivel);
 
+    if (nivel === 'premium') {
+        // Intentamos encontrar el menú por clase .nav, .sidebar o simplemente el primer <nav>
+        const contenedor = document.querySelector('.nav') || 
+                           document.querySelector('.sidebar') || 
+                           document.querySelector('nav');
+        
+        if (contenedor) {
+            console.log("Menú encontrado. Inyectando botón VIP...");
+            
             const btnVIP = document.createElement('button');
-            btnVIP.className = 'nav-btn';
-            btnVIP.style.border = '1px solid var(--mg, #c2185b)';
-            btnVIP.style.background = 'rgba(194,24,91,0.05)';
-            btnVIP.style.color = 'var(--mg-bright, #f06292)';
-            btnVIP.style.padding = '13px 16px';
-            btnVIP.style.textAlign = 'left';
-            btnVIP.style.fontFamily = "'DM Mono', monospace";
-            btnVIP.style.fontSize = '11px';
-            btnVIP.style.letterSpacing = '0.08em';
-            btnVIP.style.cursor = 'pointer';
-            btnVIP.style.borderRadius = '1px';
-            btnVIP.style.display = 'flex';
-            btnVIP.style.alignItems = 'center';
-            btnVIP.style.gap = '10px';
-            btnVIP.style.marginTop = '10px';
+            // Estilo manual para asegurar que se vea resaltado
+            Object.assign(btnVIP.style, {
+                border: '2px solid #f06292',
+                background: 'rgba(194,24,91,0.1)',
+                color: '#f06292',
+                padding: '12px 20px',
+                margin: '15px',
+                cursor: 'pointer',
+                fontFamily: 'monospace',
+                fontSize: '12px',
+                fontWeight: 'bold',
+                borderRadius: '4px',
+                display: 'block',
+                width: 'calc(100% - 30px)',
+                textAlign: 'center'
+            });
             
-            btnVIP.innerHTML = '<span class="nav-icon" style="font-size:14px;">✦</span> Bóveda Premium';
-            
+            btnVIP.innerHTML = '✦ VOLVER A MI BÓVEDA VIP';
             btnVIP.onclick = () => window.location.href = 'boveda-premium.html';
             
-            menuNav.appendChild(btnVIP);
+            // Lo ponemos al principio del menú para que no se pierda
+            contenedor.prepend(btnVIP);
+        } else {
+            console.error("No se encontró ningún menú (nav/sidebar) para poner el botón.");
         }
     }
 });
