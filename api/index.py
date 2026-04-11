@@ -17,7 +17,6 @@ def get_supabase_client():
 # ==========================================
 # ENRUTADOR MAESTRO
 # ==========================================
-
 @app.route('/', defaults={'path': ''}, methods=['POST', 'OPTIONS'])
 @app.route('/<path:path>', methods=['POST', 'OPTIONS'])
 def enrutador(path):
@@ -41,7 +40,6 @@ def enrutador(path):
         
     except Exception as e:
         return jsonify({"status": "error", "message": "Error interno: " + str(e)}), 500
-
 
 # ==========================================
 # LÓGICA DE REGISTRO
@@ -164,32 +162,25 @@ def webhook_paypal_Refugio():
     data = request.get_json(silent=True) or {}
     event_type = data.get('event_type')
     
-    # El evento exacto que confirmaste
     if event_type == 'PAYMENT.CAPTURE.COMPLETED':
         try:
             resource = data.get('resource', {})
             email_pagador = None
             
-            # 1. Buscamos primero en custom_id (Esta es la mejor práctica)
             if 'custom_id' in resource:
                 email_pagador = resource['custom_id']
             
-            # 2. Si por alguna razón no viene el custom_id, tomamos el email de la cuenta de PayPal
             if not email_pagador and 'payer' in resource and 'email_address' in resource['payer']:
                 email_pagador = resource['payer']['email_address']
                 
             if email_pagador:
-                # Ascenso a Premium en la Base de Datos
                 supabase.table('usuarios_refugio').update({"nivel_suscripcion": "premium"}).eq('email', email_pagador).execute()
                 print(f"Venta Refugio exitosa: {email_pagador} ascendido a PREMIUM.", flush=True)
                 
         except Exception as e:
             print(f"Error procesando webhook de Refugio: {str(e)}", flush=True)
             
-    # Siempre respondemos 200 OK a PayPal para que registre el éxito
     return jsonify({"status": "recibido"}), 200
-
-
 
 # ==========================================
 # CEREBRO IA: EL ORÁCULO DE REFUGIO
@@ -198,7 +189,6 @@ def chat_oraculo():
     supabase = get_supabase_client()
     api_key_anthropic = os.environ.get("ANTHROPIC_API_KEY")
     
-    # 1. Validación de Seguridad
     if not supabase or not api_key_anthropic: 
         return jsonify({"status": "error", "message": "Faltan credenciales del sistema central."}), 500
         
@@ -210,7 +200,6 @@ def chat_oraculo():
         return jsonify({"status": "error", "message": "Faltan datos de consulta para el Oráculo."}), 400
         
     try:
-        # 2. Extracción de Datos de la Usuaria
         res = supabase.table('usuarios_refugio').select('*').eq('email', email).execute()
         if len(res.data) == 0:
             return jsonify({"status": "error", "message": "Usuario no encontrado en la bóveda."}), 404
@@ -220,7 +209,6 @@ def chat_oraculo():
         fecha_nac = usuario.get('fecha_nacimiento', 'Desconocida')
         ciudad_nac = usuario.get('ciudad', 'Desconocida')
         
-        # 3. EL SYSTEM PROMPT (El alma del Oráculo)
         system_prompt = f"""
         Eres el "Oráculo de Refugio", una inteligencia analítica basada en cálculos astronómicos (efemérides JPL/NASA), psicología profunda (junguiana) y filosofía práctica estoica.
 
@@ -247,20 +235,18 @@ def chat_oraculo():
         - Párrafo 3 (La Acción): Cierra con una instrucción estoica o una pregunta de auto-reflexión poderosa para que ella asuma la responsabilidad de su siguiente paso.
         """
         
-        # 4. Conexión a Claude 3.5 Sonnet
         client = Anthropic(api_key=api_key_anthropic)
         
         respuesta_ia = client.messages.create(
-            model="claude-3-5-sonnet-20241022", # Usamos el modelo más capaz y económico para este caso
-            max_tokens=400, # Límite estricto para mantener las respuestas concisas (aprox 300 palabras)
-            temperature=0.7, # Creatividad controlada (0 = robótico, 1 = muy creativo. 0.7 es ideal aquí)
+            model="claude-3-5-sonnet-20241022",
+            max_tokens=400,
+            temperature=0.7,
             system=system_prompt,
             messages=[
                 {"role": "user", "content": mensaje_usuaria}
             ]
         )
         
-        # 5. Extracción y envío de la respuesta
         texto_final = respuesta_ia.content[0].text
         
         return jsonify({"status": "exito", "respuesta": texto_final}), 200
