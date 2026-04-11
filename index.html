@@ -503,79 +503,97 @@
         document.addEventListener('click', (e) => { if (e.target !== lugarInput) lugarList.classList.add('hidden'); });
 
         // --- LÓGICAS DE CONEXIÓN ---
-        async function procesarLogin(e) {
-            e.preventDefault();
-            const btn = document.getElementById('btn-login');
-            const msg = document.getElementById('msg-login');
-            const email = document.getElementById('login-email').value;
-            const pass = document.getElementById('login-pass').value;
+       // --- LÓGICAS DE CONEXIÓN ---
+async function procesarLogin(e) {
+    e.preventDefault();
+    const btn = document.getElementById('btn-login');
+    const msg = document.getElementById('msg-login');
+    const email = document.getElementById('login-email').value;
+    const pass = document.getElementById('login-pass').value;
 
-            btn.disabled = true; btn.textContent = "Sintonizando..."; msg.textContent = "";
+    btn.disabled = true; btn.textContent = "Sintonizando..."; msg.textContent = "";
 
-            try {
-                const res = await fetch('/api/login', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ email, password: pass })
-                });
-                const data = await res.json();
+    try {
+        const res = await fetch('/api/login', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ email, password: pass })
+        });
+        const data = await res.json();
 
-                if (data.status === "exito") {
-                    localStorage.setItem('refugio_email', data.datos.email);
-                    localStorage.setItem('refugio_nombre', data.datos.nombre);
-                    window.location.href = "refugio.html";
-                } else {
-                    msg.textContent = data.message;
-                    btn.disabled = false; btn.textContent = "Conectar a la Bóveda";
-                }
-            } catch (error) {
-                msg.textContent = "Error conectando al servidor estelar.";
-                btn.disabled = false; btn.textContent = "Conectar a la Bóveda";
-            }
-        }
-
-        async function procesarRegistro(e) {
-            e.preventDefault();
-            const btn = document.getElementById('btn-registro');
-            const msg = document.getElementById('msg-registro');
+        if (data.status === "exito") {
+            // 1. Guardamos TODOS los datos que ahora nos manda Python
+            localStorage.setItem('refugio_email', data.datos.email);
+            localStorage.setItem('refugio_nombre', data.datos.nombre);
+            localStorage.setItem('refugio_nivel', data.datos.nivel);
             
-            const payload = {
-                nombre: document.getElementById('reg-nombre').value,
-                email: document.getElementById('reg-email').value,
-                password: document.getElementById('reg-pass').value,
-                fecha: document.getElementById('reg-fecha').value,
-                hora: document.getElementById('reg-hora').value,
-                ciudad: document.getElementById('reg-ciudad').value,
-                lat: document.getElementById('reg-lat').value,
-                lon: document.getElementById('reg-lon').value
-            };
-
-            btn.disabled = true; btn.textContent = "Calculando vectores..."; msg.textContent = "";
-
-            try {
-                const res = await fetch('/api/registro', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify(payload)
-                });
-                const data = await res.json();
-
-                if (data.status === "exito") {
-                    localStorage.setItem('refugio_email', payload.email);
-                    localStorage.setItem('refugio_nombre', payload.nombre);
-                    window.location.href = "refugio.html";
-                } else if (data.status === "existe") {
-                    msg.textContent = "Este correo ya tiene un Refugio. Usa la pestaña de Acceso.";
-                    btn.disabled = false; btn.textContent = "Calcular mi Diseño";
-                } else {
-                    msg.textContent = data.message;
-                    btn.disabled = false; btn.textContent = "Calcular mi Diseño";
-                }
-            } catch (error) {
-                msg.textContent = "Fallo al conectar con la bóveda.";
-                btn.disabled = false; btn.textContent = "Calcular mi Diseño";
+            // Guardamos la fecha si existe para evitar el Aries por defecto
+            if (data.datos.fecha) {
+                localStorage.setItem('refugio_fecha', data.datos.fecha);
             }
+
+            // 2. El Guardia (Redirección Inteligente)
+            if (data.datos.nivel === 'premium') {
+                window.location.href = "boveda-premium.html";
+            } else {
+                window.location.href = "refugio.html";
+            }
+        } else {
+            msg.textContent = data.message;
+            btn.disabled = false; btn.textContent = "Conectar a la Bóveda";
         }
+    } catch (error) {
+        msg.textContent = "Error conectando al servidor estelar.";
+        btn.disabled = false; btn.textContent = "Conectar a la Bóveda";
+    }
+}
+
+async function procesarRegistro(e) {
+    e.preventDefault();
+    const btn = document.getElementById('btn-registro');
+    const msg = document.getElementById('msg-registro');
+    
+    const payload = {
+        nombre: document.getElementById('reg-nombre').value,
+        email: document.getElementById('reg-email').value,
+        password: document.getElementById('reg-pass').value,
+        fecha: document.getElementById('reg-fecha').value,
+        hora: document.getElementById('reg-hora').value,
+        ciudad: document.getElementById('reg-ciudad').value,
+        lat: document.getElementById('reg-lat').value,
+        lon: document.getElementById('reg-lon').value
+    };
+
+    btn.disabled = true; btn.textContent = "Calculando vectores..."; msg.textContent = "";
+
+    try {
+        const res = await fetch('/api/registro', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(payload)
+        });
+        const data = await res.json();
+
+        if (data.status === "exito") {
+            // También actualizamos aquí para que quede perfecto desde el día 1
+            localStorage.setItem('refugio_email', payload.email);
+            localStorage.setItem('refugio_nombre', payload.nombre);
+            localStorage.setItem('refugio_fecha', payload.fecha);
+            localStorage.setItem('refugio_nivel', 'free'); // Todo registro nuevo nace free
+            
+            window.location.href = "refugio.html";
+        } else if (data.status === "existe") {
+            msg.textContent = "Este correo ya tiene un Refugio. Usa la pestaña de Acceso.";
+            btn.disabled = false; btn.textContent = "Calcular mi Diseño";
+        } else {
+            msg.textContent = data.message;
+            btn.disabled = false; btn.textContent = "Calcular mi Diseño";
+        }
+    } catch (error) {
+        msg.textContent = "Fallo al conectar con la bóveda.";
+        btn.disabled = false; btn.textContent = "Calcular mi Diseño";
+    }
+}
     </script>
 </body>
  
