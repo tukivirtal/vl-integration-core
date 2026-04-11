@@ -1082,48 +1082,45 @@ function cerrarSesion() {
   localStorage.removeItem('refugio_email');
   localStorage.removeItem('refugio_nombre');
 }
-  // ════ DETECTOR DE USUARIAS VIP (PUERTA A LA BÓVEDA) ════
+// ════ DETECTOR DE USUARIAS VIP (PUERTA A LA BÓVEDA) ════
 document.addEventListener('DOMContentLoaded', () => {
-    // 1. Revisamos si la usuaria tiene el pase VIP en su memoria
     const nivelUsuario = localStorage.getItem('refugio_nivel');
     
     if (nivelUsuario === 'premium') {
-        // 2. Buscamos el menú lateral (nav) de refugio.html
-        const menuNav = document.querySelector('.nav');
+        // Buscamos el menú (.nav) o la barra lateral (.sidebar) como plan B
+        const menuNav = document.querySelector('.nav') || document.querySelector('.sidebar');
         
         if (menuNav) {
-            // Creamos un separador visual
             const separador = document.createElement('div');
             separador.className = 'nav-sep';
+            separador.style.height = '1px';
+            separador.style.background = 'var(--border-s, rgba(255,255,255,0.07))';
+            separador.style.margin = '12px 12px';
             menuNav.appendChild(separador);
 
-            // 3. Creamos el Botón VIP Dinámico
             const btnVIP = document.createElement('button');
             btnVIP.className = 'nav-btn';
-            // Le damos un estilo destacado (bordes y colores magenta/dorado)
             btnVIP.style.border = '1px solid var(--mg, #c2185b)';
             btnVIP.style.background = 'rgba(194,24,91,0.05)';
             btnVIP.style.color = 'var(--mg-bright, #f06292)';
+            btnVIP.style.padding = '13px 16px';
+            btnVIP.style.textAlign = 'left';
+            btnVIP.style.fontFamily = "'DM Mono', monospace";
+            btnVIP.style.fontSize = '11px';
+            btnVIP.style.letterSpacing = '0.08em';
+            btnVIP.style.cursor = 'pointer';
+            btnVIP.style.borderRadius = '1px';
+            btnVIP.style.display = 'flex';
+            btnVIP.style.alignItems = 'center';
+            btnVIP.style.gap = '10px';
+            btnVIP.style.marginTop = '10px';
             
-            btnVIP.innerHTML = '<span class="nav-icon">✦</span> Bóveda Premium';
+            btnVIP.innerHTML = '<span class="nav-icon" style="font-size:14px;">✦</span> Bóveda Premium';
             
-            // Al hacer clic, vuelve a la bóveda
             btnVIP.onclick = () => window.location.href = 'boveda-premium.html';
             
-            // Lo agregamos al menú
             menuNav.appendChild(btnVIP);
         }
-
-        // 4. (OPCIONAL) Ocultar el botón de compra
-        // Si tu botón de pago en refugio.html tiene un ID como 'btn-comprar' o una clase, 
-        // puedes descomentar las siguientes líneas y poner el ID correcto para esconderlo:
-        /*
-        const botonComprar = document.getElementById('id-de-tu-boton-de-pago');
-        if (botonComprar) {
-            botonComprar.style.display = 'none';
-            // O puedes cambiarle el texto: botonComprar.textContent = "Ya eres Premium";
-        }
-        */
     }
 });
 </script>
