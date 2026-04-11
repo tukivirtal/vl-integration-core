@@ -1,6 +1,21 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
+  <script>
+  (function() {
+    const emailGuardado = localStorage.getItem('refugio_email');
+    const nivelGuardado = localStorage.getItem('refugio_nivel');
+
+    // 1. Si no hay email, es alguien que ni siquiera inició sesión
+    if (!emailGuardado) {
+        window.location.replace('index.html');
+    }
+    // 2. Si inició sesión pero no es nivel premium (es free), la mandamos a la sala pública
+    else if (nivelGuardado !== 'premium') {
+        window.location.replace('refugio.html');
+    }
+  })();
+</script>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Bóveda Premium · Refugio</title>
