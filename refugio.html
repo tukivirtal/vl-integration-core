@@ -1083,48 +1083,49 @@ function cerrarSesion() {
   localStorage.removeItem('refugio_nombre');
 }
 // ════ DETECTOR DE USUARIAS VIP (PUERTA A LA BÓVEDA) ════
+<script>
 document.addEventListener('DOMContentLoaded', () => {
     const nivel = localStorage.getItem('refugio_nivel');
-    const email = localStorage.getItem('refugio_email');
     
-    console.log("Verificando acceso VIP para:", email, "Nivel:", nivel);
-
     if (nivel === 'premium') {
-        // Intentamos encontrar el menú por clase .nav, .sidebar o simplemente el primer <nav>
-        const contenedor = document.querySelector('.nav') || 
-                           document.querySelector('.sidebar') || 
-                           document.querySelector('nav');
+        const btnFlotante = document.createElement('button');
         
-        if (contenedor) {
-            console.log("Menú encontrado. Inyectando botón VIP...");
-            
-            const btnVIP = document.createElement('button');
-            // Estilo manual para asegurar que se vea resaltado
-            Object.assign(btnVIP.style, {
-                border: '2px solid #f06292',
-                background: 'rgba(194,24,91,0.1)',
-                color: '#f06292',
-                padding: '12px 20px',
-                margin: '15px',
-                cursor: 'pointer',
-                fontFamily: 'monospace',
-                fontSize: '12px',
-                fontWeight: 'bold',
-                borderRadius: '4px',
-                display: 'block',
-                width: 'calc(100% - 30px)',
-                textAlign: 'center'
-            });
-            
-            btnVIP.innerHTML = '✦ VOLVER A MI BÓVEDA VIP';
-            btnVIP.onclick = () => window.location.href = 'boveda-premium.html';
-            
-            // Lo ponemos al principio del menú para que no se pierda
-            contenedor.prepend(btnVIP);
-        } else {
-            console.error("No se encontró ningún menú (nav/sidebar) para poner el botón.");
-        }
+        // Estilos ultra-robustos para un botón flotante en la esquina inferior derecha
+        Object.assign(btnFlotante.style, {
+            position: 'fixed',
+            bottom: '30px',
+            right: '30px',
+            zIndex: '9999', // Esto asegura que flote por encima de TODO
+            backgroundColor: '#c2185b', // Tu color magenta (var--mg)
+            color: '#ffffff',
+            border: '1px solid #f06292',
+            padding: '16px 28px',
+            borderRadius: '50px', // Forma de píldora
+            fontFamily: "'Cormorant Garamond', serif",
+            fontSize: '18px',
+            fontStyle: 'italic',
+            cursor: 'pointer',
+            boxShadow: '0 8px 30px rgba(194,24,91,0.6)',
+            display: 'flex',
+            alignItems: 'center',
+            gap: '10px',
+            transition: 'transform 0.3s ease'
+        });
+        
+        btnFlotante.innerHTML = '<span style="font-size:22px; font-style:normal;">✦</span> Volver a mi Bóveda';
+        
+        // Efecto hover (se levanta un poquito al pasar el mouse)
+        btnFlotante.onmouseover = () => btnFlotante.style.transform = 'translateY(-5px)';
+        btnFlotante.onmouseout = () => btnFlotante.style.transform = 'translateY(0)';
+        
+        // La acción mágica
+        btnFlotante.onclick = () => window.location.href = 'boveda-premium.html';
+        
+        // Lo inyectamos en el cuerpo de la página, sin depender de menús
+        document.body.appendChild(btnFlotante);
     }
+});
+</script>
 });
 </script>
 </body>
