@@ -700,20 +700,62 @@ function getDiario(){try{return JSON.parse(localStorage.getItem('refugio_diario'
 function saveDiario(entries){localStorage.setItem('refugio_diario',JSON.stringify(entries))}
 
 function renderDiario(){
-  const entries=getDiario();
-  const container=document.getElementById('diario-entries');
-  const empty=document.getElementById('diario-empty');
-  container.innerHTML='';
-  if(!entries.length){empty.style.display='block';return}
-  empty.style.display='none';
-  [...entries].reverse().forEach(e=>{
-    const div=document.createElement('div');
-    div.className='diario-entry fade-in';
-    div.innerHTML=`<div class="entry-date">${e.fecha}</div>
+  const entries = getDiario();
+  const container = document.getElementById('diario-entries');
+  const empty = document.getElementById('diario-empty');
+  container.innerHTML = '';
+  
+  if(!entries.length){
+      empty.style.display = 'block';
+      return;
+  }
+  
+  empty.style.display = 'none';
+  
+  [...entries].reverse().forEach((e, i) => {
+    const div = document.createElement('div');
+    div.className = 'diario-entry fade-in';
+
+    // Separamos el primer párrafo del resto
+    const parrafos = (e.insight || '').split('\n\n').filter(p => p.trim());
+    const p1 = parrafos.length > 0 ? `<p>${parrafos[0].replace(/\n/g, '<br>')}</p>` : '';
+    const resto = parrafos.length > 1 ? parrafos.slice(1).map(p => `<p style="margin-top:10px;">${p.replace(/\n/g, '<br>')}</p>`).join('') : '';
+
+    let html = `<div class="entry-date">${e.fecha}</div>
       <div class="entry-question">Tu pregunta: "${e.pregunta}"</div>
-      <div class="entry-insight">${e.insight}</div>`;
+      <div class="entry-insight">${p1}</div>`;
+
+    // Si hay más de un párrafo, agregamos el botón de Ver Más
+    if(resto) {
+        html += `<div id="resto-${i}" style="display:none; margin-top:10px; font-family:'Cormorant Garamond', serif; font-size:15px; font-style:italic; color:var(--tp); line-height:1.5;">${resto}</div>
+        <button onclick="toggleResto('resto-${i}', this)" style="background:transparent; border:none; color:var(--mg-bright); font-family:'DM Mono',monospace; font-size:10px; letter-spacing:0.1em; cursor:pointer; margin-top:12px; padding:0; text-transform:uppercase; transition: color 0.3s;">+ Ver respuesta completa</button>`;
+    }
+
+    div.innerHTML = html;
     container.appendChild(div);
   });
+}
+
+// Lógica para abrir y cerrar la respuesta
+function toggleResto(id, btn) {
+    const el = document.getElementById(id);
+    if (el.style.display === 'none') {
+        el.style.display = 'block';
+        btn.textContent = '- Ver menos';
+        btn.style.color = 'var(--tm)';
+    } else {
+        el.style.display = 'none';
+        btn.textContent = '+ Ver respuesta completa';
+        btn.style.color = 'var(--mg-bright)';
+    }
+}
+
+function saveInsight(pregunta,insight){
+  const entries=getDiario();
+  const fecha=new Date().toLocaleDateString('es-AR',{weekday:'long',day:'numeric',month:'long'});
+  entries.push({fecha,pregunta,insight});
+  if(entries.length>20)entries.shift();
+  saveDiario(entries);
 }
 
 function saveInsight(pregunta,insight){
@@ -770,16 +812,15 @@ async function enviarMensajeOraculo() {
 
         const datos = await respuesta.json();
         
-        // 4. Borramos la animación de carga
-        const cargaEl = document.getElementById('carga-oraculo');
-        if(cargaEl) cargaEl.remove();
-
-        if (datos.status === 'exito') {
-            // Separar la respuesta en párrafos
-            const parrafos = datos.respuesta.split('\n\n').filter(p => p.trim());
+      if (datos.status === 'exito') {
+            // 1. Limpiamos las negritas (Convertimos **texto** a <strong>texto</strong>)
+            const textoLimpio = datos.respuesta.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
+            
+            // 2. Separar la respuesta en párrafos
+            const parrafos = textoLimpio.split('\n\n').filter(p => p.trim());
             const html = parrafos.map(p => `<p>${p.replace(/\n/g, '<br>')}</p>`).join('');
 
-            // 5. Mostrar la respuesta con el estilo oscuro/magenta del Oráculo
+            // 3. Mostrar la respuesta en el chat
             const sysDiv = document.createElement('div');
             sysDiv.className = 'msg msg-sys fade-in';
             sysDiv.innerHTML = `
@@ -788,14 +829,17 @@ async function enviarMensajeOraculo() {
             `;
             history.appendChild(sysDiv);
 
-            // 6. Guardar en el Diario de Insights (usamos la primera frase como resumen)
+            // 4. Guardar la respuesta COMPLETA en el Diario
             if (typeof saveInsight === 'function') {
-                saveInsight(mensaje, parrafos[0]);
+                saveInsight(mensaje, textoLimpio);
             }
         } else {
-            throw new Error(datos.message || "Error desconocido");
-        }
+            throw new Error(datos.message || "Error desconocido en el servidor");
+        }  // 4. Borramos la animación de carga
+        const cargaEl = document.getElementById('carga-oraculo');
+        if(cargaEl) cargaEl.remove();
 
+      
     } catch (error) {
         const cargaEl = document.getElementById('carga-oraculo');
         if(cargaEl) cargaEl.remove();
