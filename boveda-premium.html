@@ -591,7 +591,9 @@ body{background:var(--void);color:var(--tp);font-family:'DM Mono',monospace;font
         <h2 class="panel-title">Diario de Insights</h2>
         <p class="panel-sub">El oráculo recuerda. Cada conversación queda registrada aquí para que puedas ver tu evolución.</p>
       </div>
-
+      <button class="nav-btn" onclick="cerrarSesion()" style="color: var(--red);">
+        <span class="nav-icon">⏏</span> Cerrar sesión
+      </button>
       <p class="diario-intro">
         Cada vez que el oráculo te responde, el insight queda guardado en este diario. Sirve para que puedas ver patrones en tus propias preguntas y el trabajo que tu mapa va haciendo con el tiempo.
       </p>
@@ -767,6 +769,13 @@ function saveInsight(pregunta,insight){
 }
 
 // ════ CHAT CON IA REAL ════
+  // ════ CERRAR SESIÓN ════
+function cerrarSesion() {
+    // Borramos toda la memoria (nombre, email, fecha, nivel, etc.)
+    localStorage.clear();
+    // Redirigimos a la página principal de acceso (asegúrate de que se llame index.html)
+    window.location.href = 'index.html'; 
+}
 let sending = false;
 
 async function enviarMensajeOraculo() {
