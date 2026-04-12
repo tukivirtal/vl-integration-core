@@ -369,6 +369,7 @@ body{background:var(--void);color:var(--tp);font-family:'DM Mono',monospace;font
 .fade-in{animation:fadeUp 0.5s ease forwards}
 
 /* RESPONSIVE */
+/* RESPONSIVE */
 @media(max-width:700px){
   :root{--sidebar:0px}
   .sidebar{width:100%;height:auto;flex-direction:row;flex-wrap:wrap;padding:14px 16px;gap:8px;border-right:none;border-bottom:1px solid var(--border-s)}
@@ -376,9 +377,27 @@ body{background:var(--void);color:var(--tp);font-family:'DM Mono',monospace;font
   .nav{flex-direction:row;flex:unset;padding:0;gap:4px;overflow-x:auto}
   .nav-btn{padding:8px 12px;white-space:nowrap;font-size:10px}
   .sync-mini,.user-card,.nav-sep{display:none}
-  .panel{padding:20px 16px}
+  .panel{padding:20px 12px}
   .pilares-grid{grid-template-columns:1fr}
   .app{flex-direction:column}
+  
+  /* 📱 AJUSTES ESTÉTICOS PARA EL CHAT EN MÓVIL 📱 */
+  .chat-history { padding: 16px 12px; gap: 14px; }
+  
+  /* Hacemos que las burbujas ocupen casi toda la pantalla */
+  .msg { max-width: 95%; } 
+  .msg-sys { padding: 16px; }
+  .msg-user { padding: 12px 16px; }
+  .msg-sys-text { font-size: 16px; line-height: 1.5; } /* Texto más amigable a la vista */
+  
+  /* Acomodamos las preguntas sugeridas en 2 columnas perfectas */
+  .suggestions { padding: 12px 12px 0; gap: 8px; }
+  .sug-btn { font-size: 10px; padding: 10px; flex: 1 1 calc(50% - 8px); text-align: center; } 
+  
+  /* Le damos aire al campo de texto y apilamos el botón para que sea fácil de tocar */
+  .chat-input-row { padding: 12px; gap: 10px; flex-direction: column; } 
+  .chat-input { width: 100%; min-height: 52px; font-size: 14px; padding: 12px; }
+  .send-btn { width: 100%; padding: 16px; font-size: 12px; font-weight: bold; letter-spacing: 0.3em; }
 }
 </style>
 </head>
