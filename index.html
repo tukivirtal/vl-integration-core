@@ -216,6 +216,29 @@
         width: 100% !important;
         padding: 20px 15px !important; /* Reduce los rellenos gigantes de la PC */
     }
+           /* ════ LA APISONADORA (ARREGLA EL CUADRO REBELDE) ════ */
+        
+        /* 1. Busca CUALQUIER elemento que se llame "grid" y lo pasa a 1 columna */
+        [class*="grid"] {
+            grid-template-columns: 1fr !important;
+        }
+
+        /* 2. Busca las filas dentro de tu contenedor y las apila verticalmente */
+        .container > div {
+            display: flex !important;
+            flex-direction: column !important;
+            width: 100% !important;
+            gap: 30px !important;
+        }
+
+        /* 3. Le quita cualquier ancho fijo al cuadro para que respire en el celular */
+        .container > div > div {
+            width: 100% !important;
+            max-width: 100% !important;
+            min-width: 0 !important; /* Esto evita que el cuadro se trabe */
+            margin-left: 0 !important;
+            margin-right: 0 !important;
+        }
 }
     </style>
 </head>
