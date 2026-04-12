@@ -15,6 +15,31 @@ def get_supabase_client():
     except: return None
 
 # ==========================================
+# NUEVA LÓGICA MATEMÁTICA ESTRICTA (Para que la IA no adivine)
+# ==========================================
+def calcular_signo_y_elemento(fecha_str):
+    if not fecha_str or fecha_str == 'Desconocida':
+        return "Aries", "Fuego"
+    try:
+        partes = fecha_str.split('-')
+        m = int(partes[1])
+        d = int(partes[2])
+        if (m == 3 and d >= 21) or (m == 4 and d <= 19): return "Aries", "Fuego"
+        if (m == 4 and d >= 20) or (m == 5 and d <= 20): return "Tauro", "Tierra"
+        if (m == 5 and d >= 21) or (m == 6 and d <= 20): return "Géminis", "Aire"
+        if (m == 6 and d >= 21) or (m == 7 and d <= 22): return "Cáncer", "Agua"
+        if (m == 7 and d >= 23) or (m == 8 and d <= 22): return "Leo", "Fuego"
+        if (m == 8 and d >= 23) or (m == 9 and d <= 22): return "Virgo", "Tierra"
+        if (m == 9 and d >= 23) or (m == 10 and d <= 22): return "Libra", "Aire"
+        if (m == 10 and d >= 23) or (m == 11 and d <= 21): return "Escorpio", "Agua"
+        if (m == 11 and d >= 22) or (m == 12 and d <= 21): return "Sagitario", "Fuego"
+        if (m == 12 and d >= 22) or (m == 1 and d <= 19): return "Capricornio", "Tierra"
+        if (m == 1 and d >= 20) or (m == 2 and d <= 18): return "Acuario", "Aire"
+        return "Piscis", "Agua"
+    except:
+        return "Aries", "Fuego"
+
+# ==========================================
 # ENRUTADOR MAESTRO
 # ==========================================
 @app.route('/', defaults={'path': ''}, methods=['POST', 'OPTIONS'])
@@ -25,19 +50,13 @@ def enrutador(path):
     
     try:
         ruta_solicitada = request.path
-        
         if 'login' in ruta_solicitada: return login()
         if 'registro' in ruta_solicitada: return registro()
         if 'obtener_datos' in ruta_solicitada: return obtener_datos()
-        
-        # RUTA PARA PAYPAL
         if 'webhook_paypal_Refugio' in ruta_solicitada: return webhook_paypal_Refugio()
-        
-        # RUTA PARA EL ORÁCULO
         if 'chat' in ruta_solicitada: return chat_oraculo()
             
         return jsonify({"status": "error", "message": "Ruta no encontrada"}), 404
-        
     except Exception as e:
         return jsonify({"status": "error", "message": "Error interno: " + str(e)}), 500
 
@@ -103,8 +122,8 @@ def login():
                 "datos": {
                     "nombre": usuario.get('nombre'), 
                     "email": usuario.get('email'),
-                    "nivel": usuario.get('nivel_suscripcion'),  # <--- EL DATO CLAVE AÑADIDO
-                    "fecha": usuario.get('fecha_nacimiento')    # <--- AÑADIMOS LA FECHA PARA QUE LA VEA EL FRONTEND
+                    "nivel": usuario.get('nivel_suscripcion'),
+                    "fecha": usuario.get('fecha_nacimiento')
                 }
             }), 200
             
@@ -158,7 +177,7 @@ def obtener_datos():
         return jsonify({"status": "error", "message": str(e)}), 500
 
 # ==========================================
-# WEBHOOK DE PAYPAL (AUTOMATIZACIÓN DE PAGOS)
+# WEBHOOK DE PAYPAL
 # ==========================================
 def webhook_paypal_Refugio():
     supabase = get_supabase_client()
@@ -214,6 +233,9 @@ def chat_oraculo():
         fecha_nac = usuario.get('fecha_nacimiento', 'Desconocida')
         ciudad_nac = usuario.get('ciudad', 'Desconocida')
         
+        # Aquí calculamos con precisión absoluta usando Python
+        signo_exacto, elemento_exacto = calcular_signo_y_elemento(fecha_nac)
+        
         system_prompt = f"""
         Eres el "Oráculo de Refugio", una inteligencia analítica basada en cálculos astronómicos (efemérides JPL/NASA), psicología profunda (junguiana) y filosofía práctica estoica.
 
@@ -221,7 +243,11 @@ def chat_oraculo():
         Nombre: {nombre}
         Fecha de Nacimiento: {fecha_nac}
         Ciudad de Nacimiento: {ciudad_nac}
-        (Utiliza estos datos sutilmente para anclar tu respuesta a su realidad natal. Deduce su signo zodiacal tradicional y su elemento dominante a partir de su fecha).
+        Signo Solar Estricto: {signo_exacto}
+        Elemento Dominante: {elemento_exacto}
+
+        [INSTRUCCIÓN VITAL DE PERSONALIZACIÓN]
+        Ya NO necesitas deducir su signo zodiacal. Es un hecho innegable que su Signo Solar es {signo_exacto} y su Elemento Dominante es el {elemento_exacto}. Utiliza esta información exacta para anclar tu respuesta a su realidad natal. Jamás sugieras un signo diferente.
 
         [REGLAS DE COMPORTAMIENTO Y TONO]
         1. Tu tono es profundo, sobrio, analítico y empático, pero NO compasivo. Suenas como un analista sabio y objetivo.
@@ -230,12 +256,12 @@ def chat_oraculo():
         4. Eres directo. Si hay una fricción psicológica evidente en su mapa, exponla con respeto pero sin anestesia.
 
         [LIMITACIONES LEGALES - ESTRICTAS]
-        1. NUNCA le digas a la usuaria qué decisión específica tomar (ej. "debes renunciar", "debes separarte"). Tú solo iluminas el mapa y los patrones de su psique; ella toma la decisión.
+        1. NUNCA le digas a la usuaria qué decisión específica tomar. Tú solo iluminas el mapa y los patrones de su psique; ella toma la decisión.
         2. No ofrezcas consejos médicos, financieros o legales bajo ninguna circunstancia.
 
         [ESTRUCTURA OBLIGATORIA DE LA RESPUESTA]
         Tu respuesta debe tener MÁXIMO TRES PÁRRAFOS CORTOS (no más de 3-4 oraciones cada uno):
-        - Párrafo 1 (Validación): Valida la emoción o duda que presenta la usuaria explicando de dónde proviene usando su configuración natal (ej. su elemento dominante o un arquetipo).
+        - Párrafo 1 (Validación): Valida la emoción o duda que presenta la usuaria explicando de dónde proviene usando su Signo Solar ({signo_exacto}) y/o su elemento dominante ({elemento_exacto}).
         - Párrafo 2 (El Patrón): Explica la sombra o el patrón repetitivo inconsciente que se está activando (visión junguiana) que le causa fricción en este tema.
         - Párrafo 3 (La Acción): Cierra con una instrucción estoica o una pregunta de auto-reflexión poderosa para que ella asuma la responsabilidad de su siguiente paso.
         """
