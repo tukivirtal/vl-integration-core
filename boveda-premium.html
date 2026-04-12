@@ -734,9 +734,21 @@ function useSuggestion(btn){
   document.getElementById('chat-input').focus();
 }
 
-// ════ DIARIO LOCAL ════
-function getDiario(){try{return JSON.parse(localStorage.getItem('refugio_diario')||'[]')}catch{return[]}}
-function saveDiario(entries){localStorage.setItem('refugio_diario',JSON.stringify(entries))}
+// ════ DIARIO LOCAL PERSONALIZADO ════
+function getDiario() {
+    const email = localStorage.getItem('refugio_email') || 'anonimo';
+    try { 
+        return JSON.parse(localStorage.getItem('refugio_diario_' + email) || '[]');
+    } catch { 
+        return []; 
+    }
+}
+
+function saveDiario(entries) {
+    const email = localStorage.getItem('refugio_email') || 'anonimo';
+    localStorage.setItem('refugio_diario_' + email, JSON.stringify(entries));
+}
+
 
 function renderDiario(){
   const entries = getDiario();
